@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,h1,h2,p,span,div,li {
+  font-family: Peyda , Helvetica, sans-serif;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('/fonts/Font-Peyda/Peyda-Regular.ttf') format('truetype');
+  font-weight: 400; 
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('/fonts/Font-Peyda/Peyda-Medium.ttf') format('truetype');
+  font-weight: 500; 
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Peyda';
+  src: url('/fonts/Font-Peyda/Peyda-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+.swiper-masajed .swiper-button-next,.swiper-masajed .swiper-button-prev{
+  background-color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+}
+
+
+.swiper-masajed .swiper-button-next::after,.swiper-masajed .swiper-button-prev::after{
+  color: #39A894;
+  font-size: 16px !important;
+}
+
+.swiper-masajed .swiper-pagination-bullet{
+  background-color: white !important;
+  opacity: 1 !important;
+}
+
+
+.swiper-masajed .swiper-pagination-bullet-active{
+  background-color: #D5B260 !important;
+  opacity: 1 !important;
+}
+
+
+@keyframes slide {
+  0% {
+      transform: translateX(-100%);
+  }
+  100% {
+      transform: translateX(100%);
+  }
+}
+
+
+@keyframes shimmer {
+  0% {
+      transform: translateX(-100%);
+  }
+  100% {
+      transform: translateX(100%);
+  }
+}
+
+
+.animate-slide {
+  background: linear-gradient(90deg, #dcdcdc, #f0f0f0, #dcdcdc);
+  animation: slide 2s infinite;
+}
+
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+
+.rmdp-container {
+  width: 100%;
+}
