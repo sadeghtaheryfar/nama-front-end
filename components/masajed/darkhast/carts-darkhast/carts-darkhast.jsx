@@ -10,10 +10,15 @@ import CartsDarkhastActive from "./carts-darkhast-active";
 
 const CartsDarkhast = () => {
   const [futureCarts, setFutureCarts] = useState([]);
+  const [futureCartsLoading, setFutureCartsLoading] = useState(false);
+  const [activeCartsLoading, setActiveCartsLoading] = useState(false);
   const [activeCarts, setActiveCarts] = useState([]);
 
   useEffect(() => {
     const fetching = async () => {
+      setFutureCartsLoading(true);
+      setActiveCartsLoading(true);
+
       try {
         const carts = await axios.get("/api/future");
         if (carts.data) {
@@ -21,7 +26,10 @@ const CartsDarkhast = () => {
         }
       } catch (error) {
         console.log(error);
+      }finally {
+        setFutureCartsLoading(false);
       }
+
       try {
         const active = await axios.get("/api/active");
         if (active.data) {
@@ -29,6 +37,8 @@ const CartsDarkhast = () => {
         }
       } catch (error) {
         console.log(error);
+      }finally {
+        setActiveCartsLoading(false);
       }
     };
     fetching();
@@ -37,6 +47,15 @@ const CartsDarkhast = () => {
   return (
     <>
       <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-x-10">
+        {futureCartsLoading && (
+          <section className='flex justify-center items-center flex-col w-full h-[20rem]'>
+            <div className='w-full relative h-full rounded-[0.5rem] bg-[#e0e0e0] overflow-hidden'>
+                <div className='absolute top-0 left-0 h-full w-full animate-slide'></div>
+                <div className='absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent to-[#b0b0b0] opacity-50 animate-shimmer'></div>
+            </div>
+          </section>
+        )}
+
         {activeCarts &&
           activeCarts.length >= 1 &&
           activeCarts.map((item, index) => {
@@ -131,6 +150,15 @@ const CartsDarkhast = () => {
         <hr className="h-2 mb-5 xl:mt-12" />
         <h2 className="text-lg font-semibold md:my-4 lg:my-7 xl:my-9">درخواست های آینده</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-7 lg:gap-9 2xl:gap-10">
+          {futureCartsLoading && (
+            <section className='flex justify-center items-center flex-col w-full h-[8rem]'>
+              <div className='w-full relative h-full rounded-[0.5rem] bg-[#e0e0e0] overflow-hidden'>
+                  <div className='absolute top-0 left-0 h-full w-full animate-slide'></div>
+                  <div className='absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent to-[#b0b0b0] opacity-50 animate-shimmer'></div>
+              </div>
+            </section>
+          )}
+
           {futureCarts &&
             futureCarts.length >= 1 &&
             futureCarts.map((item, index) => {

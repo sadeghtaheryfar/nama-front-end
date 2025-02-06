@@ -14,13 +14,13 @@ const CartsDarkhastActive = ({ item }) => {
     <div className="flex flex-col justify-end gap-4 border rounded-xl p-4 group hover:border-[#39A894] transition-all duration-200">
       <div className="grid grid-cols-4 items-center gap-4 lg:grid-cols-5 lg:gap-5">
         <img
-          className="w-full max-w-28 lg:hidden"
+          className="w-full max-w-28 lg:hidden rounded-[0.5rem]"
           src={item.image}
           style={{ objectFit: "cover", height: "auto" }}
         />
         <img
           style={{ objectFit: "cover", height: "100%" }}
-          className="hidden lg:block w-full col-span-2 min-w-[167px] max-w-[167px] row-span-2"
+          className="hidden lg:block w-full col-span-2 min-w-[167px] max-w-[167px] row-span-2 rounded-[0.5rem]"
           alt="#"
           src={item.image}
         />

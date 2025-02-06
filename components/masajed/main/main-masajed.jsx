@@ -61,13 +61,12 @@ const MainMasajed = () => {
             navigation={true}
             pagination={{
               clickable: true,
-              enabled: false, // Pagination به طور پیش‌فرض غیرفعال است
+              enabled: false,
             }}
             loop={true}
             modules={[Navigation, Pagination, Mousewheel, Keyboard]}
             className="swiper-masajed relative min-h-[20rem]"
             breakpoints={{
-              // برای lg به بالا pagination را فعال کنید
               1024: {
                 pagination: {
                   enabled: true,
