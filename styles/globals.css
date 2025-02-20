@@ -9,6 +9,7 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  direction: rtl;
 }
 @font-face {
   font-family: 'Peyda';
@@ -91,4 +92,42 @@ html, body {
 
 .rmdp-container {
   width: 100%;
+}
+
+
+
+
+/* my changes ------------ */
+
+
+
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: right;
+  padding: 8px;
+}
+th{
+  background-color: #dddddd;
+}
+
+
+
+.vector-nama{
+  background-image: url(../public/assets/Vector.png);
+  background-size: cover;
+  background-color: rgba(0, 0, 0, 0.142);
+  background-blend-mode: multiply;
+}
+
+.vector-nama2{
+  background-image: url(../public/assets/Vector.png);
+  background-size: cover;
+  background-color: #002a4fe8  ;
+  background-blend-mode: multiply;
 }

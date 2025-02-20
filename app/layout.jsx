@@ -29,7 +29,6 @@ export default function RootLayout({ children }) {
           const url = await axios.get("/api/url");
           if (url.data) {
             router.push(url.data.verify_url);
-            Cookies.set("token", "redirect");
           }
         } catch (error) {
           console.log(error);
