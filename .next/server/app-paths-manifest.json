@@ -1,14 +1,9 @@
 {
-  "/role/page": "app/role/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/role/kartabl/page": "app/role/kartabl/page.js",
-  "/role/kartabl/edit/page": "app/role/kartabl/edit/page.js",
   "/page": "app/page.js",
+  "/api/url/route": "app/api/url/route.js",
   "/api/profile/route": "app/api/profile/route.js",
   "/api/dashboard-items/route": "app/api/dashboard-items/route.js",
-  "/api/url/route": "app/api/url/route.js",
   "/masajed/page": "app/masajed/page.js",
   "/api/banners/route": "app/api/banners/route.js",
-  "/masajed/kartabl-darkhast/page": "app/masajed/kartabl-darkhast/page.js",
-  "/api/darkhast/route": "app/api/darkhast/route.js"
+  "/role/page": "app/role/page.js"
 }
