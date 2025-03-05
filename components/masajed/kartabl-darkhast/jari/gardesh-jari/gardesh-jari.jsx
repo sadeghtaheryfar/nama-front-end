@@ -1,8 +1,12 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const GardeshJari = ({data}) => {
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
@@ -34,7 +38,7 @@ const GardeshJari = ({data}) => {
                 {data?.data?.message}
               </p>
             </div>
-            <Link className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base" href={"/masajed/kartabl-darkhast/eslah2?id=" + data?.data?.id}>
+            <Link className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base" href={`/${itemId}/kartabl-darkhast/eslah2?id=` + data?.data?.id}>
               برای اصلاح کلیک کنید
             </Link>
           </div>

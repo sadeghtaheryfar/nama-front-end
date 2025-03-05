@@ -4,8 +4,13 @@ import HeaderMaktob from "../header-maktob/header-maktob";
 import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
+import { usePathname } from "next/navigation";
 
 const MainMaktob = ({ token }) => {
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+
   const [formData, setFormData] = useState({
     title: "",
     reference_to: "executive_vice_president_mosques",
@@ -70,7 +75,7 @@ const MainMaktob = ({ token }) => {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/written-requests`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/written-requests?item_id=${itemId}`,
         formDataToSend,
         {
           headers: {

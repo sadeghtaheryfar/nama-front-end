@@ -6,6 +6,7 @@ import axios from "axios";
 import CartsGozaresh from "../carts-gozaresh/carts-gozaresh";
 import TableGozaresh from "../table-gozaresh/table-gozaresh";
 import { toPersianDate  } from "../../../../components/utils/toPersianDate";
+import { usePathname } from "next/navigation";
 
 const DarkhasthaGozaresh = () => {
   const [filters, setFilters] = useState({
@@ -41,6 +42,10 @@ const DarkhasthaGozaresh = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+
   const fetchRequests = async () => {
     setLoading(true);
     try {
@@ -52,6 +57,7 @@ const DarkhasthaGozaresh = () => {
           direction,
           status,
           per_page: 100,
+          itemId
         },
       });
       setRequests(response.data);
@@ -183,7 +189,7 @@ const DarkhasthaGozaresh = () => {
                 </span>
               </div>
 
-              <Link href={`/masajed/kartabl-darkhast/darkhast?id=` + request?.request?.id}>
+              <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request?.request?.id}>
                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                   مشاهده درخواست
                 </button>
@@ -242,7 +248,7 @@ const DarkhasthaGozaresh = () => {
                     </div>
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                    <Link href={`/masajed/kartabl-darkhast/darkhast?id=` + request?.request?.id}>مشاهده درخواست</Link>
+                    <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request?.request?.id}>مشاهده درخواست</Link>
                   </td>
                 </tr>
               ))}

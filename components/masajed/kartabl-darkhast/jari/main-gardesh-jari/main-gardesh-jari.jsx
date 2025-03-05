@@ -119,14 +119,16 @@ const MainGardeshJari = ({data}) => {
               </button>
             </a>
           </div>
-          <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
-            <span className="text-base lg:text-lg">
-              هزینه پرداختی توسط آرمان:{" "}
-            </span>
-            <span className="text-base lg:text-2xl font-bold text-[#39A894]">
-                {formatPrice(data?.data?.total_amount)}
-            </span>
-          </div>
+          {(data?.data?.final_amount || data?.data?.offer_amount) && (
+            <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
+              <span className="text-base lg:text-lg">
+                هزینه پرداختی توسط آرمان:{" "}
+              </span>
+              <span className="text-base lg:text-2xl font-bold text-[#39A894]">
+                  {data?.data?.final_amount ? formatNumber(data?.data?.final_amount) : formatNumber(data?.data?.offer_amount)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

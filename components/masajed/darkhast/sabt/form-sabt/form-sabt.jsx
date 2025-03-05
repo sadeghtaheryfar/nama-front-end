@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { formatPrice  } from "../../../../../components/utils/formatPrice";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
@@ -12,6 +12,10 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const FormSabt = ({ id }) => {
   const router = useRouter();
+  
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   const [student, setStudent] = useState("");
   const [cost, setCost] = useState("");
@@ -130,7 +134,7 @@ const FormSabt = ({ id }) => {
 
     try {
       const submitForm = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests?item_id=${itemId}`,
         formDataToSend,
         {
           headers: {
@@ -142,7 +146,7 @@ const FormSabt = ({ id }) => {
 
       if (submitForm.data) {
         localStorage.setItem("submittedForm", JSON.stringify(submitForm.data));
-        router.push(`/masajed/darkhast/sabt/sabt1/sabt2?id=${submitForm.data.data.id}&darkhast=${id}`);
+        router.push(`/${itemId}/darkhast/sabt/sabt1/sabt2?id=${submitForm.data.data.id}&darkhast=${id}`);
       }
     } catch (error) {
       console.log(error);

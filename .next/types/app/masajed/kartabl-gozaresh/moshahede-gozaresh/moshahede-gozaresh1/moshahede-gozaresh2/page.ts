@@ -1,4 +1,4 @@
-// File: C:\Users\Asian\Documents\GitHub\masjed\app\masajed\kartabl-gozaresh\moshahede-gozaresh\moshahede-gozaresh1\moshahede-gozaresh2\page.jsx
+// File: C:\Users\Asian\Documents\GitHub\masjed-v1\app\masajed\kartabl-gozaresh\moshahede-gozaresh\moshahede-gozaresh1\moshahede-gozaresh2\page.jsx
 import * as entry from '../../../../../../../../app/masajed/kartabl-gozaresh/moshahede-gozaresh/moshahede-gozaresh1/moshahede-gozaresh2/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -1,24 +1,50 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HeaderProfile from "../../../components/header-profile/page";
+import { usePathname } from "next/navigation";
+import axios from "axios";
 
 const HeaderMasjed = () => {
   const [show, setShow] = useState(false);
+  const pathname = usePathname();
+  const [header, setHeader] = useState(null);
+  const [loadingHeader, setLoadingHeader] = useState(true);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}`);
+        if (response.data) {
+          setHeader(response.data);
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      } finally {
+        setLoadingHeader(false);
+      }
+    };
+    fetching();
+  }, []);
+
   return (
     <header className="container mx-auto">
       <div className="grid grid-cols-3 items-center md:grid-cols-8 pt-10">
         <div className="flex items-end gap-3 leading-5 col-span-2 md:col-span-3 md:items-start md:translate-y-5 lg:translate-y-9 xl:translate-y-5 lg:gap-6 xl:gap-10 2xl:gap-12">
-          <Image
+          <img
             className="w-10 md:w-16 lg:w-24 xl:w-32"
             alt="#"
             width={0}
             height={0}
-            src={"/Images/masajed/mosque.svg"}
+            src={header?.data?.logo || '/Images/masajed/mosque.svg'}
           />
           <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-            مساجد
+            {header?.data?.title}
           </span>
         </div>
         <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
@@ -37,7 +63,7 @@ const HeaderMasjed = () => {
             src={"/Images/home/header/menu.svg"}
           />
         </div>
-        <div className="bg-[#1A6140] flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4">
+        <div className="bg-[#1A6140] flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
           <HeaderProfile bgRole='#3A785B'  />
         </div>
       </div>

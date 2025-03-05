@@ -1,9 +1,21 @@
 {
-  "/page": "app/page.js",
-  "/api/url/route": "app/api/url/route.js",
+  "/role/kartabl-gozaresh/darkhast/page": "app/role/kartabl-gozaresh/darkhast/page.js",
   "/api/profile/route": "app/api/profile/route.js",
+  "/api/report/show/route": "app/api/report/show/route.js",
+  "/api/show-item-dashboard/route": "app/api/show-item-dashboard/route.js",
+  "/role/kartabl/page": "app/role/kartabl/page.js",
+  "/api/info/route": "app/api/info/route.js",
+  "/api/darkhast/route": "app/api/darkhast/route.js",
+  "/role/kartabl-gozaresh/page": "app/role/kartabl-gozaresh/page.js",
+  "/api/darkhast-reports/route": "app/api/darkhast-reports/route.js",
+  "/page": "app/page.js",
   "/api/dashboard-items/route": "app/api/dashboard-items/route.js",
-  "/masajed/page": "app/masajed/page.js",
+  "/2/page": "app/2/page.js",
   "/api/banners/route": "app/api/banners/route.js",
-  "/role/page": "app/role/page.js"
+  "/2/kartabl-gozaresh/page": "app/2/kartabl-gozaresh/page.js",
+  "/2/kartabl-darkhast/darkhast/page": "app/2/kartabl-darkhast/darkhast/page.js",
+  "/api/request/show/route": "app/api/request/show/route.js",
+  "/role/kartabl/darkhast/page": "app/role/kartabl/darkhast/page.js",
+  "/role/page": "app/role/page.js",
+  "/2/kartabl-darkhast/page": "app/2/kartabl-darkhast/page.js"
 }

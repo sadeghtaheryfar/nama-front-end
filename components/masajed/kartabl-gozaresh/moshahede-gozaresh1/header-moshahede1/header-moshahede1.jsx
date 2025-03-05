@@ -39,7 +39,7 @@ const HeaderMoshahede1 = () => {
             src={"/Images/home/header/menu.svg"}
           />
         </div>
-        <div className="bg-[#1A6140] flex items-center min-w-fit justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 2xl:col-start-6 2xl:col-span-3 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4">
+        <div className="bg-[#1A6140] flex items-center min-w-fit justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 2xl:col-start-6 2xl:col-span-3 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
           <HeaderProfile bgRole='#3A785B'  />
         </div>
       </div>

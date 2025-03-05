@@ -16,31 +16,6 @@ const MainSabt1 = () => {
     }
   }
 
-  useEffect(() => {
-    const fetching = async () => {
-      try {
-        const id = params.get("id");
-        const request = await axios.post("/api/request/confirm", { id });
-
-        if (request.data) {
-          setRequsestData(request.data.data.request_plan);
-          setDataForm(request.data.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      // try {
-      //   const active = await axios.get("/api/active");
-      //   if (active.data) {
-      //     setActiveCarts(active.data.data);
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    };
-    fetching();
-  }, []);
-
   return (
     <Suspense>
       <div className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">

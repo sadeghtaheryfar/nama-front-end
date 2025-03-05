@@ -1,12 +1,16 @@
 "use client";
 import FormSabt from "../form-sabt/form-sabt";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
 
 const MainSabt = () => {
   const [requestData, setRequsestData] = useState("");
   const params = useSearchParams();
+  
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   function formatNumber(num) {
     if (num < 1000000) {
@@ -20,7 +24,7 @@ const MainSabt = () => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const request = await axios.post("/api/request/level_1", { id });
+        const request = await axios.post(`/api/request/level_1?item_id=${itemId}`, { id });
         if (request.data) {
           setRequsestData(request.data.data);
         }

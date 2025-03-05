@@ -3,7 +3,7 @@ import GardeshJari from "../gardesh-jari/gardesh-jari";
 import HeaderJari from "../header-jari/header-jari";
 import MainGardeshJari from "../main-gardesh-jari/main-gardesh-jari";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import MainGardeshMoshahede2 from "../../../../../components/masajed/kartabl-gozaresh/moshahede-gozaresh/main-gardesh-moshahede2/main-gardesh-moshahede2";
@@ -15,12 +15,15 @@ const MainJari = () => {
   const params = useSearchParams();
   const router = useRouter();
   const [requestData, setRequsestData] = useState("");
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   useEffect(() => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const response = await axios.get(`/api/request/show?id=${id}`);
+        const response = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}`);
         
         if (response.data) {
           setRequsestData(response.data);

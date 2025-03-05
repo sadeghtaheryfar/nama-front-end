@@ -11,8 +11,12 @@ export const GET = async (req) => {
         const direction = searchParams.get("direction") || "desc";
         const status = searchParams.get("status");
         const q = searchParams.get("q") || "";
+        const item_id = searchParams.get("itemId");
+        const role = searchParams.get("role");
 
-        const params = { per_page, sort, direction, q };
+        const params = { item_id, per_page, sort, direction, q };
+        
+        if (role) params.role = role;
         if (status) params.status = status;
 
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports`, {

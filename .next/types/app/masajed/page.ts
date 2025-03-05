@@ -1,4 +1,4 @@
-// File: C:\Users\Asian\Documents\GitHub\masjed\app\masajed\page.jsx
+// File: C:\Users\Asian\Documents\GitHub\masjed-v1\app\masajed\page.jsx
 import * as entry from '../../../../app/masajed/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

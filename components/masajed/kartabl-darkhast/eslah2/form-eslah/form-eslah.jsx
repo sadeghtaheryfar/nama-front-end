@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const FormEslah = ({ data }) => {
   const router = useRouter();
@@ -22,6 +22,10 @@ const FormEslah = ({ data }) => {
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
   // console.log("/masajed/darkhast/sabt/sabt1");
 
   useEffect(() => {
@@ -129,7 +133,7 @@ const FormEslah = ({ data }) => {
 
     try {
       const submitForm = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}?_method=PATCH`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}?_method=PATCH&item_id=${itemId}`,
         formDataToSend,
         {
           headers: {
@@ -141,7 +145,7 @@ const FormEslah = ({ data }) => {
 
       if (submitForm.data) {
         localStorage.setItem("submittedForm", JSON.stringify(submitForm.data));
-        router.push(`/masajed/kartabl-darkhast`);
+        router.push(`/${itemId}/kartabl-darkhast`);
       }
     } catch (error) {
       console.log(error);

@@ -12,6 +12,7 @@ import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { usePathname } from "next/navigation";
 
 const MainMasajed = () => {
   const [banners, setBanners] = useState(null);
@@ -33,13 +34,18 @@ const MainMasajed = () => {
     fetching();
   }, []);
 
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
+    if (!pathname) return;
+
     const fetching = async () => {
       try {
-        const response = await axios.get("/api/profile");
+        const response = await axios.get(`/api/profile?item_id=${itemId}`);
         if (response.data) {
           setProfile(response.data);
         }
@@ -47,6 +53,27 @@ const MainMasajed = () => {
         console.log("خطا در دریافت بنرها:", error);
       } finally {
         setLoadingProfile(false);
+      }
+    };
+    fetching();
+  }, []);
+
+  const [info, setInfo] = useState(null);
+  const [loadingInfo, setLoadingInfo] = useState(true);
+
+  useEffect(() => {
+    if (!pathname) return;
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/info?item_id=${itemId}`);
+        if (response.data) {
+          setInfo(response.data);
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      } finally {
+        setLoadingInfo(false);
       }
     };
     fetching();
@@ -110,7 +137,7 @@ const MainMasajed = () => {
                 لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                 گرافیک است.
               </p>
-              <Link href={"/masajed/darkhast"}>
+              <Link href={`/${itemId}/darkhast`}>
                 <ButtonMoshahede />
               </Link>
             </div>
@@ -128,23 +155,23 @@ const MainMasajed = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                    <span className="text-base">{profile?.requests?.done}</span>
+                    <span className="text-base">{info?.requests?.done}</span>
                     <span className="text-xs text-[#808393]">تایید شده</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                    <span className="text-base">{profile?.requests?.rejected}</span>
+                    <span className="text-base">{info?.requests?.rejected}</span>
                     <span className="text-xs text-[#808393]"> رد شده</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                    <span className="text-base">{profile?.requests?.in_progress}</span>
+                    <span className="text-base">{info?.requests?.in_progress}</span>
                     <span className="text-xs text-[#808393]"> جاری</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                    <span className="text-base">{profile?.requests?.action_needed}</span>
+                    <span className="text-base">{info?.requests?.action_needed}</span>
                     <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
                   </div>
                 </div>
@@ -154,7 +181,7 @@ const MainMasajed = () => {
                 لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                 گرافیک است.
               </p>
-              <Link href={"/masajed/kartabl-darkhast"}>
+              <Link href={`/${itemId}/kartabl-darkhast`}>
                 <ButtonMoshahede />
               </Link>
             </div>
@@ -172,23 +199,23 @@ const MainMasajed = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                    <span className="text-base">{profile?.reports?.done}</span>
+                    <span className="text-base">{info?.reports?.done}</span>
                     <span className="text-xs text-[#808393]">تایید شده</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                    <span className="text-base">{profile?.reports?.rejected}</span>
+                    <span className="text-base">{info?.reports?.rejected}</span>
                     <span className="text-xs text-[#808393]"> رد شده</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                    <span className="text-base">{profile?.reports?.in_progress}</span>
+                    <span className="text-base">{info?.reports?.in_progress}</span>
                     <span className="text-xs text-[#808393]"> جاری</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                    <span className="text-base">{profile?.reports?.action_needed}</span>
+                    <span className="text-base">{info?.reports?.action_needed}</span>
                     <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
                   </div>
                 </div>
@@ -198,7 +225,7 @@ const MainMasajed = () => {
                 لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                 گرافیک است.
               </p>
-              <Link href={"/masajed/kartabl-gozaresh"}>
+              <Link href={`/${itemId}/kartabl-gozaresh`}>
                 <ButtonMoshahede />
               </Link>
             </div>
@@ -217,7 +244,7 @@ const MainMasajed = () => {
                 لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                 گرافیک است.
               </p>
-              <Link href={"/masajed/maktob"}>
+              <Link href={`/${itemId}/maktob`}>
                 <ButtonMoshahede />
               </Link>
             </div>

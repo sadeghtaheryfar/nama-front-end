@@ -4,12 +4,18 @@ import Modal from "../modal/modal";
 import Link from "next/link";
 import Gardesh from "../../../../kartabl-darkhast/taeed/gardesh/gardesh";
 import { toPersianDate  } from "../../../../../../components/utils/toPersianDate";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 // import HeaderTaeed from "@/components/masajed/kartabl-darkhast/taeed/header-taeed/header-taeed";
 
 const MainSabt2 = () => {
   const params = useSearchParams();
+
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+
   const id = params.get("id");
 
   function formatNumber(num) {
@@ -18,6 +24,10 @@ const MainSabt2 = () => {
     } else {
       return Math.floor(num / 1000000) + " میلیون";
     }
+  }
+
+  function formatPrice(num) {
+    return Math.floor(num).toLocaleString("fa-IR") + " تومان";
   }
 
   const [requestData, setRequsestData] = useState("");
@@ -38,7 +48,7 @@ const MainSabt2 = () => {
     const fetching = async () => {
       try {
         const id = params.get("darkhast");
-        const request = await axios.post("/api/request/level_1", { id });
+        const request = await axios.post(`/api/request/level_1?item_id=${itemId}`, { id });
         if (request.data) {
           setRequsestData(request.data.data);
         }
@@ -92,6 +102,21 @@ const MainSabt2 = () => {
   //   };
   //   fetching();
   // }, []);
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const confirm = async () => {
+    setLoading(true);
+    try {
+      const id = params.get("id");
+      const request = await axios.post(`/api/request/confirm?item_id=${itemId}`, { id });
+    } catch (error) {
+      console.log(error);
+    }finally {
+      setLoading(false);
+      router.push(`/${itemId}/darkhast/sabt/sabt1/sabt2/sabt3?id=${id}`);
+    }
+  }
 
   return (
     <Suspense>
@@ -158,7 +183,7 @@ const MainSabt2 = () => {
               </div>
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">هزینه کلی عملیات:</h3>
-                <span className="text-base lg:text-lg font-medium">{formData?.data?.amount}</span>
+                <span className="text-base lg:text-lg font-medium">{formatPrice(formData?.data?.amount)}</span>
               </div>
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">تاریخ برگزاری:</h3>
@@ -194,15 +219,16 @@ const MainSabt2 = () => {
               </div>
               <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
                 <span className="text-base lg:text-lg">هزینه پرداختی توسط آرمان: </span>
-                <span className="text-base lg:text-2xl font-bold text-[#39A894]">{formData?.data?.total_amount}</span>
+                <span className="text-base lg:text-2xl font-bold text-[#39A894]">{formatPrice(formData?.data?.total_amount)}</span>
               </div>
             </div>
             <div className="flex justify-center items-center">
-              <Link href={'/masajed/darkhast/sabt/sabt1/sabt2/sabt3?id=' + id}
+              <button 
+                onClick={() => confirm()}
                 className="flex justify-center items-center w-full h-12 text-base md:max-w-[214px] font-medium text-white bg-[#39A894] rounded-[10px]"
               >
-                تایید نهایی
-              </Link>
+                {loading ? 'صبر کنید ...' : 'تایید نهایی'}
+              </button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-// File: C:\Users\Asian\Documents\GitHub\masjed\app\api\darkhast\route.js
+// File: C:\Users\Asian\Documents\GitHub\masjed-v1\app\api\darkhast\route.js
 import * as entry from '../../../../../app/api/darkhast/route.js'
 import type { NextRequest } from 'next/server.js'
 

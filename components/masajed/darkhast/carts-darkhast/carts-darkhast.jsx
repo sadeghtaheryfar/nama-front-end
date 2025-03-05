@@ -7,12 +7,16 @@ import CartsDarkhastFuture from "./carts-darkhast-future";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CartsDarkhastActive from "./carts-darkhast-active";
+import { usePathname } from "next/navigation";
 
 const CartsDarkhast = () => {
   const [futureCarts, setFutureCarts] = useState([]);
   const [futureCartsLoading, setFutureCartsLoading] = useState(false);
   const [activeCartsLoading, setActiveCartsLoading] = useState(false);
   const [activeCarts, setActiveCarts] = useState([]);
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   useEffect(() => {
     const fetching = async () => {
@@ -20,7 +24,7 @@ const CartsDarkhast = () => {
       setActiveCartsLoading(true);
 
       try {
-        const carts = await axios.get("/api/future");
+        const carts = await axios.get(`/api/future?item_id=${itemId}`);
         if (carts.data) {
           setFutureCarts(carts.data.data);
         }
@@ -31,7 +35,7 @@ const CartsDarkhast = () => {
       }
 
       try {
-        const active = await axios.get("/api/active");
+        const active = await axios.get(`/api/active?item_id=${itemId}`);
         if (active.data) {
           setActiveCarts(active.data.data);
         }

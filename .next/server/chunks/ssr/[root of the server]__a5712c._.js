@@ -170,9 +170,7 @@ function RootLayout({ children }) {
                     console.log(error);
                 }
             // router.push("/");
-            } else {
-                console.log("Token exists:", accessToken);
-            }
+            } else {}
         };
         fetching();
     }, []);

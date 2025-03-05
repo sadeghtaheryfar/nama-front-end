@@ -1,12 +1,37 @@
 'use client'
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HeaderProfile from "../../../../components/header-profile/page";
+import { usePathname } from "next/navigation";
+import axios from "axios";
 
 const HeaderMaktob = () => {
+  const [show, setShow] = useState(false);
+  const pathname = usePathname();
+  const [header, setHeader] = useState(null);
+  const [loadingHeader, setLoadingHeader] = useState(true);
 
-  const [show, setShow] = useState(false)
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}`);
+        if (response.data) {
+          setHeader(response.data);
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      } finally {
+        setLoadingHeader(false);
+      }
+    };
+    fetching();
+  }, []);
+
   return (
     <header className="container mx-auto">
     <div className="grid grid-cols-3 items-center md:grid-cols-8 pt-10">
@@ -16,10 +41,11 @@ const HeaderMaktob = () => {
           alt="#"
           width={0}
           height={0}
-          src={"/Images/masajed/mosque.svg"}
+          src={header?.data?.logo || '/Images/masajed/mosque.svg'}
         />
         <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-          مساجد
+          {header?.data?.title}
+
           <span className="text-xs md:text-sm lg:text-base xl:text-xl 2xl:text-2xl">/درخواست های مکتوب</span>
         </span>
       </div>

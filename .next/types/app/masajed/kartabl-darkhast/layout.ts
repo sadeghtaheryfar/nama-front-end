@@ -1,4 +1,4 @@
-// File: C:\Users\Asian\Documents\GitHub\masjed\app\masajed\kartabl-darkhast\layout.jsx
+// File: C:\Users\Asian\Documents\GitHub\masjed-v1\app\masajed\kartabl-darkhast\layout.jsx
 import * as entry from '../../../../../app/masajed/kartabl-darkhast/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

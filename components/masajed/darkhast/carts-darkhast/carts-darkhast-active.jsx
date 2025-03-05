@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ButtonSabt from "../button-sabt/button-sabt";
+import { usePathname } from "next/navigation";
 const CartsDarkhastActive = ({ item }) => {
   function formatNumber(num) {
     if (num < 1000000) {
@@ -9,6 +10,10 @@ const CartsDarkhastActive = ({ item }) => {
       return Math.floor(num / 1000000) + " میلیون";
     }
   }
+
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   return (
     <div className="flex flex-col justify-end gap-4 border rounded-xl p-4 group hover:border-[#39A894] transition-all duration-200">
@@ -49,7 +54,7 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
         </ul>
       </div>
-      <Link href={`/masajed/darkhast/sabt?id=${item.id}`}>
+      <Link href={`/${itemId}/darkhast/sabt?id=${item.id}`}>
         <ButtonSabt />
       </Link>
     </div>

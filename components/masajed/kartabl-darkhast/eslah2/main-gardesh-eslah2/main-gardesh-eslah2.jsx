@@ -2,18 +2,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import FormEslah from "../form-eslah/form-eslah";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 const MainGardesheslah2 = () => {
   const [requestData, setRequsestData] = useState("");
   const params = useSearchParams();
+
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+
   useEffect(() => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const request = await axios.get(`/api/request/show?id=${id}`);
+        const request = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}`);
         if (request.data) {
           setRequsestData(request.data.data);
         }

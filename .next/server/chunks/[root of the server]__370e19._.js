@@ -167,12 +167,16 @@ const GET = async (req)=>{
         const direction = searchParams.get("direction") || "desc";
         const status = searchParams.get("status");
         const q = searchParams.get("q") || "";
+        const item_id = searchParams.get("itemId");
+        const role = searchParams.get("role");
         const params = {
+            item_id,
             per_page,
             sort,
             direction,
             q
         };
+        if (role) params.role = role;
         if (status) params.status = status;
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(`${("TURBOPACK compile-time value", "http://arman.armaniran.org")}/api/v1/reports`, {
             params,

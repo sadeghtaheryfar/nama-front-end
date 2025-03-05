@@ -1,4 +1,4 @@
-// File: C:\Users\Asian\Documents\GitHub\masjed\app\api\banners\route.js
+// File: C:\Users\Asian\Documents\GitHub\masjed-v1\app\api\banners\route.js
 import * as entry from '../../../../../app/api/banners/route.js'
 import type { NextRequest } from 'next/server.js'
 

@@ -13,7 +13,7 @@ const Carts = () => {
       try {
         const response = await axios.get("/api/dashboard-items");
         if (response.data) {
-          setItems(response.data);
+          setItems(response.data.data.filter(item => ![5, 6, 7].includes(item.id)));
         }
       } catch (error) {
         console.log("خطا در دریافت بنرها:", error);
@@ -35,8 +35,8 @@ const Carts = () => {
         </section>
       )}
 
-      {Items && Items?.data?.map((item) => (
-        <Link href={item?.link || '/default-link'} key={item?.id}>
+      {Items && Items?.map((item) => (
+        <Link href={(item?.id) ? `/${item?.id}` : '/default-link'} key={item?.id}>
           <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
             <img
               className="w-full h-full rounded-md object-cover"

@@ -1,12 +1,37 @@
 'use client'
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HeaderProfile from "../../../../../components/header-profile/page";
+import { usePathname } from "next/navigation";
+import axios from "axios";
 
 const HeaderEslah2 = () => {
+  const [show, setShow] = useState(false);
+  const pathname = usePathname();
+  const [header, setHeader] = useState(null);
+  const [loadingHeader, setLoadingHeader] = useState(true);
 
-  const [show, setShow] = useState(false)
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}`);
+        if (response.data) {
+          setHeader(response.data);
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      } finally {
+        setLoadingHeader(false);
+      }
+    };
+    fetching();
+  }, []);
+
   return (
     <header className="container mx-auto">
       <div className="grid grid-cols-3 items-center md:grid-cols-8 2xl:grid-cols-9 pt-10">
@@ -16,10 +41,10 @@ const HeaderEslah2 = () => {
             alt="#"
             width={0}
             height={0}
-            src={"/Images/masajed/mosque.svg"}
+            src={header?.data?.logo || '/Images/masajed/mosque.svg'}
           />
           <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-            مساجد
+            {header?.data?.title}
             <span className="text-xs lg:text-base xl:text-xl 2xl:text-2xl">/ کارتابل درخواست ها  <span className="hidden 2xl:inline w-min-fit"> / مشاهده درخواست</span></span>
           </span>
         </div>
@@ -39,7 +64,7 @@ const HeaderEslah2 = () => {
             src={"/Images/home/header/menu.svg"}
           />
         </div>
-        <div className="bg-[#1A6140] flex items-center min-w-fit justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 2xl:col-start-6 2xl:col-span-3 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4">
+        <div className="bg-[#1A6140] flex items-center min-w-fit justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 2xl:col-start-6 2xl:col-span-3 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
           <HeaderProfile bgRole='#3A785B'  />
         </div>
       </div>
