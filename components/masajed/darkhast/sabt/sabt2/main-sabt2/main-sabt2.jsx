@@ -48,7 +48,7 @@ const MainSabt2 = () => {
     const fetching = async () => {
       try {
         const id = params.get("darkhast");
-        const request = await axios.post(`/api/request/level_1?item_id=${itemId}`, { id });
+        const request = await axios.post(`/api/request/level_1?item_id=${itemId}&role=mosque_head_coach`, { id });
         if (request.data) {
           setRequsestData(request.data.data);
         }
@@ -109,7 +109,7 @@ const MainSabt2 = () => {
     setLoading(true);
     try {
       const id = params.get("id");
-      const request = await axios.post(`/api/request/confirm?item_id=${itemId}`, { id });
+      const request = await axios.post(`/api/request/confirm?item_id=${itemId}&role=mosque_head_coach`, { id });
     } catch (error) {
       console.log(error);
     }finally {

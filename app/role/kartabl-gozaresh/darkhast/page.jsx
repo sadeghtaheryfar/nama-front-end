@@ -56,7 +56,7 @@ export default function Accept() {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
         }
@@ -80,7 +80,7 @@ export default function Accept() {
         const response = await axios.get(`/api/report/show?id=${id}&item_id=${item_id}&role=${role}`);
         
         if (response.data) {
-          setRequsestData(response.data);
+          setRequsestData(response);
         }
       } catch (error) {
         console.log("خطا", error);
@@ -101,7 +101,7 @@ export default function Accept() {
                 className="w-[36px] h-[36px] md:w-[130px] md:h-[130px]"
               />
               <div className="text-[#D5B260] text-[12px] md:text-[18px] font-bold md:text-3xl md:my-6 my-3 mx-4">
-              {header?.data?.title} / کارتابل درخواست ها
+              {header?.data?.title} / کارتابل گزارش ها
               </div>
             </div>
             <div className="flex">
@@ -133,7 +133,7 @@ export default function Accept() {
               <GardeshJariRole data={requestData}/>
             </div>
 
-            <MainGozareshJariRole data={requestData}/>
+            <MainGozareshJariRole data={requestData?.data} back_steps={requestData?.data?.back_steps}/>
           </div>
         </div>
       </div>

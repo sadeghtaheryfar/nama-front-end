@@ -19,9 +19,35 @@ const HeaderDarkhast = () => {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
+
+          fetch("/Images/masajed/header-desktop-msj.svg")
+            .then(response => response.text())
+            .then(svgText => {
+              const parser = new DOMParser();
+              const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+              
+              const rectElements = svgDoc.querySelectorAll("rect");
+              rectElements.forEach(rect => {
+                rect.setAttribute("fill", response?.data?.data?.color);
+              })
+              
+              const serializer = new XMLSerializer();
+              const modifiedSvgText = serializer.serializeToString(svgDoc);
+              
+              const svgBlob = new Blob([modifiedSvgText], { type: "image/svg+xml" });
+              const svgUrl = URL.createObjectURL(svgBlob);
+              
+              const headerElement = document.querySelector(".lg\\:bg-header-masjed-desktop");
+              if (headerElement) {
+                headerElement.style.backgroundImage = `url(${svgUrl})`;
+              }
+            })
+            .catch(error => {
+              console.error("خطا در بارگذاری یا پردازش SVG:", error);
+            });
         }
       } catch (error) {
         console.log("خطا در دریافت بنرها:", error);
@@ -31,6 +57,30 @@ const HeaderDarkhast = () => {
     };
     fetching();
   }, []);
+
+  const lightenColor = (color, percent) => {
+    const hex = color.startsWith('#') ? color.substring(1) : color;
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+    r = Math.min(255, Math.floor(r + (255 - r) * percent / 100));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent / 100));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent / 100));
+    const newHex = 
+      r.toString(16).padStart(2, '0') +
+      g.toString(16).padStart(2, '0') +
+      b.toString(16).padStart(2, '0');
+    
+    return `#${newHex}`;
+  };
+
+  const [lighterColor, setLighterColor] = useState();
+  const [solighterColor, setSoLighterColor] = useState();
+  useEffect(() => {
+    if(!header?.data?.color) return
+    setLighterColor(lightenColor(header?.data?.color, 15));
+    setSoLighterColor(lightenColor(header?.data?.color, 30));
+  }, [header?.data?.color])
 
   return (
     <header className="container mx-auto">
@@ -51,22 +101,24 @@ const HeaderDarkhast = () => {
         </div>
         <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
           <Image
-            className="w-10 lg:w-12 xl:w-16 bg-[#1A6140] rounded-full p-2 lg:p-3 xl:p-5"
+            className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5"
             alt="#"
             width={0}
             height={0}
             src={"/Images/home/header/notification.svg"}
+            style={{backgroundColor : lighterColor}}
           />
           <Image
-            className="w-10 lg:w-12 xl:w-16 bg-[#1A6140] rounded-full p-2 lg:p-3 xl:p-5"
+            className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5"
             alt="#"
             width={0}
             height={0}
             src={"/Images/home/header/menu.svg"}
+            style={{backgroundColor : lighterColor}}
           />
         </div>
-        <div className="bg-[#1A6140] flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 xl:col-span-3 xl:col-start-5 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4">
-          <HeaderProfile bgRole='#3A785B'  />
+        <div style={{backgroundColor : lighterColor}} className="flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 xl:col-span-3 xl:col-start-5 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4">
+          <HeaderProfile bgRole={solighterColor}  />
         </div>
       </div>
     </header>

@@ -13,8 +13,6 @@ export const POST = async (req, res) => {
 
   const token = (await cookies()).get("token")?.value;
 
-  console.log(students, amount, body, date, imam_letter, area_interface_letter, request_plan_id);
-
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`,

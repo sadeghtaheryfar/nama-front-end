@@ -50,7 +50,7 @@ const DarkhasthaGozaresh = () => {
     setLoading(true);
     try {
       const { search, sort, direction, status } = filters;
-      const response = await axios.get(`/api/darkhast-reports`, {
+      const response = await axios.get(`/api/darkhast-reports?item_id=${itemId}&role=mosque_head_coach`, {
         params: {
           q: search,
           sort,

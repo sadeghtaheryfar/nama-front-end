@@ -17,7 +17,7 @@ const GozareshKartablGozaresh = () => {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/info?item_id=${itemId}`);
+        const response = await axios.get(`/api/info?item_id=${itemId}&role=mosque_head_coach`);
         if (response.data) {
           setInfo(response.data);
         }

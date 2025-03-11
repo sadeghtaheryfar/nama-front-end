@@ -6,6 +6,7 @@ export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
   const itemId = searchParams.get("item_id");
+  const role = searchParams.get("role");
 
   if (!id) {
     return NextResponse.json({ message: "شناسه معتبر نیست." }, { status: 400 });
@@ -15,7 +16,7 @@ export const GET = async (req) => {
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports/${id}?item_id=${itemId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports/${id}?item_id=${itemId}${role ? `&role=${role}` : ''}`,
       {
         headers: {
           Authorization: `bearer ${token}`,

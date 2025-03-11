@@ -156,9 +156,15 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$serv
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/axios/lib/axios.js [app-route] (ecmascript)");
 ;
 ;
-const GET = async ()=>{
+const GET = async (req)=>{
+    const { searchParams } = new URL(req.url);
+    const itemId = searchParams.get("item_id");
     try {
-        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(`${("TURBOPACK compile-time value", "http://arman.armaniran.org")}/api/v1/banners`, {
+        let apiUrl = `${("TURBOPACK compile-time value", "http://arman.armaniran.org")}/api/v1/banners`;
+        if (itemId) {
+            apiUrl += `?item_id=${itemId}`;
+        }
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(apiUrl, {
             headers: {
                 Accept: "application/json"
             }
@@ -168,7 +174,11 @@ const GET = async ()=>{
         });
     } catch (error) {
         console.error("Error fetching banners:", error);
-        throw error;
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Failed to fetch banners"
+        }, {
+            status: 500
+        });
     }
 };
 }}),

@@ -6,10 +6,12 @@ export const POST = async (req, res) => {
   const id = data.id;
 
   const token = (await cookies()).get("token")?.value;
+  const { searchParams } = new URL(req.url);
+  const role = searchParams.get("role");
 
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}/confirm`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}/confirm${role ? `?role=${role}` : ''}`,
       {},
       {
         headers: {

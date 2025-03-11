@@ -21,7 +21,7 @@ const MainMasajed = () => {
   useEffect(() => {
     const fetching = async () => {
       try {
-        const response = await axios.get("/api/banners");
+        const response = await axios.get(`/api/banners?item_id=${itemId}`);
         if (response.data) {
           setBanners(response.data);
         }
@@ -39,6 +39,7 @@ const MainMasajed = () => {
   const itemId = pathSegments[1];
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [permition, setpPermition] = useState(true);
 
   useEffect(() => {
     if (!pathname) return;
@@ -48,6 +49,15 @@ const MainMasajed = () => {
         const response = await axios.get(`/api/profile?item_id=${itemId}`);
         if (response.data) {
           setProfile(response.data);
+        }
+        const hasHeadCoachRole = response.data?.data?.roles?.some(
+          role => role.role_en === "mosque_head_coach"
+        );
+
+        if (!hasHeadCoachRole) {
+          if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
+            setpPermition(false);
+          }
         }
       } catch (error) {
         console.log("خطا در دریافت بنرها:", error);
@@ -66,7 +76,7 @@ const MainMasajed = () => {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/info?item_id=${itemId}`);
+        const response = await axios.get(`/api/info?item_id=${itemId}&role=mosque_head_coach`);
         if (response.data) {
           setInfo(response.data);
         }
@@ -122,133 +132,139 @@ const MainMasajed = () => {
             )}
           </Swiper>
 
-          <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-12">
-            {/* کارت درخواست‌های فعال */}
-            <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
-              <Image
-                className="w-16 pb-4"
-                alt="#"
-                width={0}
-                height={0}
-                src={"/Images/masajed/cart/tik.svg"}
-              />
-              <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های فعال</h2>
-              <p className="text-xs font-medium text-slate-400 leading-6">
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
-                گرافیک است.
-              </p>
-              <Link href={`/${itemId}/darkhast`}>
-                <ButtonMoshahede />
-              </Link>
-            </div>
-
-            {/* کارت کارتابل درخواست‌ها */}
-            <div className="flex flex-col gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
-              <div className="flex items-center justify-between">
+          {permition ? (
+            <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-12">
+              {/* کارت درخواست‌های فعال */}
+              <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
                 <Image
-                  className="w-16"
+                  className="w-16 pb-4"
                   alt="#"
                   width={0}
                   height={0}
-                  src={"/Images/masajed/cart/Bill.svg"}
+                  src={"/Images/masajed/cart/tik.svg"}
                 />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                    <span className="text-base">{info?.requests?.done}</span>
-                    <span className="text-xs text-[#808393]">تایید شده</span>
-                  </div>
+                <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های فعال</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
+                </p>
+                <Link href={`/${itemId}/darkhast`}>
+                  <ButtonMoshahede />
+                </Link>
+              </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                    <span className="text-base">{info?.requests?.rejected}</span>
-                    <span className="text-xs text-[#808393]"> رد شده</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                    <span className="text-base">{info?.requests?.in_progress}</span>
-                    <span className="text-xs text-[#808393]"> جاری</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                    <span className="text-base">{info?.requests?.action_needed}</span>
-                    <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
+              {/* کارت کارتابل درخواست‌ها */}
+              <div className="flex flex-col gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <Image
+                    className="w-16"
+                    alt="#"
+                    width={0}
+                    height={0}
+                    src={"/Images/masajed/cart/Bill.svg"}
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
+                      <span className="text-base">{info?.requests?.done}</span>
+                      <span className="text-xs text-[#808393]">تایید شده</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
+                      <span className="text-base">{info?.requests?.rejected}</span>
+                      <span className="text-xs text-[#808393]"> رد شده</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
+                      <span className="text-base">{info?.requests?.in_progress}</span>
+                      <span className="text-xs text-[#808393]"> جاری</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
+                      <span className="text-base">{info?.requests?.action_needed}</span>
+                      <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
+                    </div>
                   </div>
                 </div>
+                <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل درخواست ها</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
+                </p>
+                <Link href={`/${itemId}/kartabl-darkhast`}>
+                  <ButtonMoshahede />
+                </Link>
               </div>
-              <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل درخواست ها</h2>
-              <p className="text-xs font-medium text-slate-400 leading-6">
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
-                گرافیک است.
-              </p>
-              <Link href={`/${itemId}/kartabl-darkhast`}>
-                <ButtonMoshahede />
-              </Link>
-            </div>
 
-            {/* کارت کارتابل گزارش‌ها */}
-            <div className="flex flex-col gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
-              <div className="flex items-center justify-between">
+              {/* کارت کارتابل گزارش‌ها */}
+              <div className="flex flex-col gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <Image
+                    className="w-16"
+                    alt="#"
+                    width={0}
+                    height={0}
+                    src={"/Images/masajed/cart/Growth.svg"}
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
+                      <span className="text-base">{info?.reports?.done}</span>
+                      <span className="text-xs text-[#808393]">تایید شده</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
+                      <span className="text-base">{info?.reports?.rejected}</span>
+                      <span className="text-xs text-[#808393]"> رد شده</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
+                      <span className="text-base">{info?.reports?.in_progress}</span>
+                      <span className="text-xs text-[#808393]"> جاری</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
+                      <span className="text-base">{info?.reports?.action_needed}</span>
+                      <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
+                    </div>
+                  </div>
+                </div>
+                <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل گزارش ها</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
+                </p>
+                <Link href={`/${itemId}/kartabl-gozaresh`}>
+                  <ButtonMoshahede />
+                </Link>
+              </div>
+
+              {/* کارت درخواست‌های مکتوب */}
+              <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200 lg:col-span-1">
                 <Image
-                  className="w-16"
+                  className="w-16 pb-4"
                   alt="#"
                   width={0}
                   height={0}
-                  src={"/Images/masajed/cart/Growth.svg"}
+                  src={"/Images/masajed/cart/Sign.svg"}
                 />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                    <span className="text-base">{info?.reports?.done}</span>
-                    <span className="text-xs text-[#808393]">تایید شده</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                    <span className="text-base">{info?.reports?.rejected}</span>
-                    <span className="text-xs text-[#808393]"> رد شده</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                    <span className="text-base">{info?.reports?.in_progress}</span>
-                    <span className="text-xs text-[#808393]"> جاری</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                    <span className="text-base">{info?.reports?.action_needed}</span>
-                    <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
-                  </div>
-                </div>
+                <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های مکتوب</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
+                </p>
+                <Link href={`/${itemId}/maktob`}>
+                  <ButtonMoshahede />
+                </Link>
               </div>
-              <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل گزارش ها</h2>
-              <p className="text-xs font-medium text-slate-400 leading-6">
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
-                گرافیک است.
-              </p>
-              <Link href={`/${itemId}/kartabl-gozaresh`}>
-                <ButtonMoshahede />
-              </Link>
             </div>
-
-            {/* کارت درخواست‌های مکتوب */}
-            <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200 lg:col-span-1">
-              <Image
-                className="w-16 pb-4"
-                alt="#"
-                width={0}
-                height={0}
-                src={"/Images/masajed/cart/Sign.svg"}
-              />
-              <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های مکتوب</h2>
-              <p className="text-xs font-medium text-slate-400 leading-6">
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
-                گرافیک است.
-              </p>
-              <Link href={`/${itemId}/maktob`}>
-                <ButtonMoshahede />
-              </Link>
+          ) : (
+            <div className="text-[24px] font-semibold text-center mt-8">
+              <p>شما دسترسی به این قسمت را ندارید .</p>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

@@ -174,18 +174,28 @@ const Header = ({ bgBox, bgRole })=>{
     _s();
     const [profile, setProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loadingProfile, setLoadingProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
     const pathSegments = pathname.split("/");
     const itemId = pathSegments[1];
     const [showRoleMenu, setShowRoleMenu] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Header.useEffect": ()=>{
+            if (!itemId) return;
             const fetching = {
                 "Header.useEffect.fetching": async ()=>{
                     try {
                         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`/api/profile?item_id=${itemId}`);
                         if (response.data) {
                             setProfile(response.data);
+                        }
+                        const hasHeadCoachRole = response.data?.data?.roles?.some({
+                            "Header.useEffect.fetching": (role)=>role.role_en === "mosque_head_coach"
+                        }["Header.useEffect.fetching"]);
+                        if (!hasHeadCoachRole) {
+                            if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
+                                router.push("/" + itemId);
+                            }
                         }
                     } catch (error) {
                         console.log("خطا در دریافت بنرها:", error);
@@ -196,7 +206,9 @@ const Header = ({ bgBox, bgRole })=>{
             }["Header.useEffect.fetching"];
             fetching();
         }
-    }["Header.useEffect"], []);
+    }["Header.useEffect"], [
+        itemId
+    ]);
     const roleOptions = [
         {
             key: 'mosque_head_coach',
@@ -274,7 +286,7 @@ const Header = ({ bgBox, bgRole })=>{
                 src: profile?.data?.avatar || '/Images/home/Ellipse 477.svg'
             }, void 0, false, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 83,
+                lineNumber: 96,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -290,7 +302,7 @@ const Header = ({ bgBox, bgRole })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 91,
+                        lineNumber: 104,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -301,13 +313,13 @@ const Header = ({ bgBox, bgRole })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 92,
+                        lineNumber: 105,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 90,
+                lineNumber: 103,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -325,7 +337,7 @@ const Header = ({ bgBox, bgRole })=>{
                                 children: "نقش"
                             }, void 0, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 97,
+                                lineNumber: 110,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -336,13 +348,13 @@ const Header = ({ bgBox, bgRole })=>{
                                 src: '/Images/home/edit-2.svg'
                             }, void 0, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 98,
+                                lineNumber: 111,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 96,
+                        lineNumber: 109,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -350,7 +362,7 @@ const Header = ({ bgBox, bgRole })=>{
                         children: translateNama(profile?.data?.nama_role)
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 100,
+                        lineNumber: 113,
                         columnNumber: 21
                     }, this),
                     showRoleMenu && itemId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -364,18 +376,18 @@ const Header = ({ bgBox, bgRole })=>{
                                 children: role.role
                             }, role.role_en, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 106,
+                                lineNumber: 119,
                                 columnNumber: 33
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 104,
+                        lineNumber: 117,
                         columnNumber: 25
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 95,
+                lineNumber: 108,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -386,7 +398,7 @@ const Header = ({ bgBox, bgRole })=>{
                         children: "سطح دسترسی"
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 119,
+                        lineNumber: 132,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -394,20 +406,21 @@ const Header = ({ bgBox, bgRole })=>{
                         children: translateRole(profile?.data?.arman_role)
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 120,
+                        lineNumber: 133,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 118,
+                lineNumber: 131,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true);
 };
-_s(Header, "GUOJV7T8AE66F5h4ZJQ9gNm+ZeE=", false, function() {
+_s(Header, "11NnhZDIcPnwodZtM5ImppWxelA=", false, function() {
     return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"]
     ];
 });

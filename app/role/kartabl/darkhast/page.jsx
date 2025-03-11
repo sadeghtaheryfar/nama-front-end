@@ -56,7 +56,7 @@ export default function Accept() {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
         }
@@ -80,7 +80,7 @@ export default function Accept() {
         const response = await axios.get(`/api/request/show?id=${id}&item_id=${item_id}&role=${role}`);
         
         if (response.data) {
-          setRequsestData(response.data);
+          setRequsestData(response);
         }
       } catch (error) {
         console.log("خطا", error);
@@ -133,7 +133,7 @@ export default function Accept() {
               <GardeshJariRole data={requestData}/>
             </div>
 
-            <MainGardeshJariRole data={requestData}/>
+            <MainGardeshJariRole data={requestData?.data} back_steps={requestData?.data?.back_steps}/>
           </div>
         </div>
       </div>

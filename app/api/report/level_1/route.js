@@ -8,10 +8,11 @@ export const POST = async (req, res) => {
   const token = (await cookies()).get("token")?.value;
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
+  const role = searchParams.get("role");
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans/${id}?item_id=${itemId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans/${id}?item_id=${itemId}${role ? `&role=${role}` : ''}`,
       {
         headers: {
           Authorization: `bearer ${token}`,

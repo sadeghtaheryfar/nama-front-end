@@ -164,8 +164,9 @@ const POST = async (req, res)=>{
     const token = (await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cookies"])()).get("token")?.value;
     const { searchParams } = new URL(req.url);
     const itemId = searchParams.get("item_id");
+    const role = searchParams.get("role");
     try {
-        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(`${("TURBOPACK compile-time value", "http://arman.armaniran.org")}/api/v1/request-plans/${id}?item_id=${itemId}`, {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(`${("TURBOPACK compile-time value", "http://arman.armaniran.org")}/api/v1/request-plans/${id}?item_id=${itemId}${role ? `&role=${role}` : ''}`, {
             headers: {
                 Authorization: `bearer ${token}`
             }

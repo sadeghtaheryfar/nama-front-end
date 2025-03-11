@@ -7,6 +7,8 @@ const GardeshJariRole = ({data}) => {
   const searchParams = useSearchParams();
   const itemId = searchParams.get("item_id");
 
+  console.log('>>>>>>>>>>>', data)
+
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
@@ -17,7 +19,7 @@ const GardeshJariRole = ({data}) => {
 
       <div className="flex items-center flex-col justify-center font-[sans-serif] w-max lg:hidden">
         {/* تایید سر مربی مسجد */}
-        {data?.data?.step == 'approval_mosque_head_coach' ? (
+        {data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <>
             {data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
@@ -95,7 +97,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید مسئول فرهنگی مسجد */}
-        {data?.data?.step == 'approval_mosque_cultural_officer' ? (
+        {data?.data?.data?.step == 'approval_mosque_cultural_officer' ? (
           <>
             {data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
@@ -153,7 +155,7 @@ const GardeshJariRole = ({data}) => {
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -194,7 +196,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید  رابط منطقه */}
-        {data?.data?.step == 'approval_area_interface' ? (
+        {data?.data?.data?.step == 'approval_area_interface' ? (
           <>
             {data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
@@ -252,7 +254,7 @@ const GardeshJariRole = ({data}) => {
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -293,7 +295,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید معاونت اجرایی مساجد */}
-        {data?.data?.step == 'approval_executive_vice_president_mosques' ? (
+        {data?.data?.data?.step == 'approval_executive_vice_president_mosques' ? (
           <>
             {data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
@@ -351,7 +353,7 @@ const GardeshJariRole = ({data}) => {
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_area_interface' || data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_area_interface' || data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -392,7 +394,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید معاونت طرح و برنامه */}
-        {data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
+        {data?.data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
           <>
             {data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
@@ -450,7 +452,7 @@ const GardeshJariRole = ({data}) => {
               </div>
             )}
           </>
-        ) : data?.data?.step != 'finish' ? (
+        ) : data?.data?.data?.step != 'finish' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -493,7 +495,7 @@ const GardeshJariRole = ({data}) => {
 
       <div className="hidden lg:flex items-end justify-between">
         {/* تایید سر مربی مسجد */}
-        {data?.data?.step == 'approval_mosque_head_coach' ? (
+        {data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
@@ -565,7 +567,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید مسئول فرهنگی مسجد */}
-        {data?.data?.step == 'approval_mosque_cultural_officer' ? (
+        {data?.data?.data?.step == 'approval_mosque_cultural_officer' ? (
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
@@ -617,7 +619,7 @@ const GardeshJariRole = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center ">
@@ -653,7 +655,7 @@ const GardeshJariRole = ({data}) => {
         )}
         
         {/* تایید  رابط منطقه */}
-        {data?.data?.step == 'approval_area_interface' ? (
+        {data?.data?.data?.step == 'approval_area_interface' ? (
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
@@ -705,7 +707,7 @@ const GardeshJariRole = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center ">
@@ -742,7 +744,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید معاونت اجرایی مساجد */}
-        {data?.data?.step == 'approval_executive_vice_president_mosques' ? (
+        {data?.data?.data?.step == 'approval_executive_vice_president_mosques' ? (
           <div className="w-full flex flex-col items-start">
           {data?.data?.status == 'in_progress' ? (
             <>
@@ -794,7 +796,7 @@ const GardeshJariRole = ({data}) => {
             </>
           )}
         </div>
-        ) : data?.data?.step == 'approval_area_interface' || data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_area_interface' || data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center">
@@ -829,7 +831,7 @@ const GardeshJariRole = ({data}) => {
         )}
 
         {/* تایید معاونت طرح و برنامه */}
-        {data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
+        {data?.data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
@@ -881,7 +883,7 @@ const GardeshJariRole = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step != 'finish' ? (
+        ) : data?.data?.data?.step != 'finish' ? (
           <div className="w-full flex flex-col max-w-fit">
             <div className="flex items-center justify-center ml-14 2xl:ml-16">
                 <Image
@@ -892,7 +894,7 @@ const GardeshJariRole = ({data}) => {
                   src={"/Images/masajed/kartabl-darkhast/jari/tik1.svg"}
                 />
               </div>
-            <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرح و برنامه</span>
+            <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرحی و برنامه</span>
           </div>
         ) : (
           <div className="w-full flex flex-col max-w-fit">

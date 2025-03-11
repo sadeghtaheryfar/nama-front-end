@@ -23,7 +23,7 @@ const MainJari = () => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const response = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}`);
+        const response = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}&role=mosque_head_coach`);
         
         if (response.data) {
           setRequsestData(response.data);

@@ -61,9 +61,11 @@ export default function Role() {
   const [loadingBanners, setLoadingBanners] = useState(true);
 
   useEffect(() => {
+    if (!item_id) return;
+
     const fetching = async () => {
       try {
-        const response = await axios.get("/api/banners");
+        const response = await axios.get(`/api/banners?item_id=${item_id}`);
         if (response.data) {
           setBanners(response.data);
         }
@@ -74,14 +76,14 @@ export default function Role() {
       }
     };
     fetching();
-  }, []);
+  }, [item_id]);
 
   useEffect(() => {
     if (!item_id) return;
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
         }

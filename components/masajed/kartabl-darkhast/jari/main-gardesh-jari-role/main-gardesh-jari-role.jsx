@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
 
-const MainGardeshJariRole = ({data}) => {
+const MainGardeshJariRole = ({data,back_steps}) => {
   function formatNumber(num) {
     if (num < 1000000) {
       return Math.floor(num / 1000) + " هزار";
@@ -289,7 +289,7 @@ const MainGardeshJariRole = ({data}) => {
         </div>
       )}
 
-      <Modal showModal={showModal} setShowModal={setShowModal} hnadleForm={hnadleForm} selectedReason={selectedReason} setSelectedReason={setSelectedReason} />
+      <Modal showModal={showModal} setShowModal={setShowModal} hnadleForm={hnadleForm} selectedReason={selectedReason} setSelectedReason={setSelectedReason} backSteps={back_steps}  />
     </div>
   );
 };

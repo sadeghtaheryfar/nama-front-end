@@ -24,7 +24,7 @@ const CartsDarkhast = () => {
       setActiveCartsLoading(true);
 
       try {
-        const carts = await axios.get(`/api/future?item_id=${itemId}`);
+        const carts = await axios.get(`/api/future?item_id=${itemId}&role=mosque_head_coach`);
         if (carts.data) {
           setFutureCarts(carts.data.data);
         }
@@ -35,7 +35,7 @@ const CartsDarkhast = () => {
       }
 
       try {
-        const active = await axios.get(`/api/active?item_id=${itemId}`);
+        const active = await axios.get(`/api/active?item_id=${itemId}&role=mosque_head_coach`);
         if (active.data) {
           setActiveCarts(active.data.data);
         }

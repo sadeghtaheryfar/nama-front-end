@@ -1,13 +1,14 @@
 'use client';
 import axios from "axios";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter  } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Header = ({bgBox,bgRole}) => {
     const [profile, setProfile] = useState(null);
     const [loadingProfile, setLoadingProfile] = useState(true);
     
+    const router = useRouter();
     const pathname = usePathname();
     const pathSegments = pathname.split("/");
     const itemId = pathSegments[1];
@@ -15,11 +16,23 @@ const Header = ({bgBox,bgRole}) => {
     const [showRoleMenu, setShowRoleMenu] = useState(false);
 
     useEffect(() => {
+        if (!itemId) return;
         const fetching = async () => {
             try {
                 const response = await axios.get(`/api/profile?item_id=${itemId}`);
                 if (response.data) {
                     setProfile(response.data);
+                }
+
+                const hasHeadCoachRole = response.data?.data?.roles?.some(
+                    role => role.role_en === "mosque_head_coach"
+                );
+
+                if (!hasHeadCoachRole) {
+
+                    if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
+                        router.push("/" + itemId);
+                    }
                 }
             } catch (error) {
                 console.log("خطا در دریافت بنرها:", error);
@@ -28,7 +41,7 @@ const Header = ({bgBox,bgRole}) => {
             }
         };
         fetching();
-    }, []);
+    }, [itemId]);
 
     const roleOptions = [
         { key: 'mosque_head_coach', label: 'سرمربی مسجد' },

@@ -134,7 +134,7 @@ const FormSabt = ({ id }) => {
 
     try {
       const submitForm = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests?item_id=${itemId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests?item_id=${itemId}&role=mosque_head_coach`,
         formDataToSend,
         {
           headers: {

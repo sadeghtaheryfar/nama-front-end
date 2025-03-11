@@ -5,9 +5,10 @@ export const GET = async (req) => {
   const token = (await cookies()).get("token")?.value;
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
+  const role = searchParams.get("role");
 
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans?item_id=${itemId}`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans?item_id=${itemId}${role ? `&role=${role}` : ''}`, {
       headers: {
         Authorization: `bearer ${token}`,
       },

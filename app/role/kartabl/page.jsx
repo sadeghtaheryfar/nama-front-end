@@ -55,7 +55,7 @@ export default function Kartabl() {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
         }

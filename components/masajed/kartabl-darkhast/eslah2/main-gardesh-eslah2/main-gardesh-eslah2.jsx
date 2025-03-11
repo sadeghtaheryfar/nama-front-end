@@ -18,7 +18,7 @@ const MainGardesheslah2 = () => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const request = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}`);
+        const request = await axios.get(`/api/request/show?id=${id}&item_id=${itemId}&role=mosque_head_coach`);
         if (request.data) {
           setRequsestData(request.data.data);
         }

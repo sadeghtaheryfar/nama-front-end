@@ -1766,6 +1766,10 @@ img, video {
   background-image: url("/Images/masajed/header.svg");
 }
 
+.bg-header-masjed-desktop {
+  background-image: url("/Images/masajed/header-desktop-msj.svg");
+}
+
 .from-\[\#002A4F\] {
   --tw-gradient-from: #002a4f var(--tw-gradient-from-position);
   --tw-gradient-to: #002a4f00 var(--tw-gradient-to-position);
@@ -1918,26 +1922,6 @@ img, video {
   padding-bottom: 1.25rem;
 }
 
-.px-\[\] {
-  padding-left: ;
-  padding-right: ;
-}
-
-.px-\[2\] {
-  padding-left: 2px;
-  padding-right: 2px;
-}
-
-.px-\[2r\] {
-  padding-left: 2r;
-  padding-right: 2r;
-}
-
-.px-\[2re\] {
-  padding-left: 2re;
-  padding-right: 2re;
-}
-
 .pb-1 {
   padding-bottom: .25rem;
 }
@@ -2073,6 +2057,10 @@ img, video {
 
 .text-\[18px\] {
   font-size: 18px;
+}
+
+.text-\[24px\] {
+  font-size: 24px;
 }
 
 .text-\[26px\] {
@@ -2543,6 +2531,18 @@ th {
   background-size: cover;
   background-color: #002a4fe8;
   background-blend-mode: multiply;
+}
+
+.filtered-bg:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: "#492d2d";
+  filter: brightness(1.5) saturate(.8);
+  z-index: -1;
 }
 
 .checked\:bg-\[\#D5B260\]:checked {

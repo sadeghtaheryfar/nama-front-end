@@ -51,7 +51,7 @@ const Darkhastha = () => {
     setLoading(true);
     try {
       const { search, sort, direction, status } = filters;
-      const response = await axios.get(`/api/darkhast`, {
+      const response = await axios.get(`/api/darkhast?item_id=${itemId}&role=mosque_head_coach`, {
         params: {
           q: search,
           sort,

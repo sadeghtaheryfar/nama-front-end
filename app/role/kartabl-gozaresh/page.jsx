@@ -4,7 +4,6 @@ import filter from "./../../..//public/assets/filter.svg";
 import sort from "./../../..//public/assets/sort.svg";
 import Link from "next/link";
 
-
 import HeaderProfile from "./../../../components/header-profile-admin/page";
 import mosque from "./../../../public/assets/mosque.png";
 import man from "./../../../public/assets/man.png";
@@ -55,7 +54,7 @@ export default function Kartabl() {
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
           setHeader(response.data);
         }
