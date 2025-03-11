@@ -1,14 +1,1 @@
-{
-  "/page": "app/page.js",
-  "/api/dashboard-items/route": "app/api/dashboard-items/route.js",
-  "/api/url/route": "app/api/url/route.js",
-  "/2/page": "app/2/page.js",
-  "/api/banners/route": "app/api/banners/route.js",
-  "/api/profile/route": "app/api/profile/route.js",
-  "/api/info/route": "app/api/info/route.js",
-  "/api/show-item-dashboard/route": "app/api/show-item-dashboard/route.js",
-  "/4/page": "app/4/page.js",
-  "/2/darkhast/page": "app/2/darkhast/page.js",
-  "/api/future/route": "app/api/future/route.js",
-  "/api/active/route": "app/api/active/route.js"
-}
+{}
