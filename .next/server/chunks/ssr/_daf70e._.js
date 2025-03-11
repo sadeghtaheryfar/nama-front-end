@@ -163,7 +163,6 @@ const Header = ({ bgBox, bgRole })=>{
     const itemId = pathSegments[1];
     const [showRoleMenu, setShowRoleMenu] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (!itemId) return;
         const fetching = async ()=>{
             try {
                 const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/profile?item_id=${itemId}`);
@@ -257,7 +256,7 @@ const Header = ({ bgBox, bgRole })=>{
                 src: profile?.data?.avatar || '/Images/home/Ellipse 477.svg'
             }, void 0, false, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 96,
+                lineNumber: 95,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -273,7 +272,7 @@ const Header = ({ bgBox, bgRole })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 104,
+                        lineNumber: 103,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -284,13 +283,13 @@ const Header = ({ bgBox, bgRole })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 105,
+                        lineNumber: 104,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 103,
+                lineNumber: 102,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -308,7 +307,7 @@ const Header = ({ bgBox, bgRole })=>{
                                 children: "نقش"
                             }, void 0, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 110,
+                                lineNumber: 109,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -319,13 +318,13 @@ const Header = ({ bgBox, bgRole })=>{
                                 src: '/Images/home/edit-2.svg'
                             }, void 0, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 111,
+                                lineNumber: 110,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 109,
+                        lineNumber: 108,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -333,7 +332,7 @@ const Header = ({ bgBox, bgRole })=>{
                         children: translateNama(profile?.data?.nama_role)
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 113,
+                        lineNumber: 112,
                         columnNumber: 21
                     }, this),
                     showRoleMenu && itemId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -347,18 +346,18 @@ const Header = ({ bgBox, bgRole })=>{
                                 children: role.role
                             }, role.role_en, false, {
                                 fileName: "[project]/components/header-profile/page.jsx",
-                                lineNumber: 119,
+                                lineNumber: 118,
                                 columnNumber: 33
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 117,
+                        lineNumber: 116,
                         columnNumber: 25
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 108,
+                lineNumber: 107,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -369,7 +368,7 @@ const Header = ({ bgBox, bgRole })=>{
                         children: "سطح دسترسی"
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 132,
+                        lineNumber: 131,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -377,13 +376,13 @@ const Header = ({ bgBox, bgRole })=>{
                         children: translateRole(profile?.data?.arman_role)
                     }, void 0, false, {
                         fileName: "[project]/components/header-profile/page.jsx",
-                        lineNumber: 133,
+                        lineNumber: 132,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/header-profile/page.jsx",
-                lineNumber: 131,
+                lineNumber: 130,
                 columnNumber: 17
             }, this)
         ]

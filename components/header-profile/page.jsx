@@ -16,7 +16,6 @@ const Header = ({bgBox,bgRole}) => {
     const [showRoleMenu, setShowRoleMenu] = useState(false);
 
     useEffect(() => {
-        if (!itemId) return;
         const fetching = async () => {
             try {
                 const response = await axios.get(`/api/profile?item_id=${itemId}`);

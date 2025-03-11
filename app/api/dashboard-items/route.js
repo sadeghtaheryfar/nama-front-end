@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export const GET = async (req) => {
-  const access = cookies().get("access")?.value;
+  const cookieStore = await cookies();
+  const access = cookieStore.get("access")?.value;
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
 

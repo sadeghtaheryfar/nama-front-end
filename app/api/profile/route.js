@@ -8,7 +8,7 @@ export const GET = async (req) => {
   const itemId = searchParams.get("item_id");
 
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/profile?item_id=${itemId}`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/profile${itemId ? `?item_id=${itemId}` : ''}`, {
       headers: {
         Accept: "application/json",
         Authorization: `bearer ${token}`,
