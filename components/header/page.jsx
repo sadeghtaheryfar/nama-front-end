@@ -1,8 +1,14 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import HeaderProfile from "../header-profile/page";
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
+  const router = useRouter();
+
+  const goBack = (e) => {
+    if(e) router.back(); else router.push('/');
+  };
 
   return (
     <header>
@@ -16,18 +22,20 @@ const Header = () => {
         />
         <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
           <Image
-            className="w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5"
+            className="w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer"
             alt="#"
             width={0}
             height={0}
             src={"/Images/home/header/notification.svg"}
+            onClick={() => goBack()}
           />
           <Image
-            className="w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5"
+            className="w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer"
             alt="#"
             width={0}
             height={0}
             src={"/Images/home/header/menu.svg"}
+            onClick={() => goBack(true)}
           />
         </div>
         

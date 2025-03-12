@@ -1,6 +1,6 @@
 "use client";
-import { toPersianDate  } from "../../../../../components/utils/toPersianDate";
-import { formatPrice  } from "../../../../../components/utils/formatPrice";
+import { toPersianDate } from "../../../../../components/utils/toPersianDate";
+import { formatPrice } from "../../../../../components/utils/formatPrice";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
 
-const MainGozareshJariRole = ({data,back_steps}) => {
+const MainGozareshJariRole = ({data, back_steps}) => {
   function formatNumber(num) {
     if (num < 1000000) {
       return Math.floor(num / 1000) + " هزار";
@@ -31,6 +31,18 @@ const MainGozareshJariRole = ({data,back_steps}) => {
 
   const [showModal, setShowModal] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
+  
+  // Form validation states
+  const [errors, setErrors] = useState({
+    amount: "",
+    des: "",
+    selectedReason: ""
+  });
+  const [touched, setTouched] = useState({
+    amount: false,
+    des: false,
+    selectedReason: false
+  });
 
   useEffect(() => {
     setRole(searchParams.get("role"));
@@ -38,19 +50,90 @@ const MainGozareshJariRole = ({data,back_steps}) => {
     setId(searchParams.get("id"));
   }, [searchParams]);
 
+  // Validate form fields
+  const validateField = (field, value) => {
+    let errorMessage = "";
+    
+    if (field === "amount") {
+      if ((data?.data?.need_offer_amount || data?.data?.need_final_amount) && !value) {
+        errorMessage = "مبلغ را وارد کنید";
+      } else if (value && isNaN(value) || value < 0) {
+        errorMessage = "لطفا یک مقدار عددی معتبر وارد کنید";
+      }
+    } else if (field === "des") {
+      if (!value) {
+        errorMessage = "توضیحات را وارد کنید";
+      }
+    } else if (field === "selectedReason") {
+      if (!value && selectedReason === "action_needed") {
+        errorMessage = "دلیل ارجاع را انتخاب کنید";
+      }
+    }
+    
+    return errorMessage;
+  };
+
+  // Handle field blur for validation
+  const handleBlur = (field) => {
+    const value = field === "amount" ? amount : field === "des" ? des : selectedReason;
+    const error = validateField(field, value);
+    
+    setErrors(prev => ({
+      ...prev,
+      [field]: error
+    }));
+    
+    setTouched(prev => ({
+      ...prev,
+      [field]: true
+    }));
+  };
+
+  // Handle field change
+  const handleChange = (field, value) => {
+    if (field === "amount") {
+      setAmount(value);
+    } else if (field === "des") {
+      setDes(value);
+    } else if (field === "selectedReason") {
+      setSelectedReason(value);
+    }
+    
+    if (touched[field]) {
+      const error = validateField(field, value);
+      setErrors(prev => ({
+        ...prev,
+        [field]: error
+      }));
+    }
+  };
+
   const hnadleForm = async (e) => {
     setMessage({ text: "", type: "" });
-
-    if (!des) {
+    
+    // Set all fields as touched to trigger validation
+    setTouched({
+      amount: true,
+      des: true,
+      selectedReason: e === 'action_needed'
+    });
+    
+    // Validate all fields
+    const amountError = validateField("amount", amount);
+    const desError = validateField("des", des);
+    const reasonError = e === 'action_needed' ? validateField("selectedReason", selectedReason) : "";
+    
+    setErrors({
+      amount: amountError,
+      des: desError,
+      selectedReason: reasonError
+    });
+    
+    // Check if there are any errors
+    if (desError || amountError || (e === 'action_needed' && reasonError)) {
       setStatusSend("مقادیر فرم ناقص است.");
       return;
-    }else if((data?.data?.need_offer_amount || data?.data?.need_final_amount) && !amount){
-      setStatusSend("مقادیر فرم ناقص است.");
-      return;
-    }else if(e == 'action_needed' && !selectedReason){
-      setStatusSend("مقادیر فرم ناقص است.");
-      return;
-    }else {
+    } else {
       setStatusSend("");
     }
 
@@ -94,6 +177,76 @@ const MainGozareshJariRole = ({data,back_steps}) => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Convert number to Persian text
+  const convertToPersianText = (num) => {
+    if (!num) return "";
+    
+    const persianUnits = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+    const persianTeens = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+    const persianTens = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+    const persianHundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+    const persianBig = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون'];
+    
+    if (num === 0) return 'صفر';
+    
+    let result = '';
+    let groups = [];
+    let n = parseInt(num);
+    
+    while (n > 0) {
+      groups.push(n % 1000);
+      n = Math.floor(n / 1000);
+    }
+    
+    for (let i = groups.length - 1; i >= 0; i--) {
+      let group = groups[i];
+      let groupText = '';
+      
+      let hundreds = Math.floor(group / 100);
+      let tens = Math.floor((group % 100) / 10);
+      let units = group % 10;
+      
+      if (hundreds > 0) {
+        groupText += persianHundreds[hundreds] + ' ';
+      }
+      
+      if (tens === 1) {
+        groupText += persianTeens[units] + ' ';
+      } else {
+        if (tens > 1) {
+          groupText += persianTens[tens] + ' ';
+        }
+        if (units > 0) {
+          groupText += persianUnits[units] + ' ';
+        }
+      }
+      
+      if (group > 0) {
+        groupText += persianBig[i] + ' ';
+      }
+      
+      result += groupText;
+    }
+    
+    return result.trim() + ' ریال';
+  };
+
+  const translateRole = (role) => {
+    if (role === "mosque_head_coach") {
+        return "سرمربی مسجد";
+    } else if (role === "mosque_cultural_officer") {
+        return " مسئول فرهنگی مسجد";
+    } else if (role === "area_interface") {
+        return "رابط منطقه";
+    } else if (role === "executive_vice_president_mosques") {
+        return "معاونت اجرایی مساجد";
+    } else if (role === "deputy_for_planning_and_programming") {
+        return "معاونت طرح و برنامه";
+    } else {
+        return "نامشخص";
     }
   };
   
@@ -195,39 +348,47 @@ const MainGozareshJariRole = ({data,back_steps}) => {
           <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
             {(data?.data?.need_offer_amount) ? (
               <div className="mb-4">
-                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
-                  هزینه پیشنهادی توسط آرمان{" "}
+                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  هزینه پیشنهادی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
                 </label>
                 <div className="relative">
                   <input
                     type="number"
                     id="amount"
                     value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
+                    onChange={(event) => handleChange("amount", event.target.value)}
+                    onBlur={() => handleBlur("amount")}
                     name="amount"
                     placeholder="در اینجا تایپ کنید …"
-                    className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                    className={`block w-full p-4 border rounded-lg text-gray-700 ${
+                      errors.amount ? 'border-red-500 bg-red-50' : touched.amount && !errors.amount ? 'border-green-500 bg-green-50' : 'border-[#DFDFDF]'
+                    }`}
                   />
                 </div>
-                <small>{formatPrice(amount)}</small>
+                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+                {amount && <small className="block mt-1 text-gray-600">{convertToPersianText(amount)}</small>}
               </div>
             ) : (data?.data?.need_final_amount) ? (
               <div className="mb-4">
-                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
-                  هزینه پرداختی توسط آرمان{" "}
+                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  هزینه پرداختی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
                 </label>
                 <div className="relative">
                   <input
                     type="number"
                     id="amount"
                     value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
+                    onChange={(event) => handleChange("amount", event.target.value)}
+                    onBlur={() => handleBlur("amount")}
                     name="amount"
                     placeholder="در اینجا تایپ کنید …"
-                    className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                    className={`block w-full p-4 border rounded-lg text-gray-700 ${
+                      errors.amount ? 'border-red-500 bg-red-50' : touched.amount && !errors.amount ? 'border-green-500 bg-green-50' : 'border-[#DFDFDF]'
+                    }`}
                   />
                 </div>
-                <small>{formatPrice(amount)}</small>
+                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+                {amount && <small className="block mt-1 text-gray-600">{convertToPersianText(amount)}</small>}
               </div>
             ) : (
               <></>
@@ -236,18 +397,22 @@ const MainGozareshJariRole = ({data,back_steps}) => {
 
           <div className="mb-4 mt-3">
             <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              نظر{" "}
+              توضیحات تکمیلی {translateRole(role)} <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
             </label>
             <textarea
-              className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700 md:h-24"
+              className={`block w-full p-4 border rounded-lg text-gray-700 md:h-24 ${
+                errors.des ? 'border-red-500 bg-red-50' : touched.des && !errors.des ? 'border-green-500 bg-green-50' : 'border-[#DFDFDF]'
+              }`}
               id="des"
               name="des"
               value={des}
-              onChange={(event) => setDes(event.target.value)}
+              onChange={(event) => handleChange("des", event.target.value)}
+              onBlur={() => handleBlur("des")}
               rows="10"
               cols="15"
               placeholder="در اینجا تایپ کنید …"
             />
+            {errors.des && <p className="text-red-500 text-sm mt-1">{errors.des}</p>}
           </div>
           
           <div className="flex justify-center w-full flex-col items-center">

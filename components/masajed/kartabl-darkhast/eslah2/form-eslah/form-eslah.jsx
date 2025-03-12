@@ -5,19 +5,128 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+
+const convertToPersianText = (num) => {
+  if (!num) return "";
+  
+  const persianWords = {
+    0: "صفر",
+    1: "یک",
+    2: "دو",
+    3: "سه",
+    4: "چهار",
+    5: "پنج",
+    6: "شش",
+    7: "هفت",
+    8: "هشت",
+    9: "نه",
+    10: "ده",
+    11: "یازده",
+    12: "دوازده",
+    13: "سیزده",
+    14: "چهارده",
+    15: "پانزده",
+    16: "شانزده",
+    17: "هفده",
+    18: "هجده",
+    19: "نوزده",
+    20: "بیست",
+    30: "سی",
+    40: "چهل",
+    50: "پنجاه",
+    60: "شصت",
+    70: "هفتاد",
+    80: "هشتاد",
+    90: "نود",
+    100: "صد",
+    200: "دویست",
+    300: "سیصد",
+    400: "چهارصد",
+    500: "پانصد",
+    600: "ششصد",
+    700: "هفتصد",
+    800: "هشتصد",
+    900: "نهصد",
+  };
+
+  const units = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
+  
+  if (num === 0) return persianWords[0];
+  
+  const numStr = Math.floor(Math.abs(num)).toString();
+  let result = "";
+  let counter = 0;
+
+  // Process the number in groups of three digits
+  for (let i = numStr.length; i > 0; i -= 3) {
+    const start = Math.max(0, i - 3);
+    const group = parseInt(numStr.substring(start, i));
+    
+    if (group !== 0) {
+      let groupText = "";
+      
+      // Convert the group to text
+      if (group < 20) {
+        groupText = persianWords[group] || "";
+      } else if (group < 100) {
+        const tens = Math.floor(group / 10) * 10;
+        const ones = group % 10;
+        groupText = persianWords[tens] + (ones > 0 ? " و " + persianWords[ones] : "");
+      } else {
+        const hundreds = Math.floor(group / 100) * 100;
+        const remainder = group % 100;
+        
+        groupText = persianWords[hundreds];
+        
+        if (remainder > 0) {
+          if (remainder < 20) {
+            groupText += " و " + persianWords[remainder];
+          } else {
+            const tens = Math.floor(remainder / 10) * 10;
+            const ones = remainder % 10;
+            groupText += " و " + persianWords[tens] + (ones > 0 ? " و " + persianWords[ones] : "");
+          }
+        }
+      }
+      
+      // Add the unit (thousand, million, etc.)
+      if (counter > 0) {
+        groupText += " " + units[counter];
+      }
+      
+      // Add this group to the result
+      result = groupText + (result ? " و " + result : "");
+    }
+    
+    counter++;
+  }
+  
+  return result || persianWords[0];
+};
 
 const FormEslah = ({ data }) => {
   const router = useRouter();
   
   const [student, setStudent] = useState("");
+  const [studentError, setStudentError] = useState("");
   const [id, setID] = useState("");
   const [cost, setCost] = useState("");
+  const [costError, setCostError] = useState("");
+  const [costText, setCostText] = useState("");
   const [time, setTime] = useState("");
+  const [timeError, setTimeError] = useState("");
   const [des, setDes] = useState("");
   const [imamLetter, setImamLetter] = useState(null);
+  const [imamLetterError, setImamLetterError] = useState("");
   const [connectionLetter, setConntectionLetter] = useState(null);
-  const [statusFile1, setStatusFile1] = useState("فایلی انتخاب نشد");
-  const [statusFile2, setStatusFile2] = useState("فایلی انتخاب نشد");
+  const [connectionLetterError, setConnectionLetterError] = useState("");
+  const [statusFile1, setStatusFile1] = useState("مقدار فایل وجود ندارد");
+  const [statusFile2, setStatusFile2] = useState("مقدار فایل وجود ندارد");
+  const [file1Uploaded, setFile1Uploaded] = useState(false);
+  const [file2Uploaded, setFile2Uploaded] = useState(false);
   const [statusSend, setStatusSend] = useState("");
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
@@ -26,7 +135,6 @@ const FormEslah = ({ data }) => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
-  // console.log("/masajed/darkhast/sabt/sabt1");
 
   useEffect(() => {
     if(data)
@@ -36,11 +144,70 @@ const FormEslah = ({ data }) => {
       setCost(data?.amount);
       setDes(data?.body);
     }
-  }, [data])
+  }, [data]);
+
+  useEffect(() => {
+    if (cost) {
+      setCostText(convertToPersianText(parseInt(cost)));
+    } else {
+      setCostText("");
+    }
+  }, [cost]);
+
+  const validateForm = () => {
+    let isValid = true;
+
+    if (!student) {
+      setStudentError("تعداد دانش آموزان الزامی است.");
+      isValid = false;
+    } else {
+      setStudentError("");
+    }
+
+    if (!cost) {
+      setCostError("هزینه کلی الزامی است.");
+      isValid = false;
+    } else {
+      setCostError("");
+    }
+
+    if (!time) {
+      setTimeError("تاریخ برگزاری الزامی است.");
+      isValid = false;
+    } else {
+      setTimeError("");
+    }
+
+    if (!imamLetter) {
+      setImamLetterError("نامه امام جماعت الزامی است.");
+      isValid = false;
+    } else {
+      setImamLetterError("");
+    }
+
+    if (!connectionLetter) {
+      setConnectionLetterError("نامه رابط منطقه الزامی است.");
+      isValid = false;
+    } else {
+      setConnectionLetterError("");
+    }
+
+    if (!checkbox) {
+      setStatusCheckBox("این گزینه الزامی است.");
+      isValid = false;
+    } else {
+      setStatusCheckBox("");
+    }
+
+    return isValid;
+  };
 
   const handleFile1 = (event) => {
     if (event.target.value === "") {
-      setStatusFile1("فایلی انتخاب نشد");
+      setStatusFile1("مقدار فایل وجود ندارد");
+      setFile1Uploaded(false);
+      setImamLetter(null);
+      setImamLetterError("نامه امام جماعت الزامی است.");
       return;
     }
     if (
@@ -51,8 +218,13 @@ const FormEslah = ({ data }) => {
     ) {
       setImamLetter(event.target.files);
       setStatusFile1("فایل مورد نظر انتخاب شد");
+      setFile1Uploaded(true);
+      setImamLetterError("");
     } else {
       setStatusFile1("فرمت فایل انتخابی مجاز نمی باشد");
+      setFile1Uploaded(false);
+      setImamLetter(null);
+      setImamLetterError("فرمت فایل انتخابی مجاز نمی باشد");
     }
   };
 
@@ -60,7 +232,10 @@ const FormEslah = ({ data }) => {
     setStatusSend("");
 
     if (event.target.value === "") {
-      setStatusFile2("فایلی انتخاب نشد");
+      setStatusFile2("مقدار فایل وجود ندارد");
+      setFile2Uploaded(false);
+      setConntectionLetter(null);
+      setConnectionLetterError("نامه رابط منطقه الزامی است.");
       return;
     }
     if (
@@ -71,20 +246,52 @@ const FormEslah = ({ data }) => {
     ) {
       setConntectionLetter(event.target.files);
       setStatusFile2("فایل مورد نظر انتخاب شد");
+      setFile2Uploaded(true);
+      setConnectionLetterError("");
     } else {
       setStatusFile2("فرمت فایل انتخابی مجاز نمی باشد");
+      setFile2Uploaded(false);
+      setConntectionLetter(null);
+      setConnectionLetterError("فرمت فایل انتخابی مجاز نمی باشد");
+    }
+  };
+
+  const handleDateChange = (date) => {
+    if (date) {
+      const formattedDate = `${date.year}/${date.month.number.toString().padStart(2, '0')}/${date.day.toString().padStart(2, '0')}`;
+      setTime(formattedDate);
+      setTimeError("");
+    } else {
+      setTime("");
+      setTimeError("تاریخ برگزاری الزامی است.");
+    }
+  };
+
+  const handleStudentChange = (event) => {
+    const value = event.target.value;
+    setStudent(value);
+    if (!value) {
+      setStudentError("تعداد دانش آموزان الزامی است.");
+    } else {
+      setStudentError("");
+    }
+  };
+
+  const handleCostChange = (event) => {
+    const value = event.target.value;
+    setCost(value);
+    
+    if (!value) {
+      setCostError("هزینه کلی الزامی است.");
+      setCostText("");
+    } else {
+      setCostError("");
+      setCostText(convertToPersianText(parseInt(value)));
     }
   };
 
   const hnadleForm = async () => {
-    if (!checkbox) {
-      setStatusCheckBox("این گزینه الزامی است.");
-      return;
-    } else {
-      setStatusCheckBox("");
-    }
-
-    if (!student || !cost || !time || !imamLetter || !connectionLetter) {
+    if (!validateForm()) {
       setStatusSend("مقادیر فرم ناقص است.");
       return;
     } else {
@@ -92,31 +299,6 @@ const FormEslah = ({ data }) => {
     }
 
     const newDate = time.replaceAll("/", "-");
-
-    // console.log(
-    //   "student : ",
-    //   student,
-    //   "date : ",
-    //   newDate,
-    //   "body : ",
-    //   des,
-    //   "imam_letter : ",
-    //   imamLetter[0],
-    //   "area_interface_letter : ",
-    //   connectionLetter[0],
-    //   id
-    // );
-
-    // {
-    //     request_plan_id: id,
-    //     students: student,
-    //     amount: cost,
-    //     date: newDate,
-    //     body: des,
-    //     imam_letter: imamLetter[0],
-    //     area_interface_letter: connectionLetter[0],
-    //     sheba: null,
-    //   },
 
     const formDataToSend = new FormData();
     formDataToSend.append("students", Number(student));
@@ -128,8 +310,6 @@ const FormEslah = ({ data }) => {
     formDataToSend.append("area_interface_letter", connectionLetter[0]);
     
     setLoading(true);
-
-    // console.log(formDataToSend.get("imam_letter"));
 
     try {
       const submitForm = await axios.post(
@@ -148,10 +328,14 @@ const FormEslah = ({ data }) => {
         router.push(`/${itemId}/kartabl-darkhast`);
       }
     } catch (error) {
-      console.log(error);
-      if(error.response.data.error)
-      {
+      if (error.response && error.response.data.error) {
         setStatusSend(error.response.data.error);
+      } else {
+        setStatusSend("خطا در ارسال اطلاعات");
+        if(error.response && error.response.data.errors.amount[0])
+        {
+          setCostError(error.response.data.errors.amount[0]);
+        }
       }
     } finally {
       setLoading(false);
@@ -162,88 +346,75 @@ const FormEslah = ({ data }) => {
     <div className="w-full bg-white rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
         <div className="mb-4">
-          <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
-            تعداد دانش آموزان نوجوان{" "}
+          <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+            تعداد دانش آموزان نوجوان <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
           </label>
           <div className="relative">
             <input
               type="number"
               id="student"
               value={student}
-              onChange={(event) => setStudent(event.target.value)}
+              onChange={handleStudentChange}
               name="student"
               placeholder="به عنوان مثال 25 عدد..."
-              className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+              className={`block w-full p-4 border rounded-lg text-gray-700 ${
+                studentError ? 'border-red-500' : student ? 'border-green-500' : 'border-[#DFDFDF]'
+              }`}
             />
-
-            {/* <Image
-              className="w-8 absolute bottom-1/2 translate-y-1/2 left-1 flex items-center pl-3 bg-white"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/sabt/arrowDown.svg"}
-            /> */}
-            {/* <select
-              id="options"
-              name="options"
-              className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
-            >
-              <option value="">لطفا انتخاب کنید </option>
-              <option value="option1">گزینه ۱</option>
-              <option value="option2">گزینه ۲</option>
-              <option value="option3">گزینه ۳</option>
-            </select> */}
+            {studentError && <p className="text-red-500 text-sm mt-1">{studentError}</p>}
           </div>
         </div>
 
         <div className="mb-4">
           <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-            هزینه کلی عملیات{" "}
+            هزینه کلی عملیات <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
           </label>
           <input
             type="number"
             id="cost"
             name="cost"
             value={cost}
-            onChange={(event) => setCost(event.target.value)}
+            onChange={handleCostChange}
             min={1000}
             max={10000000000000}
             placeholder="از 1،000 تا 10،000،000،000،000"
-            className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+            className={`block w-full p-4 border rounded-lg text-gray-700 ${
+              costError ? 'border-red-500' : cost ? 'border-green-500' : 'border-[#DFDFDF]'
+            }`}
           />
+          {costError && <p className="text-red-500 text-sm mt-1">{costError}</p>}
+          {costText && <p className="text-gray-600 text-sm mt-1">{costText} تومان</p>}
         </div>
 
         <div className="mb-4">
           <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-            تاریخ برگزاری{" "}
+            تاریخ برگزاری <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
           </label>
           <div className="relative">
-            <Image
-              className="w-9 absolute bottom-1/2 translate-y-1/2 left-1 flex items-center pl-3 bg-white"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/sabt/calendar.svg"}
-            />
-            <input
-              type="text"
-              id="time"
-              name="time"
+            <DatePicker
+              calendar={persian}
+              locale={persian_fa}
+              calendarPosition="bottom-right"
               value={time}
-              onChange={(event) => setTime(event.target.value)}
-              placeholder="۱۴۰۳/۰۹/۱۲"
-              className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+              onChange={handleDateChange}
+              inputClass={`block w-full p-4 border rounded-lg text-gray-700 ${
+                timeError ? 'border-red-500' : time ? 'border-green-500' : 'border-[#DFDFDF]'
+              }`}
+              placeholder="انتخاب تاریخ"
             />
+            {timeError && <p className="text-red-500 text-sm mt-1">{timeError}</p>}
           </div>
         </div>
       </div>
 
       <div className="mb-4 mt-3">
         <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-          توضیحات تکمیلی{" "}
+          توضیحات تکمیلی
         </label>
         <textarea
-          className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700 md:h-24"
+          className={`block w-full p-4 border rounded-lg text-gray-700 md:h-24 ${
+            des ? 'border-green-500' : 'border-[#DFDFDF]'
+          }`}
           id="des"
           name="des"
           value={des}
@@ -257,11 +428,13 @@ const FormEslah = ({ data }) => {
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل پیوست نامه امام جماعت
+            آپلود فایل پیوست نامه امام جماعت <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
           </h3>
           <label
             htmlFor="file-upload_1"
-            className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+              imamLetterError ? 'border-red-500' : file1Uploaded ? 'border-green-500' : 'border-gray-300'
+            }`}
           >
             <div className="flex items-center justify-between pt-5 pb-6">
               <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
@@ -273,7 +446,7 @@ const FormEslah = ({ data }) => {
               alt="#"
               width={0}
               height={0}
-              src={"/Images/masajed/darkhast/sabt/Group.svg"}
+              src={file1Uploaded ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
             />
             <input
               id="file-upload_1"
@@ -284,13 +457,18 @@ const FormEslah = ({ data }) => {
             />
             <span>{statusFile1}</span>
           </label>
+          {imamLetterError && <p className="text-red-500 text-sm mt-1">{imamLetterError}</p>}
         </div>
 
         <div className="mb-4">
-          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل نامه رابط منطقه</h3>
+          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+            آپلود فایل نامه رابط منطقه <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
+          </h3>
           <label
             htmlFor="file-upload_2"
-            className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+              connectionLetterError ? 'border-red-500' : file2Uploaded ? 'border-green-500' : 'border-gray-300'
+            }`}
           >
             <div className="flex items-center justify-between pt-5 pb-6">
               <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
@@ -302,7 +480,7 @@ const FormEslah = ({ data }) => {
               alt="#"
               width={0}
               height={0}
-              src={"/Images/masajed/darkhast/sabt/Group.svg"}
+              src={file2Uploaded ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
             />
             <input
               id="file-upload_2"
@@ -313,6 +491,7 @@ const FormEslah = ({ data }) => {
             />
             <span>{statusFile2}</span>
           </label>
+          {connectionLetterError && <p className="text-red-500 text-sm mt-1">{connectionLetterError}</p>}
         </div>
       </div>
 
@@ -320,18 +499,18 @@ const FormEslah = ({ data }) => {
         <input
           id="checked-checkbox"
           type="checkbox"
-          value={checkbox}
+          checked={checkbox}
           onChange={(event) => setCheckBox(event.target.checked)}
-          className="min-w-5 h-5 appearance-none checked:bg-[#D5B260] border border-gray-300 rounded  checked:ring-offset-2 checked:ring-1 ring-gray-300"
+          className={`min-w-5 h-5 appearance-none checked:bg-[#39A894] border rounded checked:ring-offset-2 checked:ring-1 ring-gray-300`}
         />
         <label
           htmlFor="checked-checkbox"
           className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 leading-6"
         >
           تمامی اطلاعات فوق را بررسی کرده ام و صحت آن را تایید می کنم و در صورت عدم تطبیق مسئولیت آن
-          را می پذیرم.{" "}
+          را می پذیرم. <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
         </label>
-        <span className="text-red-500 px-2">{statusCheckBox}</span>
+        {statusCheckBox && <span className="text-red-500 px-2">{statusCheckBox}</span>}
       </div>
       <div className="flex justify-center w-full flex-col items-center">
         <button
@@ -340,7 +519,7 @@ const FormEslah = ({ data }) => {
         >
           {loading ? 'صبر کنید ...' : 'تایید و ثبت اطلاعات'}
         </button>
-        <span className="p-2 text-red-600">{statusSend}</span>
+        {statusSend && <span className="p-2 text-red-600">{statusSend}</span>}
       </div>
     </div>
   );

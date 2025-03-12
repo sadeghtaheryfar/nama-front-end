@@ -36,7 +36,7 @@ const MainSabt1 = () => {
               <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
                 <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
                 سرانه حمایتی هر نفر به مبلغ{" "}
-                {formatNumber(requestData.support_for_each_person_amount)} میلیون تومان میباشد.
+                {formatNumber(requestData.support_for_each_person_amount)} تومان میباشد.
               </li>
               <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
                 <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>

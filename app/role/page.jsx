@@ -117,6 +117,10 @@ export default function Role() {
     fetching();
   }, [item_id]);
 
+  const goBack = (e) => {
+    if(e) router.back(); else router.push('/');
+  };
+
   return (
     <>
       <div className=" h-screen relative">
@@ -143,6 +147,7 @@ export default function Role() {
                   height={0}
                   alt=""
                   src={menu}
+                  onClick={() => goBack()}
                 />
                 <Image
                   className="cursor-pointer w-[24px] md:w-[69px]"
@@ -150,6 +155,7 @@ export default function Role() {
                   height={0}
                   src={notif}
                   alt=""
+                  onClick={() => goBack(true)}
                 />
               </div>
             </div>

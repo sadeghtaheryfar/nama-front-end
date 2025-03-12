@@ -6,8 +6,14 @@ import mosque from "./../../../../public/assets/mosque.png";
 import man from "./../../../../public/assets/man.png";
 import menu from "./../../../../public/assets/menu.svg";
 import notif from "./../../../../public/assets/notif.svg";
+import { useRouter } from 'next/navigation';
 
 export default function Reject() {
+  
+  const router = useRouter();
+  const goBack = (e) => {
+    if(e) router.back(); else router.push('/');
+  };
   return (
     <>
       <div className=" h-screen relative">
@@ -38,10 +44,12 @@ export default function Reject() {
                 <Image
                   className="cursor-pointer w-[24px] md:w-[69px] md:mx-4 mx-2"
                   src={menu}
+                  onClick={() => goBack()}
                 />
                 <Image
                   className="cursor-pointer w-[24px] md:w-[69px]"
                   src={notif}
+                  onClick={() => goBack(true)}
                 />
               </div>
             </div>

@@ -370,7 +370,7 @@ const Header = ({ bgBox, bgRole })=>{
                         },
                         className: "absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black",
                         children: profile?.data?.roles?.map((role)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                href: `/role?role=${role.role_en}&item_id=${itemId}`,
+                                href: role.role_en == 'mosque_head_coach' ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`,
                                 className: "!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex",
                                 children: role.role
                             }, role.role_en, false, {
@@ -443,11 +443,20 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/image.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$header$2d$profile$2f$page$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/components/header-profile/page.jsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
+;
+var _s = __turbopack_refresh__.signature();
 ;
 ;
 ;
 ;
 const Header = ()=>{
+    _s();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const goBack = (e)=>{
+        if (e) router.back();
+        else router.push('/');
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "grid grid-cols-2 items-center md:grid-cols-8 pt-10",
@@ -460,38 +469,40 @@ const Header = ()=>{
                     src: "/Images/home/header/setad.svg"
                 }, void 0, false, {
                     fileName: "[project]/components/header/page.jsx",
-                    lineNumber: 10,
+                    lineNumber: 16,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            className: "w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5",
+                            className: "w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer",
                             alt: "#",
                             width: 0,
                             height: 0,
-                            src: "/Images/home/header/notification.svg"
+                            src: "/Images/home/header/notification.svg",
+                            onClick: ()=>goBack()
                         }, void 0, false, {
                             fileName: "[project]/components/header/page.jsx",
-                            lineNumber: 18,
+                            lineNumber: 24,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            className: "w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5",
+                            className: "w-10 lg:w-12 xl:w-16 bg-[#1A4162] rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer",
                             alt: "#",
                             width: 0,
                             height: 0,
-                            src: "/Images/home/header/menu.svg"
+                            src: "/Images/home/header/menu.svg",
+                            onClick: ()=>goBack(true)
                         }, void 0, false, {
                             fileName: "[project]/components/header/page.jsx",
-                            lineNumber: 25,
+                            lineNumber: 32,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/header/page.jsx",
-                    lineNumber: 17,
+                    lineNumber: 23,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -500,26 +511,31 @@ const Header = ()=>{
                         bgRole: "#3A5C78"
                     }, void 0, false, {
                         fileName: "[project]/components/header/page.jsx",
-                        lineNumber: 35,
+                        lineNumber: 43,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/header/page.jsx",
-                    lineNumber: 34,
+                    lineNumber: 42,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/header/page.jsx",
-            lineNumber: 9,
+            lineNumber: 15,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/header/page.jsx",
-        lineNumber: 8,
+        lineNumber: 14,
         columnNumber: 5
     }, this);
 };
+_s(Header, "fN7XvhJ+p5oE6+Xlo0NJmXpxjC8=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
 _c = Header;
 const __TURBOPACK__default__export__ = Header;
 var _c;

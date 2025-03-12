@@ -89,6 +89,10 @@ export default function Accept() {
     };
     fetching();
   }, [item_id,role]);
+
+  const goBack = (e) => {
+    if(e) router.back(); else router.push('/');
+  };
   
   return (
     <>
@@ -113,11 +117,13 @@ export default function Accept() {
                   className="cursor-pointer w-[24px] md:w-[69px] md:mx-4 mx-2"
                   alt=""
                   src={menu}
+                  onClick={() => goBack()}
                 />
                 <Image
                   className="cursor-pointer w-[24px] md:w-[69px]"
                   src={notif}
                   alt=""
+                  onClick={() => goBack(true)}
                 />
               </div>
             </div>

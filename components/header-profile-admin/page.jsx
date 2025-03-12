@@ -49,7 +49,10 @@ const Header = ({ bgBox, bgRole }) => {
     const handleRoleChange = (newRole) => {
         setCurrentRole(newRole);
         setShowRoleMenu(false);
-        router.push(`?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`);
+        if(newRole == 'mosque_head_coach') 
+            router.push(`/${itemIdFromUrl}`);
+        else
+            router.push(`?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`);
     };
 
     useEffect(() => {

@@ -10,13 +10,13 @@ const GardeshJari = ({data}) => {
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
-        <h2 className="text-base font-bold text-center lg:text-lg md:text-right xl:text-xl 2xl:text-[22px]">
+        <h2 className="text-nowrap min-w-min lg:ml-8 text-base font-bold text-center lg:text-lg md:text-right xl:text-xl 2xl:text-[22px]">
           گردش کار درخواست شماره {data?.data?.id}
         </h2>
 
         {data?.data?.status == 'action_needed' && (
-          <div className="bg-[#FEF8E8] rounded-lg pb-5 pt-2 px-3.5 flex flex-col gap-2 lg:items-center lg:flex-row xl:p-4">
-            <div className="flex flex-col gap-2">
+          <div className="w-full bg-[#FEF8E8] rounded-lg pb-5 pt-2 px-3.5 flex flex-col gap-2 lg:items-center lg:flex-row xl:p-4">
+            <div className="flex flex-col gap-2 w-full">
               <div className="flex items-center gap-3">
                 <Image
                   width={0}
@@ -27,7 +27,7 @@ const GardeshJari = ({data}) => {
                 />
                 <div className="flex flex-col">
                   <h3 className="text-sm font-semibold text-[#FABE00] xl:text-[18px]">
-                    نیازمند اصلاح{" "}
+                    نیازمند اصلاح - {data?.data?.last_updated_by}
                   </h3>
                   <p className="hidden 2xl:block text-base leading-9 w-full">
                     {data?.data?.message}

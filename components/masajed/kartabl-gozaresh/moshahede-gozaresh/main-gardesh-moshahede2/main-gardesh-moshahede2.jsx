@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { formatPrice  } from "../../../../../components/utils/formatPrice";
+import { formatPrice } from "../../../../../components/utils/formatPrice";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -25,28 +25,126 @@ const MainGardeshMoshahede2 = ({ id }) => {
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
-  // console.log("/masajed/darkhast/sabt/sabt1");
+  
+  // Validation states for each field
+  const [errors, setErrors] = useState({
+    student: "",
+    time: "",
+    images: "",
+    video: ""
+  });
+  
+  // Track if fields have been touched/interacted with
+  const [touched, setTouched] = useState({
+    student: false,
+    time: false,
+    des: false,
+    images: false,
+    video: false
+  });
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
 
+  const validateField = (name, value) => {
+    let error = "";
+    
+    switch(name) {
+      case "student":
+        if (!value) error = "تعداد دانش آموزان الزامی است";
+        else if (isNaN(value) || value <= 0) error = "لطفا یک عدد مثبت وارد کنید";
+        break;
+      case "time":
+        if (!value) error = "تاریخ برگزاری الزامی است";
+        break;
+      case "images":
+        if (value.length < 3) error = "حداقل ۳ تصویر الزامی است";
+        else if (value.length > 10) error = "حداکثر ۱۰ تصویر مجاز است";
+        break;
+      case "video":
+        if (value && !value.type.startsWith("video/")) error = "فقط فایل ویدئویی مجاز است";
+        break;
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
+  const handleBlur = (name) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+    
+    let value;
+    switch(name) {
+      case "student":
+        value = student;
+        break;
+      case "time":
+        value = time;
+        break;
+      case "images":
+        value = images;
+        break;
+      case "video":
+        value = video;
+        break;
+      default:
+        value = "";
+    }
+    
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleStudentChange = (event) => {
+    const value = event.target.value;
+    setStudent(value);
+    
+    if (touched.student) {
+      const error = validateField("student", value);
+      setErrors(prev => ({ ...prev, student: error }));
+    }
+  };
+
+  const handleTimeChange = (value) => {
+    setTime(value);
+    
+    if (touched.time) {
+      const error = validateField("time", value);
+      setErrors(prev => ({ ...prev, time: error }));
+    }
+  };
+
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
-    setImages((prev) => [...prev, ...files]);
+    const newImages = [...images, ...files];
+    setImages(newImages);
+    
+    setTouched(prev => ({ ...prev, images: true }));
+    const error = validateField("images", newImages);
+    setErrors(prev => ({ ...prev, images: error }));
   };
 
   const removeImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
+    
+    if (touched.images) {
+      const error = validateField("images", newImages);
+      setErrors(prev => ({ ...prev, images: error }));
+    }
   };
 
   const handleVideoUpload = (event) => {
     const file = event.target.files[0];
-    if (!file.type.startsWith("video/")) {
-      setStatusSend("فقط فایل ویدئویی مجاز است.");
-      return;
-    }
+    if (!file) return;
+    
     setVideo(file);
+    setTouched(prev => ({ ...prev, video: true }));
+    
+    const error = validateField("video", file);
+    setErrors(prev => ({ ...prev, video: error }));
   };
 
   const convertPersianToEnglish = (str) => {
@@ -58,8 +156,63 @@ const MainGardeshMoshahede2 = ({ id }) => {
     );
   };
 
+  // Convert number to Persian text
+  const numberToText = (num) => {
+    if (!num || isNaN(num)) return "";
+    
+    const units = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه", "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
+    const tens = ["", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+    const scales = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
+    
+    if (num === 0) return "صفر";
+    
+    const numStr = String(num);
+    if (num < 20) return units[num];
+    if (num < 100) {
+      const ten = Math.floor(num / 10);
+      const unit = num % 10;
+      return tens[ten] + (unit > 0 ? " و " + units[unit] : "");
+    }
+    
+    // For simplicity, we'll handle up to 9999
+    if (num < 1000) {
+      const hundred = Math.floor(num / 100);
+      const remainder = num % 100;
+      return units[hundred] + " صد" + (remainder > 0 ? " و " + numberToText(remainder) : "");
+    }
+    
+    if (num < 10000) {
+      const thousand = Math.floor(num / 1000);
+      const remainder = num % 1000;
+      return units[thousand] + " هزار" + (remainder > 0 ? " و " + numberToText(remainder) : "");
+    }
+    
+    return numStr; // For larger numbers, return as is
+  };
+
+  const validateForm = () => {
+    const formErrors = {
+      student: validateField("student", student),
+      time: validateField("time", time),
+      images: validateField("images", images),
+      video: validateField("video", video)
+    };
+    
+    setErrors(formErrors);
+    setTouched({
+      student: true,
+      time: true,
+      des: true,
+      images: true,
+      video: true
+    });
+    
+    return !Object.values(formErrors).some(error => error);
+  };
+
   const hnadleForm = async () => {
     setMessage({ text: "", type: "" });
+    
     if (!checkbox) {
       setStatusCheckBox("این گزینه الزامی است.");
       return;
@@ -67,38 +220,14 @@ const MainGardeshMoshahede2 = ({ id }) => {
       setStatusCheckBox("");
     }
 
-    if (!student || !time || images.length < 3 || images.length > 10) {
-      setStatusSend("مقادیر فرم ناقص است.");
+    if (!validateForm()) {
+      setStatusSend("لطفا خطاهای فرم را برطرف کنید.");
       return;
     } else {
       setStatusSend("");
     }
+    
     const englishTime = convertPersianToEnglish(String(time));
-
-    // console.log(
-    //   "student : ",
-    //   student,
-    //   "date : ",
-    //   newDate,
-    //   "body : ",
-    //   des,
-    //   "imam_letter : ",
-    //   imamLetter[0],
-    //   "area_interface_letter : ",
-    //   connectionLetter[0],
-    //   id
-    // );
-
-    // {
-    //     request_plan_id: id,
-    //     students: student,
-    //     amount: cost,
-    //     date: newDate,
-    //     body: des,
-    //     imam_letter: imamLetter[0],
-    //     area_interface_letter: connectionLetter[0],
-    //     sheba: null,
-    //   },
 
     const formDataToSend = new FormData();
     formDataToSend.append("students", Number(student));
@@ -112,8 +241,6 @@ const MainGardeshMoshahede2 = ({ id }) => {
     }
     
     setLoading(true);
-
-    // console.log(formDataToSend.get("imam_letter"));
 
     try {
       const submitForm = await axios.post(
@@ -132,13 +259,22 @@ const MainGardeshMoshahede2 = ({ id }) => {
       }
     } catch (error) {
       console.log(error);
-      if(error.response.data.error)
-      {
+      if(error.response?.data?.error) {
         setStatusSend(error.response.data.error);
+      } else {
+        setStatusSend("خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.");
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to determine input field class based on validation state
+  const getFieldClass = (fieldName) => {
+    const baseClass = "block w-full p-4 border rounded-lg text-gray-700";
+    if (!touched[fieldName]) return `${baseClass} border-[#DFDFDF]`;
+    if (errors[fieldName]) return `${baseClass} border-red-500 bg-red-50`;
+    return `${baseClass} border-green-500 bg-green-50`;
   };
 
   return (
@@ -153,61 +289,54 @@ const MainGardeshMoshahede2 = ({ id }) => {
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
           <div className="mb-4">
-            <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
-              تعداد دانش آموزان نوجوان{" "}
+            <label htmlFor="student" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+              تعداد دانش آموزان نوجوان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
             </label>
             <div className="relative">
               <input
                 type="number"
                 id="student"
                 value={student}
-                onChange={(event) => setStudent(event.target.value)}
+                onChange={handleStudentChange}
+                onBlur={() => handleBlur("student")}
                 name="student"
                 placeholder="به عنوان مثال 25 عدد..."
-                className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                className={getFieldClass("student")}
               />
-
-              {/* <Image
-                className="w-8 absolute bottom-1/2 translate-y-1/2 left-1 flex items-center pl-3 bg-white"
-                alt="#"
-                width={0}
-                height={0}
-                src={"/Images/masajed/darkhast/sabt/arrowDown.svg"}
-              /> */}
-              {/* <select
-                id="options"
-                name="options"
-                className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
-              >
-                <option value="">لطفا انتخاب کنید </option>
-                <option value="option1">گزینه ۱</option>
-                <option value="option2">گزینه ۲</option>
-                <option value="option3">گزینه ۳</option>
-              </select> */}
+              {errors.student && touched.student && (
+                <p className="mt-1 text-xs text-red-500">{errors.student}</p>
+              )}
             </div>
           </div>
 
           <div className="mb-4">
             <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              تاریخ برگزاری{" "}
+              تاریخ برگزاری <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
             </label>
             <div className="relative w-full">
               <DatePicker
                 value={time}
-                onChange={setTime}
+                onChange={handleTimeChange}
+                onOpen={() => setTouched(prev => ({ ...prev, time: true }))}
+                onClose={() => handleBlur("time")}
                 calendar={persian}
                 locale={persian_fa}
-                inputClass="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                inputClass={!touched.time ? "block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700" :
+                          errors.time ? "block w-full p-4 border border-red-500 rounded-lg text-gray-700 bg-red-50" :
+                          "block w-full p-4 border border-green-500 rounded-lg text-gray-700 bg-green-50"}
                 format="YYYY-MM-DD"
                 placeholder="انتخاب تاریخ"
               />
+              {errors.time && touched.time && (
+                <p className="mt-1 text-xs text-red-500">{errors.time}</p>
+              )}
             </div>
           </div>
         </div>
 
         <div className="mb-4 mt-3">
           <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-            توضیحات تکمیلی{" "}
+            توضیحات تکمیلی
           </label>
           <textarea
             className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700 md:h-24"
@@ -223,22 +352,42 @@ const MainGardeshMoshahede2 = ({ id }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
           <div className="mb-4">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل تصویری حداقل ۳ عدد</h3>
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+              آپلود فایل تصویری <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span> <span className="text-sm text-gray-500">(حداقل ۳ و حداکثر ۱۰ عدد)</span>
+            </h3>
             <label
               htmlFor="file-upload_1"
-              className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+                touched.images
+                  ? errors.images
+                    ? "border-red-500 bg-red-50"
+                    : "border-green-500 bg-green-50"
+                  : "border-gray-300"
+              }`}
             >
               <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
                 برای آپلود فایل کلیک کنید
               </span>
-              <Image className="w-7" alt="#" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+              {images.length > 0 && !errors.images ? (
+                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.png" />
+              ) : (
+                <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+              )}
               <input id="file-upload_1" type="file" multiple className="hidden" onChange={handleImageUpload} />
             </label>
+            {errors.images && touched.images && (
+              <p className="mt-1 text-xs text-red-500">{errors.images}</p>
+            )}
             <div className="mt-2 grid grid-cols-3 gap-2">
               {images.map((image, index) => (
                 <div key={index} className="relative w-24 h-24">
                   <img src={URL.createObjectURL(image)} alt="" className="w-full h-full object-cover rounded-lg" />
-                  <button className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center" onClick={() => removeImage(index)}>×</button>
+                  <button 
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center" 
+                    onClick={() => removeImage(index)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -248,14 +397,27 @@ const MainGardeshMoshahede2 = ({ id }) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری)</h3>
             <label
               htmlFor="file-upload_2"
-              className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+                touched.video
+                  ? errors.video
+                    ? "border-red-500 bg-red-50"
+                    : video ? "border-green-500 bg-green-50" : "border-gray-300"
+                  : "border-gray-300"
+              }`}
             >
               <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
                 برای آپلود فایل کلیک کنید
               </span>
-              <Image className="w-7" alt="#" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+              {video && !errors.video ? (
+                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.png" />
+              ) : (
+                <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+              )}
               <input id="file-upload_2" type="file" className="hidden" onChange={handleVideoUpload} />
             </label>
+            {errors.video && touched.video && (
+              <p className="mt-1 text-xs text-red-500">{errors.video}</p>
+            )}
             {video && (
               <div className="mt-2 w-full">
                 <video controls className="w-full rounded-lg">
@@ -270,9 +432,9 @@ const MainGardeshMoshahede2 = ({ id }) => {
           <input
             id="checked-checkbox"
             type="checkbox"
-            value={checkbox}
+            checked={checkbox}
             onChange={(event) => setCheckBox(event.target.checked)}
-            className="min-w-5 h-5 appearance-none checked:bg-[#D5B260] border border-gray-300 rounded  checked:ring-offset-2 checked:ring-1 ring-gray-300"
+            className="min-w-5 h-5 appearance-none checked:bg-[#39A894] border border-gray-300 rounded checked:ring-offset-2 checked:ring-1 ring-gray-300"
           />
           <label
             htmlFor="checked-checkbox"
@@ -280,14 +442,18 @@ const MainGardeshMoshahede2 = ({ id }) => {
           >
             تمامی اطلاعات فوق را بررسی کرده ام و صحت آن را تایید می کنم و در صورت عدم تطبیق مسئولیت آن
             را می پذیرم.{" "}
+            <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
           </label>
-          <span className="text-red-500 px-2">{statusCheckBox}</span>
         </div>
+        {statusCheckBox && (
+          <p className="mb-4 text-xs text-red-500">{statusCheckBox}</p>
+        )}
         
         <div className="flex justify-center w-full flex-col items-center">
           <button
             onClick={() => hnadleForm()}
             className="w-full h-12 text-white bg-[#39A894] text-base font-medium rounded-[10px] hover:border border-[#39A894] hover:text-[#39A894] hover:bg-white md:max-w-[214px]"
+            disabled={loading}
           >
             {loading ? 'صبر کنید ...' : 'تایید و ثبت اطلاعات'}
           </button>
@@ -302,7 +468,9 @@ const MainGardeshMoshahede2 = ({ id }) => {
               {message.text}
             </p>
           )}
-          <span className="p-2 text-red-600">{statusSend}</span>
+          {statusSend && (
+            <p className="mt-2 p-2 text-red-600 text-sm">{statusSend}</p>
+          )}
         </div>
       </div>
     </div>

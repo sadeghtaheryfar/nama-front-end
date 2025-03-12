@@ -17,11 +17,13 @@ const MainMaktob = ({ token }) => {
     letter: null,
     sign: null,
     body: "",
+    checked: false
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [touched, setTouched] = useState({});
 
   const [fileNames, setFileNames] = useState({
     letter: "برای آپلود فایل کلیک کنید",
@@ -30,6 +32,7 @@ const MainMaktob = ({ token }) => {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setTouched({ ...touched, [e.target.name]: true });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
@@ -39,12 +42,14 @@ const MainMaktob = ({ token }) => {
       const { name } = e.target;
       setFormData({ ...formData, [name]: file });
       setFileNames({ ...fileNames, [name]: file.name.slice(-20) });
+      setTouched({ ...touched, [name]: true });
       setErrors({ ...errors, [name]: "" });
     }
   };
 
   const handleCheckboxChange = (e) => {
     setFormData({ ...formData, checked: e.target.checked });
+    setTouched({ ...touched, checked: true });
     setErrors({ ...errors, checked: "" });
   };
 
@@ -60,9 +65,23 @@ const MainMaktob = ({ token }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const getFieldBorderStyle = (fieldName) => {
+    if (!touched[fieldName]) return "border-[#DFDFDF]";
+    if (errors[fieldName]) return "border-red-500";
+    return formData[fieldName] ? "border-green-500" : "border-[#DFDFDF]";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
+    
+    // Mark all fields as touched
+    const allTouched = {};
+    Object.keys(formData).forEach(key => {
+      allTouched[key] = true;
+    });
+    setTouched(allTouched);
+    
     if (!validateForm()) return;
 
     setLoading(true);
@@ -93,11 +112,13 @@ const MainMaktob = ({ token }) => {
         letter: null,
         sign: null,
         body: "",
+        checked: false
       });
       setFileNames({
         letter: "برای آپلود فایل کلیک کنید",
         sign: "برای آپلود فایل کلیک کنید",
       });
+      setTouched({});
       document.getElementById("title").value = "";
       document.getElementById("textarea").value = "";
       document.getElementById("checked-checkbox").checked = false;
@@ -126,7 +147,7 @@ const MainMaktob = ({ token }) => {
                       htmlFor="title"
                       className="block text-base lg:text-lg text-[#3B3B3B] mb-2 "
                     >
-                      عنوان درخواست
+                      عنوان درخواست <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -134,10 +155,13 @@ const MainMaktob = ({ token }) => {
                         name="title"
                         type="text"
                         onChange={handleInputChange}
+                        onBlur={() => setTouched({ ...touched, title: true })}
                         placeholder="عنوان درخواست ..."
-                        className="block w-full p-4 border border-[#DFDFDF] rounded-lg"
+                        className={`block w-full p-4 border rounded-lg ${getFieldBorderStyle("title")}`}
                       />
-                      {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+                      {errors.title && touched.title && (
+                        <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+                      )}
                     </div>
                   </div>
                   <div className="mb-4">
@@ -145,7 +169,7 @@ const MainMaktob = ({ token }) => {
                       htmlFor="reference_to"
                       className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
                     >
-                      ارجاع به{" "}
+                      ارجاع به
                     </label>
                     <div className="relative">
                       <Image
@@ -173,10 +197,12 @@ const MainMaktob = ({ token }) => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-2 xl:gap-x-6 2xl:gap-x-8">
                   <div className="mb-4">
-                    <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود عکس نامه</h3>
+                    <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+                      آپلود عکس نامه <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+                    </h3>
                     <label
                       htmlFor="letter"
-                      className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getFieldBorderStyle("letter")}`}
                     >
                       <div className="flex items-center justify-between pt-5 pb-6">
                         <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
@@ -188,7 +214,7 @@ const MainMaktob = ({ token }) => {
                         alt="#"
                         width={0}
                         height={0}
-                        src={"/Images/masajed/darkhast/sabt/Group.svg"}
+                        src={formData.letter ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
                       />
                       <input
                         id="letter"
@@ -198,16 +224,18 @@ const MainMaktob = ({ token }) => {
                         className="hidden"
                       />
                     </label>
-                    {errors.letter && <p className="text-red-500 text-xs mt-1">{errors.letter}</p>}
+                    {errors.letter && touched.letter && (
+                      <p className="text-red-500 text-xs mt-1">{errors.letter}</p>
+                    )}
                   </div>
 
                   <div className="mb-4">
                     <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-                      آپلود عکس امضا به همراه اسم
+                      آپلود عکس امضا به همراه اسم <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
                     </h3>
                     <label
                       htmlFor="sign"
-                      className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
+                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getFieldBorderStyle("sign")}`}
                     >
                       <div className="flex items-center justify-between pt-5 pb-6">
                         <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
@@ -219,7 +247,7 @@ const MainMaktob = ({ token }) => {
                         alt="#"
                         width={0}
                         height={0}
-                        src={"/Images/masajed/darkhast/sabt/Group.svg"}
+                        src={formData.sign ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
                       />
                       <input
                         id="sign"
@@ -229,7 +257,9 @@ const MainMaktob = ({ token }) => {
                         className="hidden"
                       />
                     </label>
-                    {errors.sign && <p className="text-red-500 text-xs mt-1">{errors.sign}</p>}
+                    {errors.sign && touched.sign && (
+                      <p className="text-red-500 text-xs mt-1">{errors.sign}</p>
+                    )}
                   </div>
                 </div>
 
@@ -238,18 +268,21 @@ const MainMaktob = ({ token }) => {
                     htmlFor="textarea"
                     className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
                   >
-                    نوشتن متن نامه{" "}
+                    نوشتن متن نامه <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
                   </label>
                   <textarea
-                    className="block w-full p-4 border border-[#DFDFDF] rounded-lg md:h-24"
+                    className={`block w-full p-4 border rounded-lg md:h-24 ${getFieldBorderStyle("body")}`}
                     id="textarea"
                     name="body"
                     rows="5"
                     cols="15"
                     onChange={handleInputChange}
+                    onBlur={() => setTouched({ ...touched, body: true })}
                     placeholder={"در اینجا تایپ کنید …"}
                   />
-                  {errors.body && <p className="text-red-500 text-xs mt-1">{errors.body}</p>}
+                  {errors.body && touched.body && (
+                    <p className="text-red-500 text-xs mt-1">{errors.body}</p>
+                  )}
                 </div>
               </div>
               <hr className="h-0.5 mb-4 md:hidden" />
@@ -309,17 +342,18 @@ const MainMaktob = ({ token }) => {
                 id="checked-checkbox"
                 type="checkbox"
                 onChange={handleCheckboxChange}
-                className="min-w-5 h-5 appearance-none checked:bg-[#D5B260] border border-gray-300 rounded  checked:ring-offset-2 checked:ring-1 ring-gray-300"
+                className={`min-w-5 h-5 appearance-none checked:bg-[#39A894] border rounded checked:ring-offset-2 checked:ring-1 ring-gray-300`}
               />
               <label
                 htmlFor="checked-checkbox"
                 className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 leading-6"
               >
                 تمامی اطلاعات فوق را بررسی کرده ام و صحت آن را تایید می کنم و در صورت عدم تطبیق
-                مسئولیت آن را می پذیرم.{" "}
+                مسئولیت آن را می پذیرم. <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
               </label>
-
-              {errors.checked && <p className="text-xs text-red-500 mt-1 mr-2">{errors.checked}</p>}
+              {errors.checked && touched.checked && (
+                <p className="text-red-500 text-xs mt-1 mr-2">{errors.checked}</p>
+              )}
             </div>
 
             <div className="flex justify-center flex-col items-center">
