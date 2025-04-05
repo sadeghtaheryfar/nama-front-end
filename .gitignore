@@ -16,6 +16,9 @@
 
 # next.js
 /out/
+/.next
+/out
+/__MACOSX
 
 # production
 /build/
