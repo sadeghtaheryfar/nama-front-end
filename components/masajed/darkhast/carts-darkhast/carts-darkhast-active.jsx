@@ -4,11 +4,7 @@ import ButtonSabt from "../button-sabt/button-sabt";
 import { usePathname } from "next/navigation";
 const CartsDarkhastActive = ({ item }) => {
   function formatNumber(num) {
-    if (num < 1000000) {
-      return Math.floor(num / 1000) + " هزار";
-    } else {
-      return Math.floor(num / 1000000) + " میلیون";
-    }
+    return Math.floor(num / 1000000);
   }
 
   const pathname = usePathname();
@@ -43,20 +39,42 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-            سرانه حمایتی هر نفر به مبلغ {formatNumber(item.support_for_each_person_amount)} میلیون
+            سرانه حمایتی هر نفر به مبلغ حداکثر {formatNumber(item.support_for_each_person_amount)} میلیون
             تومان میباشد.
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
             {item.expires_at === null
-              ? "ندارد"
+              ? "فاقد محدودیت زمانی"
               : `محدود مهلت زمانی انتخاب این درخواست تا تاریخ ${item.expires_at} میباشد.`}
+          </li>
+          <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+            <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+            {item.previous_requests > item.max_allocated_request && (
+              <span className="font-bold">در خواستی باقی نمانده.</span>
+            )}
+            {item.previous_requests <= item.max_allocated_request && (
+              <span>
+                درخواست
+                <span className="text-[#D5B260] font-bold">
+                  {item.previous_requests} از {item.max_allocated_request}
+                </span>
+                (تنها {item.max_allocated_request - item.previous_requests} درخواست
+                باقی مانده است)
+              </span>
+            )}
           </li>
         </ul>
       </div>
-      <Link href={`/${itemId}/darkhast/sabt?id=${item.id}`}>
-        <ButtonSabt />
-      </Link>
+        {(Number(item.max_allocated_request - item.previous_requests) > 1 ) ? (
+          <Link href={`/${itemId}/darkhast/sabt?id=${item.id}`}>
+            <ButtonSabt />
+          </Link>
+        ) : (
+          <button className="w-full h-12 text-red-600 text-base font-medium rounded-[10px] border border-red-600">
+            غیر فعال 
+          </button>
+        )}
     </div>
   );
 };

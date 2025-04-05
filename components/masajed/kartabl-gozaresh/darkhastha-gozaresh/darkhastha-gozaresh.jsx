@@ -104,7 +104,7 @@ const DarkhasthaGozaresh = () => {
                   <span className="text-xs text-[#202020] min-w-fit lg:text-lg">
                     {filters.status 
                       ? (filters.status === "rejected" ? "رد شده" 
-                        : filters.status === "in_progress" ? "جاری" 
+                        : filters.status === "in_progress" ? "باز" 
                         : filters.status === "action_needed" ? "نیازمند اصلاح" 
                         : filters.status === "done" ? "تایید شده" 
                         : "وضعیت نامشخص") 
@@ -116,7 +116,7 @@ const DarkhasthaGozaresh = () => {
                   <div className="absolute mt-2 w-full bg-white border rounded-[8px] shadow">
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>باز</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید شده</div>
                   </div>
@@ -176,7 +176,7 @@ const DarkhasthaGozaresh = () => {
                     request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                     "text-[#D9534F] bg-[#FDECEA]"}`}>
                   {request.status === "rejected" ? "رد شده" : 
-                    request.status === "in_progress" ? "جاری" : 
+                    request.status === "in_progress" ? "باز" : 
                     request.status === "action_needed" ? "نیازمند اصلاح" : 
                     request.status === "done" ? "تایید شده" : "نامشخص"}
                 </span>
@@ -242,7 +242,7 @@ const DarkhasthaGozaresh = () => {
                         request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                         "text-[#D9534F] bg-[#FDECEA]"}`}>
                       {request.status === "rejected" ? "رد شده" : 
-                        request.status === "in_progress" ? "جاری" : 
+                        request.status === "in_progress" ? "باز" : 
                         request.status === "action_needed" ? "نیازمند اصلاح" : 
                         request.status === "done" ? "تایید شده" : "نامشخص"}
                     </div>

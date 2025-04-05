@@ -369,7 +369,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
                 برای آپلود فایل کلیک کنید
               </span>
               {images.length > 0 && !errors.images ? (
-                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.png" />
+                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
               ) : (
                 <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
               )}
@@ -394,7 +394,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
           </div>
 
           <div className="mb-4">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری)</h3>
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری) </h3>
             <label
               htmlFor="file-upload_2"
               className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
@@ -409,12 +409,13 @@ const MainGardeshMoshahede2 = ({ id }) => {
                 برای آپلود فایل کلیک کنید
               </span>
               {video && !errors.video ? (
-                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.png" />
+                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
               ) : (
                 <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
               )}
               <input id="file-upload_2" type="file" className="hidden" onChange={handleVideoUpload} />
             </label>
+            <small className="text-yellow-600">در صورت گویا نبودن گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
             {errors.video && touched.video && (
               <p className="mt-1 text-xs text-red-500">{errors.video}</p>
             )}

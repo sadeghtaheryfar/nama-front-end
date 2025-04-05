@@ -39,7 +39,7 @@ const Header = () => {
           />
         </div>
         
-        <div className={`bg-[#1A4162] flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4`}>
+        <div className={`bg-[#1A4162] flex items-center justify-between gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4`}>
           <HeaderProfile bgRole='#3A5C78'  />
         </div>
       </div>

@@ -137,12 +137,22 @@ const FormEslah = ({ data }) => {
   const itemId = pathSegments[1];
 
   useEffect(() => {
-    if(data)
-    {
+    if(data) {
       setStudent(data?.students);
       setID(data?.id);
       setCost(data?.amount);
       setDes(data?.body);
+      
+
+      if (!data.imam_letter) {
+        setImamLetterError("");
+        setStatusFile1("فایل اختیاری است");
+      }
+      
+      if (!data.area_interface_letter) {
+        setConnectionLetterError("");
+        setStatusFile2("فایل اختیاری است");
+      }
     }
   }, [data]);
 
@@ -178,14 +188,14 @@ const FormEslah = ({ data }) => {
       setTimeError("");
     }
 
-    if (!imamLetter) {
+    if (data?.imam_letter && !imamLetter) {
       setImamLetterError("نامه امام جماعت الزامی است.");
       isValid = false;
     } else {
       setImamLetterError("");
     }
 
-    if (!connectionLetter) {
+    if (data?.area_interface_letter && !connectionLetter) {
       setConnectionLetterError("نامه رابط منطقه الزامی است.");
       isValid = false;
     } else {
@@ -204,18 +214,19 @@ const FormEslah = ({ data }) => {
 
   const handleFile1 = (event) => {
     if (event.target.value === "") {
-      setStatusFile1("مقدار فایل وجود ندارد");
-      setFile1Uploaded(false);
-      setImamLetter(null);
-      setImamLetterError("نامه امام جماعت الزامی است.");
+      if (data?.imam_letter) {
+        setStatusFile1("مقدار فایل وجود ندارد");
+        setFile1Uploaded(false);
+        setImamLetter(null);
+        setImamLetterError("نامه امام جماعت الزامی است.");
+      } else {
+        setStatusFile1("فایل اختیاری است");
+        setFile1Uploaded(false);
+        setImamLetter(null);
+      }
       return;
     }
-    if (
-      true
-      // event.target.files[0].type === "image/jpeg" ||
-      // event.target.files[0].type === "image/png" ||
-      // event.target.files[0].name.includes(".zip")
-    ) {
+    if (true) {
       setImamLetter(event.target.files);
       setStatusFile1("فایل مورد نظر انتخاب شد");
       setFile1Uploaded(true);
@@ -224,7 +235,9 @@ const FormEslah = ({ data }) => {
       setStatusFile1("فرمت فایل انتخابی مجاز نمی باشد");
       setFile1Uploaded(false);
       setImamLetter(null);
-      setImamLetterError("فرمت فایل انتخابی مجاز نمی باشد");
+      if (data?.imam_letter) {
+        setImamLetterError("فرمت فایل انتخابی مجاز نمی باشد");
+      }
     }
   };
 
@@ -232,18 +245,20 @@ const FormEslah = ({ data }) => {
     setStatusSend("");
 
     if (event.target.value === "") {
-      setStatusFile2("مقدار فایل وجود ندارد");
-      setFile2Uploaded(false);
-      setConntectionLetter(null);
-      setConnectionLetterError("نامه رابط منطقه الزامی است.");
+      if (data?.area_interface_letter) {
+        setStatusFile2("مقدار فایل وجود ندارد");
+        setFile2Uploaded(false);
+        setConntectionLetter(null);
+        setConnectionLetterError("نامه رابط منطقه الزامی است.");
+      } else {
+        setStatusFile2("فایل اختیاری است");
+        setFile2Uploaded(false);
+        setConntectionLetter(null);
+      }
       return;
     }
-    if (
-      true
-      // event.target.files[0].type === "image/jpeg" ||
-      // event.target.files[0].type === "image/png" ||
-      // event.target.files[0].name.includes(".zip")
-    ) {
+
+    if (true) {
       setConntectionLetter(event.target.files);
       setStatusFile2("فایل مورد نظر انتخاب شد");
       setFile2Uploaded(true);
@@ -252,7 +267,9 @@ const FormEslah = ({ data }) => {
       setStatusFile2("فرمت فایل انتخابی مجاز نمی باشد");
       setFile2Uploaded(false);
       setConntectionLetter(null);
-      setConnectionLetterError("فرمت فایل انتخابی مجاز نمی باشد");
+      if (data?.area_interface_letter) {
+        setConnectionLetterError("فرمت فایل انتخابی مجاز نمی باشد");
+      }
     }
   };
 
@@ -306,8 +323,14 @@ const FormEslah = ({ data }) => {
     formDataToSend.append("body", des);
     formDataToSend.append("date", newDate);
     formDataToSend.append("request_plan_id", id);
-    formDataToSend.append("imam_letter", imamLetter[0]);
-    formDataToSend.append("area_interface_letter", connectionLetter[0]);
+    
+    if (imamLetter && imamLetter[0]) {
+      formDataToSend.append("imam_letter", imamLetter[0]);
+    }
+    
+    if (connectionLetter && connectionLetter[0]) {
+      formDataToSend.append("area_interface_letter", connectionLetter[0]);
+    }
     
     setLoading(true);
 
@@ -428,7 +451,7 @@ const FormEslah = ({ data }) => {
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل پیوست نامه امام جماعت <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
+            آپلود فایل پیوست نامه امام جماعت {data?.imam_letter && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
           </h3>
           <label
             htmlFor="file-upload_1"
@@ -446,7 +469,7 @@ const FormEslah = ({ data }) => {
               alt="#"
               width={0}
               height={0}
-              src={file1Uploaded ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+              src={file1Uploaded ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
             />
             <input
               id="file-upload_1"
@@ -455,14 +478,14 @@ const FormEslah = ({ data }) => {
               className="hidden"
               onChange={(event) => handleFile1(event)}
             />
-            <span>{statusFile1}</span>
+            <small>{statusFile1}</span>
           </label>
           {imamLetterError && <p className="text-red-500 text-sm mt-1">{imamLetterError}</p>}
         </div>
 
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل نامه رابط منطقه <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
+            آپلود فایل نامه رابط منطقه {data?.area_interface_letter && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
           </h3>
           <label
             htmlFor="file-upload_2"
@@ -480,7 +503,7 @@ const FormEslah = ({ data }) => {
               alt="#"
               width={0}
               height={0}
-              src={file2Uploaded ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+              src={file2Uploaded ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
             />
             <input
               id="file-upload_2"
@@ -489,7 +512,7 @@ const FormEslah = ({ data }) => {
               className="hidden"
               onChange={(event) => handleFile2(event)}
             />
-            <span>{statusFile2}</span>
+            <small>{statusFile2}</small>
           </label>
           {connectionLetterError && <p className="text-red-500 text-sm mt-1">{connectionLetterError}</p>}
         </div>

@@ -229,7 +229,7 @@ export default function Role() {
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
                         {info?.requests?.done}
                       </span>
-                      تایید شده
+                      تایید و ارسال
                     </div>
                     <div className="flex items-center">
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#FFD140] text-white inline-block">
@@ -277,7 +277,7 @@ export default function Role() {
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
                         {info?.reports?.done}
                       </span>
-                      تایید شده
+                      تایید و ارسال
                     </div>
                     <div className="flex items-center">
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#FFD140] text-white inline-block">

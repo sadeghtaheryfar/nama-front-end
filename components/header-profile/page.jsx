@@ -93,7 +93,7 @@ const Header = ({bgBox,bgRole}) => {
     return (
         <>
             <img
-                className="w-12 lg:w-16"
+                className="w-12 lg:w-16 rounded-full"
                 alt="user"
                 width={0}
                 height={0}
@@ -104,28 +104,30 @@ const Header = ({bgBox,bgRole}) => {
                 <span className="text-[10px] lg:text-sm font-medium">شناسه یکتا : {profile?.data?.id || ' '}</span>
                 </div>
 
-                <div style={{ backgroundColor: bgRole }} className='relative z-[12] px-2 py-1 rounded-xl cursor-pointer' onClick={() => setShowRoleMenu(!showRoleMenu)}>
-                    <div className='flex justify-between items-center gap-6 sm:gap-8 lg:gap-16 cursor-pointer'>
-                        <span className='text-xs lg:text-base font-medium'>نقش</span>
-                        <img className='w-5' alt='#' width={0} height={0} src={'/Images/home/edit-2.svg'} />
-                    </div>
-                    <span className='text-[10px] lg:text-sm'>
-                        {translateNama(profile?.data?.nama_role)}
-                    </span>
-                    {(showRoleMenu && itemId) && (
-                        <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
-                            {profile?.data?.roles?.map((role) => (
-                                <a
-                                    href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
-                                    key={role.role_en}
-                                    className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex'
-                                >
-                                    {role.role}
-                                </a>
-                            ))}
+                {pathname != '/' && (
+                    <div style={{ backgroundColor: bgRole }} className='relative z-[12] px-2 py-1 rounded-xl cursor-pointer' onClick={() => setShowRoleMenu(!showRoleMenu)}>
+                        <div className='flex justify-between items-center gap-6 sm:gap-8 lg:gap-16 cursor-pointer'>
+                            <span className='text-xs lg:text-base font-medium'>نقش</span>
+                            <img className='w-5' alt='#' width={0} height={0} src={'/Images/home/edit-2.svg'} />
                         </div>
-                    )}
-                </div>
+                        <span className='text-[10px] lg:text-sm'>
+                            {translateNama(profile?.data?.nama_role)}
+                        </span>
+                        {(showRoleMenu && itemId) && (
+                            <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
+                                {profile?.data?.roles?.map((role) => (
+                                    <a
+                                        href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
+                                        key={role.role_en}
+                                        className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex'
+                                    >
+                                        {role.role}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <div className="flex flex-col leading-7">
                 <span className="text-xs lg:text-base font-medium">سطح دسترسی</span>

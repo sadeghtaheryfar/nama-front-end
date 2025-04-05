@@ -338,7 +338,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
                 alt="#"
                 width={0}
                 height={0}
-                src={images.length > 0 ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+                src={images.length > 0 ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
               />
               <input
                 id="file-upload_1"
@@ -386,7 +386,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
                 alt="#"
                 width={0}
                 height={0}
-                src={video ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+                src={video ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
               />
               <input
                 id="file-upload_2"
@@ -395,6 +395,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
                 onChange={handleVideoUpload}
               />
             </label>
+            <small className="text-yellow-600">در صورت گویا نبودن گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
             {video && (
               <div className="mt-2 w-full">
                 <video controls className="w-full rounded-lg">

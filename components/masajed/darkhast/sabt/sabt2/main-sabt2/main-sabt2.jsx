@@ -16,6 +16,32 @@ const MainSabt2 = () => {
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
 
+  const [typeField, setTypeField] = useState(null);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
+        if (response.data) {
+          if(response?.data?.data?.title == "مساجد")
+          {
+            setTypeField('امام جماعت')
+          }else if(response?.data?.data?.title == "مدارس")
+          {
+            setTypeField('مدیر')
+          }
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      }
+    };
+    fetching();
+  }, []);
+
   const id = params.get("id");
 
   function formatNumber(num) {
@@ -27,7 +53,7 @@ const MainSabt2 = () => {
   }
 
   function formatPrice(num) {
-    return Math.floor(num).toLocaleString("fa-IR") + " تومان";
+    return Math.floor(num).toLocaleString("fa-IR") + " ریال";
   }
 
   const [requestData, setRequsestData] = useState("");
@@ -164,7 +190,7 @@ const MainSabt2 = () => {
                     <span>
                       درخواست
                       <span className="text-[#D5B260] font-bold">
-                        {requestData.previous_requests} از {requestData.max_allocated_request}
+                        {requestData.previous_requests + 1} از {requestData.max_allocated_request}
                       </span>
                       (تنها {requestData.max_allocated_request - requestData.previous_requests} درخواست
                       باقی مانده است)
@@ -197,26 +223,31 @@ const MainSabt2 = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-                <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                  فایل پیوست نامه امام جماعت:
-                </h3>
-                <a href={formData?.data?.imam_letter?.original}>
-                  <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                    برای مشاهده فایل کلیک کنید
-                  </button>
-                </a>
-              </div>
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
-                <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                  فایل نامه رابط منطقه:
-                </h3>
-                <a href={formData?.data?.area_interface_letter?.original}>
-                  <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                    برای مشاهده فایل کلیک کنید
-                  </button>
-                </a>
-              </div>
+              {(formData?.data?.imam_letter?.original) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                    فایل پیوست نامه {typeField}:
+                  </h3>
+                  <a href={formData?.data?.imam_letter?.original}>
+                    <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
+                      برای مشاهده فایل کلیک کنید
+                    </button>
+                  </a>
+                </div>
+              )}
+              
+              {(formData?.data?.area_interface_letter?.original) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                    فایل نامه رابط منطقه:
+                  </h3>
+                  <a href={formData?.data?.area_interface_letter?.original}>
+                    <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
+                      برای مشاهده فایل کلیک کنید
+                    </button>
+                  </a>
+                </div>
+              )}
               <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
                 <span className="text-base lg:text-lg">هزینه پرداختی توسط آرمان: </span>
                 <span className="text-base lg:text-2xl font-bold text-[#39A894]">{formatPrice(formData?.data?.total_amount)}</span>

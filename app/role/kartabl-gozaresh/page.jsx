@@ -208,7 +208,7 @@ export default function Kartabl() {
                 <div className="flex items-center justify-center bg-[#77b7dc80] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.reports?.done}</div>
                 </div>
-                برای مشاهده تایید شده کلیک کنید
+                برای مشاهده تایید و ارسال کلیک کنید
               </div>
               <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#dc262680] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
@@ -255,7 +255,7 @@ export default function Kartabl() {
                             ? (filters.status === "rejected" ? "رد شده" 
                               : filters.status === "in_progress" ? "جاری" 
                               : filters.status === "action_needed" ? "نیازمند اصلاح" 
-                              : filters.status === "done" ? "تایید شده" 
+                              : filters.status === "done" ? "تایید و ارسال" 
                               : "وضعیت نامشخص") 
                             : "فیلتر درخواست‌ها"}
                         </span>
@@ -267,7 +267,7 @@ export default function Kartabl() {
                           <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
                           <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
                           <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید شده</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید و ارسال</div>
                         </div>
                       )}
                     </div>
@@ -327,7 +327,7 @@ export default function Kartabl() {
                         {request.status === "rejected" ? "رد شده" : 
                           request.status === "in_progress" ? "جاری" : 
                           request.status === "action_needed" ? "نیازمند اصلاح" : 
-                          request.status === "done" ? "تایید شده" : "نامشخص"}
+                          request.status === "done" ? "تایید و ارسال" : "نامشخص"}
                       </span>
                     </div>
 
@@ -393,7 +393,7 @@ export default function Kartabl() {
                             {request.status === "rejected" ? "رد شده" : 
                               request.status === "in_progress" ? "جاری" : 
                               request.status === "action_needed" ? "نیازمند اصلاح" : 
-                              request.status === "done" ? "تایید شده" : "نامشخص"}
+                              request.status === "done" ? "تایید و ارسال" : "نامشخص"}
                           </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">

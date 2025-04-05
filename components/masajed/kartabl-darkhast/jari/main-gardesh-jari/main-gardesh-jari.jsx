@@ -1,6 +1,9 @@
 import { toPersianDate  } from "../../../../../components/utils/toPersianDate";
 import { formatPrice  } from "../../../../../components/utils/formatPrice";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
 
 const MainGardeshJari = ({data}) => {
   function formatNumber(num) {
@@ -10,6 +13,33 @@ const MainGardeshJari = ({data}) => {
       return Math.floor(num / 1000000) + " میلیون";
     }
   }
+
+  const pathname = usePathname();
+  const [typeField, setTypeField] = useState(null);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
+        if (response.data) {
+          if(response?.data?.data?.title == "مساجد")
+          {
+            setTypeField('امام جماعت')
+          }else if(response?.data?.data?.title == "مدارس")
+          {
+            setTypeField('مدیر')
+          }
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      }
+    };
+    fetching();
+  }, []);
   
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
@@ -101,7 +131,7 @@ const MainGardeshJari = ({data}) => {
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
             <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل پیوست نامه امام جماعت:
+              فایل پیوست نامه {typeField}:
             </h3>
             <a href={data?.data?.imam_letter?.original}>
               <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">

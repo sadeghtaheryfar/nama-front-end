@@ -29,14 +29,17 @@ function RootLayout({ children }) {
         "RootLayout.useEffect": ()=>{
             const fetching = {
                 "RootLayout.useEffect.fetching": async ()=>{
-                    const accessToken = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("token");
-                    const token = params.get("jwt");
-                    if (token) {
-                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].set("token", token);
+                    // بررسی اگر توکن از URL آمده است
+                    const tokenFromParams = params.get("jwt");
+                    if (tokenFromParams) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].set("token", tokenFromParams);
                         window.history.replaceState(null, "", "/");
                         return;
                     }
+                    // بررسی اگر توکن در کوکی ذخیره شده
+                    const accessToken = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("token");
                     if (!accessToken) {
+                        // اگر توکن وجود نداشت، به صفحه لاگین هدایت می‌کنیم
                         try {
                             const url = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/url");
                             if (url.data) {
@@ -45,8 +48,30 @@ function RootLayout({ children }) {
                         } catch (error) {
                             console.log(error);
                         }
-                    // router.push("/");
-                    } else {}
+                    } else {
+                        // اگر توکن وجود داشت، اعتبار آن را با API پروفایل بررسی می‌کنیم
+                        try {
+                            await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`/api/profile`, {
+                                headers: {
+                                    Accept: "application/json",
+                                    Authorization: `bearer ${accessToken}`
+                                }
+                            });
+                        // اگر خطایی نبود، یعنی توکن معتبر است
+                        } catch (error) {
+                            console.log("توکن نامعتبر است:", error);
+                            // در صورت خطا، توکن را حذف می‌کنیم و کاربر را به صفحه لاگین هدایت می‌کنیم
+                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].remove("token");
+                            try {
+                                const url = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/url");
+                                if (url.data) {
+                                    router.push(url.data.verify_url);
+                                }
+                            } catch (urlError) {
+                                console.log(urlError);
+                            }
+                        }
+                    }
                 }
             }["RootLayout.useEffect.fetching"];
             fetching();
@@ -61,17 +86,17 @@ function RootLayout({ children }) {
                 children: children
             }, void 0, false, {
                 fileName: "[project]/app/layout.jsx",
-                lineNumber: 47,
+                lineNumber: 71,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/layout.jsx",
-            lineNumber: 46,
+            lineNumber: 70,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.jsx",
-        lineNumber: 45,
+        lineNumber: 69,
         columnNumber: 5
     }, this);
 }

@@ -136,13 +136,22 @@ const MainMasajed = () => {
             <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-12">
               {/* کارت درخواست‌های فعال */}
               <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#39A894] transition-all duration-200">
-                <Image
-                  className="w-16 pb-4"
-                  alt="#"
-                  width={0}
-                  height={0}
-                  src={"/Images/masajed/cart/tik.svg"}
-                />
+                <div className="flex justify-between">
+                  <Image
+                    className="w-16 pb-4"
+                    alt="#"
+                    width={0}
+                    height={0}
+                    src={"/Images/masajed/cart/tik.svg"}
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
+                      <span className="text-base">{info?.plans}</span>
+                      <span className="text-xs text-[#808393]">درخواست های فعال</span>
+                    </div>
+                  </div>
+                </div>
                 <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های فعال</h2>
                 <p className="text-xs font-medium text-slate-400 leading-6">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
@@ -222,7 +231,7 @@ const MainMasajed = () => {
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
                       <span className="text-base">{info?.reports?.in_progress}</span>
-                      <span className="text-xs text-[#808393]"> جاری</span>
+                      <span className="text-xs text-[#808393]">باز</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>

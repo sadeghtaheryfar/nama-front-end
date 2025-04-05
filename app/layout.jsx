@@ -15,16 +15,19 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const fetching = async () => {
-      const accessToken = Cookies.get("token");
-
-      const token = params.get("jwt");
-
-      if (token) {
-        Cookies.set("token", token);
+      // بررسی اگر توکن از URL آمده است
+      const tokenFromParams = params.get("jwt");
+      if (tokenFromParams) {
+        Cookies.set("token", tokenFromParams);
         window.history.replaceState(null, "", "/");
         return;
       }
+
+      // بررسی اگر توکن در کوکی ذخیره شده
+      const accessToken = Cookies.get("token");
+      
       if (!accessToken) {
+        // اگر توکن وجود نداشت، به صفحه لاگین هدایت می‌کنیم
         try {
           const url = await axios.get("/api/url");
           if (url.data) {
@@ -33,11 +36,32 @@ export default function RootLayout({ children }) {
         } catch (error) {
           console.log(error);
         }
-        // router.push("/");
       } else {
-        
+        // اگر توکن وجود داشت، اعتبار آن را با API پروفایل بررسی می‌کنیم
+        try {
+          await axios.get(`/api/profile`, {
+            headers: {
+              Accept: "application/json",
+              Authorization: `bearer ${accessToken}`,
+            },
+          });
+          // اگر خطایی نبود، یعنی توکن معتبر است
+        } catch (error) {
+          console.log("توکن نامعتبر است:", error);
+          // در صورت خطا، توکن را حذف می‌کنیم و کاربر را به صفحه لاگین هدایت می‌کنیم
+          Cookies.remove("token");
+          try {
+            const url = await axios.get("/api/url");
+            if (url.data) {
+              router.push(url.data.verify_url);
+            }
+          } catch (urlError) {
+            console.log(urlError);
+          }
+        }
       }
     };
+    
     fetching();
   }, []);
 

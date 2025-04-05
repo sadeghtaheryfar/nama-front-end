@@ -10,7 +10,7 @@ import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
-const FormSabt = ({ id }) => {
+const FormSabt = ({ id,data }) => {
   const router = useRouter();
 
   const pathname = usePathname();
@@ -29,6 +29,42 @@ const FormSabt = ({ id }) => {
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [isImamLetterRequired, setIsImamLetterRequired] = useState(false);
+  const [isAreaLetterRequired, setIsAreaLetterRequired] = useState(false);
+
+  const [typeField, setTypeField] = useState(null);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const pathSegments = pathname.split("/");
+    const itemId = pathSegments[1];
+
+    const fetching = async () => {
+      try {
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
+        if (response.data) {
+          if(response?.data?.data?.title == "مساجد")
+          {
+            setTypeField('امام جماعت')
+          }else if(response?.data?.data?.title == "مدارس")
+          {
+            setTypeField('مدیر')
+          }
+        }
+      } catch (error) {
+        console.log("خطا در دریافت بنرها:", error);
+      }
+    };
+    fetching();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setIsImamLetterRequired(data.imam_letter === true);
+      setIsAreaLetterRequired(data.area_interface_letter === true);
+    }
+  }, [data]);
 
   // Validation states
   const [errors, setErrors] = useState({
@@ -105,41 +141,63 @@ const FormSabt = ({ id }) => {
   };
 
   const handleFile1 = (event) => {
+    setStatusSend("");
+    
+    // Check if file is selected
     if (event.target.value === "") {
       setStatusFile1("مقدار فایل وجود ندارد");
       setErrors({ ...errors, imamLetter: "این فیلد الزامی است" });
       setTouched({ ...touched, imamLetter: true });
       return;
     }
-    if (true) {
-      setImamLetter(event.target.files);
-      setStatusFile1("مقدار فایل وجود ندارد");
+    
+    // Get the file
+    const files = event.target.files;
+    const file = files[0];
+    
+    // Check if the file is an image
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+    const isValidFileType = file && allowedTypes.includes(file.type);
+    
+    if (isValidFileType) {
+      setImamLetter(files);
+      setStatusFile1("فایل مورد نظر انتخاب شد");
       setErrors({ ...errors, imamLetter: "" });
       setTouched({ ...touched, imamLetter: true });
     } else {
       setStatusFile1("فرمت فایل انتخابی مجاز نمی باشد");
-      setErrors({ ...errors, imamLetter: "فرمت فایل انتخابی مجاز نمی باشد" });
+      setErrors({ ...errors, imamLetter: "فقط فایل‌های عکس مجاز هستند" });
       setTouched({ ...touched, imamLetter: true });
     }
   };
 
   const handleFile2 = (event) => {
     setStatusSend("");
-
+    
+    // Check if file is selected
     if (event.target.value === "") {
       setStatusFile2("مقدار فایل وجود ندارد");
       setErrors({ ...errors, connectionLetter: "این فیلد الزامی است" });
       setTouched({ ...touched, connectionLetter: true });
       return;
     }
-    if (true) {
-      setConntectionLetter(event.target.files);
+    
+    // Get the file
+    const files = event.target.files;
+    const file = files[0];
+    
+    // Check if the file is an image
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+    const isValidFileType = file && allowedTypes.includes(file.type);
+    
+    if (isValidFileType) {
+      setConntectionLetter(files);
       setStatusFile2("فایل مورد نظر انتخاب شد");
       setErrors({ ...errors, connectionLetter: "" });
       setTouched({ ...touched, connectionLetter: true });
     } else {
       setStatusFile2("فرمت فایل انتخابی مجاز نمی باشد");
-      setErrors({ ...errors, connectionLetter: "فرمت فایل انتخابی مجاز نمی باشد" });
+      setErrors({ ...errors, connectionLetter: "فقط فایل‌های عکس مجاز هستند" });
       setTouched({ ...touched, connectionLetter: true });
     }
   };
@@ -188,6 +246,20 @@ const FormSabt = ({ id }) => {
     setTouched({ ...touched, time: true });
   };
 
+  const validateImamLetter = (value) => {
+    if (isImamLetterRequired && !value) {
+      return `فایل نامه ${typeField} الزامی است`;
+    }
+    return "";
+  };
+  
+  const validateAreaLetter = (value) => {
+    if (isAreaLetterRequired && !value) {
+      return "فایل نامه رابط منطقه الزامی است";
+    }
+    return "";
+  };
+
   const convertPersianToEnglish = (str) => {
     const persianNumbers = "۰۱۲۳۴۵۶۷۸۹";
     const englishNumbers = "0123456789";
@@ -211,8 +283,8 @@ const FormSabt = ({ id }) => {
     const newErrors = {
       student: validateStudent(student),
       time: validateTime(time),
-      imamLetter: imamLetter ? "" : "فایل نامه امام جماعت الزامی است",
-      connectionLetter: connectionLetter ? "" : "فایل نامه رابط منطقه الزامی است",
+      imamLetter: validateImamLetter(imamLetter),
+      connectionLetter: validateAreaLetter(connectionLetter),
     };
 
     setErrors(newErrors);
@@ -242,8 +314,14 @@ const FormSabt = ({ id }) => {
     formDataToSend.append("body", des);
     formDataToSend.append("date", englishTime);
     formDataToSend.append("request_plan_id", id);
-    formDataToSend.append("imam_letter", imamLetter[0]);
-    formDataToSend.append("area_interface_letter", connectionLetter[0]);
+    
+    if (imamLetter && imamLetter[0]) {
+      formDataToSend.append("imam_letter", imamLetter[0]);
+    }
+    
+    if (connectionLetter && connectionLetter[0]) {
+      formDataToSend.append("area_interface_letter", connectionLetter[0]);
+    }
 
     setLoading(true);
 
@@ -295,6 +373,18 @@ const FormSabt = ({ id }) => {
     <span className="text-red-500 mr-1" style={{ fontFamily : 'none' }}>*</span>
   );
 
+  function formatToCurrency(amount) {
+    const number = Number(amount);
+    
+    if (isNaN(number)) {
+      return "مقدار وارد شده معتبر نیست";
+    }
+    
+    const formattedNumber = number.toLocaleString("fa-IR");
+    
+    return `${formattedNumber} ریال`;
+  }
+
   return (
     <div className="w-full bg-white rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
@@ -303,7 +393,7 @@ const FormSabt = ({ id }) => {
             htmlFor="options"
             className="block text-base lg:text-lg text-[#3B3B3B] mb-2 "
           >
-            تعداد دانش آموزان نوجوان
+            تعداد دانش آموزان / نوجوان
             <RequiredStar />
           </label>
           <div className="relative">
@@ -351,10 +441,17 @@ const FormSabt = ({ id }) => {
             <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
           )}
           {cost ? (
-            <div className="mt-2 text-sm text-gray-600">
-              <span className="font-medium">مبلغ به حروف: </span>
-              {convertToPersianWords(Number(cost))}
-            </div>
+            <>
+              <div className="mt-2 text-sm text-gray-600">
+                <span className="font-medium">مبلغ به حروف: </span>
+                {convertToPersianWords(Number(cost))}
+              </div>
+
+              <div className="mt-2 text-sm text-gray-600">
+                <span className="font-medium">مبلغ به عدد: </span>
+                {formatToCurrency(cost)}
+              </div>
+            </>
           ) : (
             <small className="mt-2">&nbsp;</small>
           )}
@@ -410,8 +507,8 @@ const FormSabt = ({ id }) => {
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل پیوست نامه امام جماعت
-            <RequiredStar />
+            آپلود فایل پیوست نامه {typeField}
+            {isImamLetterRequired && <RequiredStar />}
           </h3>
           <label
             htmlFor="file-upload_1"
@@ -430,7 +527,7 @@ const FormSabt = ({ id }) => {
                 alt="تأیید آپلود"
                 width={0}
                 height={0}
-                src={"/Images/masajed/upload.png"}
+                src={"/Images/masajed/upload.svg"}
               />
             ) : (
               <Image
@@ -448,7 +545,7 @@ const FormSabt = ({ id }) => {
               className="hidden"
               onChange={(event) => handleFile1(event)}
             />
-            <span>{statusFile1}</span>
+            <small>{statusFile1}</small>
           </label>
           {touched.imamLetter && errors.imamLetter && (
             <div className="text-red-500 text-sm mt-1">{errors.imamLetter}</div>
@@ -458,7 +555,7 @@ const FormSabt = ({ id }) => {
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
             آپلود فایل نامه رابط منطقه
-            <RequiredStar />
+            {isAreaLetterRequired && <RequiredStar />}
           </h3>
           <label
             htmlFor="file-upload_2"
@@ -477,7 +574,7 @@ const FormSabt = ({ id }) => {
                 alt="تأیید آپلود"
                 width={0}
                 height={0}
-                src={"/Images/masajed/upload.png"}
+                src={"/Images/masajed/upload.svg"}
               />
             ) : (
               <Image
@@ -495,7 +592,7 @@ const FormSabt = ({ id }) => {
               className="hidden"
               onChange={(event) => handleFile2(event)}
             />
-            <span>{statusFile2}</span>
+            <small>{statusFile2}</small>
           </label>
           {touched.connectionLetter && errors.connectionLetter && (
             <div className="text-red-500 text-sm mt-1">

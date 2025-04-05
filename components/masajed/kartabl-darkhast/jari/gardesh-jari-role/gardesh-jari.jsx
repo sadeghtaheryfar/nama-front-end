@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 const GardeshJariRole = ({data}) => {
   const searchParams = useSearchParams();
   const itemId = searchParams.get("item_id");
+  console.log('>>>>>>>>>>>', data?.data)
 
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
@@ -30,11 +31,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
             ) : data?.data?.data?.status == 'rejected' ? (
@@ -48,11 +50,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
             ) : (
@@ -66,11 +69,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
             )}
@@ -90,6 +94,7 @@ const GardeshJariRole = ({data}) => {
             <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
             <div className="absolute top-1 right-full mr-4 w-max">
               <span className="text-sm text-[#25C7AA]">تایید سر مربی مسجد</span>
+              <p>{data?.data?.data?.body}</p>
             </div>
           </div>
         )}
@@ -108,11 +113,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
             ) : data?.data?.data?.status == 'rejected' ? (
@@ -126,11 +132,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
             ) : (
@@ -144,11 +151,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
             )}
@@ -170,6 +178,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید مسئول فرهنگی مسجد
               </span>
+              <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
             </div>
           </div>
         ) : (
@@ -189,6 +198,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید مسئول فرهنگی مسجد
               </span>
+              <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
             </div>
           </div>
         )}
@@ -207,11 +217,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
             ) : data?.data?.data?.status == 'rejected' ? (
@@ -225,11 +236,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
             ) : (
@@ -243,11 +255,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
             )}
@@ -269,6 +282,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#959595]">
               تایید  رابط منطقه 
               </span>
+              <p>{data?.data?.data?.messages?.area_interface}</p>
             </div>
           </div>
         ) : (
@@ -288,6 +302,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید  رابط منطقه 
               </span>
+              <p>{data?.data?.data?.messages?.area_interface}</p>
             </div>
           </div>
         )}
@@ -306,11 +321,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
             ) : data?.data?.data?.status == 'rejected' ? (
@@ -324,11 +340,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
             ) : (
@@ -342,11 +359,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
             )}
@@ -368,6 +386,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید معاونت اجرایی مساجد 
               </span>
+              <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
             </div>
           </div>
         ) : (
@@ -387,6 +406,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید معاونت اجرایی مساجد 
               </span>
+              <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
             </div>
           </div>
         )}
@@ -405,11 +425,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : data?.data?.data?.status == 'rejected' ? (
@@ -423,11 +444,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : (
@@ -441,11 +463,12 @@ const GardeshJariRole = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             )}
@@ -467,6 +490,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید معاونت طرح و برنامه 
               </span>
+              <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
             </div>
           </div>
         ) : (
@@ -486,6 +510,7 @@ const GardeshJariRole = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید معاونت طرح و برنامه 
               </span>
+              <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
             </div>
           </div>
         )}
@@ -560,7 +585,6 @@ const GardeshJariRole = ({data}) => {
               <div className="w-full h-[2px] border-b border-dashed border-[#25C7AA]"></div>
             </div>
             <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید سر مربی مسجد</span>
-
           </div>
         )}
 
@@ -908,6 +932,28 @@ const GardeshJariRole = ({data}) => {
             <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرح و برنامه</span>
           </div>
         )}
+      </div>
+      
+      <div className="hidden lg:flex items-end justify-between">
+        <div className="w-full flex flex-col items-start">
+          <p>{data?.data?.data?.body}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.area_interface}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
+        </div>
       </div>
     </div>
   );

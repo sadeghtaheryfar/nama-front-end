@@ -7,12 +7,11 @@ const CartsDarkhastFuture = ({ image, title, id, body }) => {
         <img
           className="min-w-[68px] lg:min-w-24 rounded-[0.5rem]"
           src={image}
-          style={{ width: "200px", height: "100px", objectFit: "cover" }}
+          style={{ width: "100px", height: "100px", objectFit: "cover" }}
         />
         <div className="flex flex-col gap-1.5">
           <h2 className="text-base font-bold">{title || "بدون نام"}</h2>
-          <span className="text-xs font-medium lg:text-base">شماره: {id || 0}</span>
-          <p className="hidden lg:block text-xs text-[#808393] leading-5">{body}</p>
+          <p className="text-xs text-[#808393] leading-5">{body}</p>
         </div>
       </div>
       {/* <p className="text-xs text-[#808393] leading-5 lg:hidden">

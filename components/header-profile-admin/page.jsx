@@ -82,7 +82,7 @@ const Header = ({ bgBox, bgRole }) => {
     return (
         <>
             <img
-                className='w-12 lg:w-16'
+                className='w-12 lg:w-16 rounded-full ml-4'
                 alt='user'
                 width={0}
                 height={0}

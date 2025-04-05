@@ -48,7 +48,7 @@ const GozareshKartablGozaresh = () => {
           <span className="text-lg font-semibold text-white flex items-center justify-center outline outline-8 outline-[#77B7DC]/30 rounded-full xl:outline-[14px] bg-[#77B7DC] w-8 h-8 pt-1.5 xl:h-12 xl:w-12 xl:text-[28px]">
             {info?.reports?.in_progress ? info?.reports?.in_progress : '0'}
           </span>
-          <span className="text-sm font-semibold text-[#77B7DC] xl:text-lg 2xl:text-[22px]">جاری</span>
+          <span className="text-sm font-semibold text-[#77B7DC] xl:text-lg 2xl:text-[22px]">باز</span>
         </div>
         <div className="flex items-center justify-start gap-5 h-8 w-32 rounded-full bg-[#D32F2F]/5 border border-[#D32F2F] lg:w-36 xl:w-44 xl:h-12 2xl:w-48">
           <span className="text-lg font-semibold text-white flex items-center justify-center outline outline-8 outline-[#D32F2F]/30 rounded-full xl:outline-[14px] bg-[#D32F2F] w-8 h-8 pt-1.5 xl:h-12 xl:w-12 xl:text-[28px]">

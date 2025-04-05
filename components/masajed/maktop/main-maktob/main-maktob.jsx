@@ -56,7 +56,6 @@ const MainMaktob = ({ token }) => {
   const validateForm = () => {
     let newErrors = {};
     if (!formData.title.trim()) newErrors.title = "عنوان درخواست الزامی است.";
-    if (!formData.letter) newErrors.letter = "آپلود عکس نامه الزامی است.";
     if (!formData.sign) newErrors.sign = "آپلود عکس امضا الزامی است.";
     if (!formData.body.trim()) newErrors.body = "متن نامه نباید خالی باشد.";
     if (!formData.checked) newErrors.checked = "تیک تأیید الزامی است.";
@@ -85,11 +84,15 @@ const MainMaktob = ({ token }) => {
     if (!validateForm()) return;
 
     setLoading(true);
+    console.log('>>>>>>>>>>>', formData)
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("body", formData.body);
     formDataToSend.append("reference_to", formData.reference_to);
-    formDataToSend.append("letter", formData.letter);
+    if(formData.letter)
+    {
+      formDataToSend.append("letter", formData.letter);
+    }
     formDataToSend.append("sign", formData.sign);
 
     try {
@@ -130,6 +133,18 @@ const MainMaktob = ({ token }) => {
       setLoading(false);
     }
   };
+
+  const translateRole = (role) => {
+    if (role === "deputy_for_planning_and_programming") {
+        return "معاونت اجرایی مساجد";
+    } else if (role === "super_admin") {
+        return "سوپر ادمین";
+    } else if (role === "executive_vice_president_mosques") {
+        return "معاونت طرح و برنامه";
+    } else {
+        return "نامشخص";
+    }
+};
 
   return (
     <div className="bg-header-masjed bg-repeat-x bg-auto lg:bg-header-masjed-desktop lg:bg-no-repeat lg:bg-contain px-7">
@@ -198,7 +213,7 @@ const MainMaktob = ({ token }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-2 xl:gap-x-6 2xl:gap-x-8">
                   <div className="mb-4">
                     <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-                      آپلود عکس نامه <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+                      آپلود عکس نامه
                     </h3>
                     <label
                       htmlFor="letter"
@@ -214,7 +229,7 @@ const MainMaktob = ({ token }) => {
                         alt="#"
                         width={0}
                         height={0}
-                        src={formData.letter ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+                        src={formData.letter ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
                       />
                       <input
                         id="letter"
@@ -247,7 +262,7 @@ const MainMaktob = ({ token }) => {
                         alt="#"
                         width={0}
                         height={0}
-                        src={formData.sign ? "/Images/masajed/upload.png" : "/Images/masajed/darkhast/sabt/Group.svg"}
+                        src={formData.sign ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
                       />
                       <input
                         id="sign"
@@ -287,7 +302,7 @@ const MainMaktob = ({ token }) => {
               </div>
               <hr className="h-0.5 mb-4 md:hidden" />
               <div className="hidden w-1 bg-gray-300 md:block"></div>
-              <div className="mb-4 flex flex-col gap-4 border rounded-xl p-4 pt-6 max-w-lg md:mt-9 md:mx-7 lg:mt-12 xl:mx-14 xl:p-6 xl:pt-8">
+              <div className="mb-4 flex flex-col gap-4 border rounded-xl p-4 pt-6 max-w-lg md:mt-9 md:mx-7 lg:mt-12 xl:mx-14 xl:p-6 xl:pt-8 min-w-[18rem]">
                 <div className="flex items-center justify-center gap-3 pb-2">
                   <Image
                     className="w-7 xl:w-8"
@@ -308,16 +323,11 @@ const MainMaktob = ({ token }) => {
                   به نام خدا
                 </span>
                 <span className="text-sm text-[#3B3B3B] xl:text-base ">
-                  عنوان: درخواست شماره ۵۰۴
+                  عنوان: {formData?.title}
                 </span>
-                <span className="text-sm text-[#3B3B3B] xl:text-base ">ارجاع: بخش میدیریت</span>
+                <span className="text-sm text-[#3B3B3B] xl:text-base ">ارجاع: {translateRole(formData?.reference_to)}</span>
                 <p className="text-xs leading-6 xl:text-base xl:leading-9">
-                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                  گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و
-                  برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع حال و آینده شناخت فراوان
-                  جامعه و متخصصان را تا با نرم افزارها شناخت بیشتری را طراحان رایانه ای علی الخصوص
-                  طراحان خلاقلی قرار گیردلورم ایپسوم متن ساختگی با تولید چاپگرها و متون بلکه روزنامه
-                  و مجله در ستون و سطرآنچنان که لازم است.
+                  {formData?.body}
                 </p>
                 <div className="flex justify-end">
                   <Image

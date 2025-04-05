@@ -61,7 +61,7 @@ const MainSabt = () => {
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              سرانه حمایتی هر نفر به مبلغ {formatNumber(
+              سرانه حمایتی هر نفر به مبلغ حداکثر {formatNumber(
                 requestData.support_for_each_person_amount
               )}{" "}
               تومان میباشد.
@@ -69,7 +69,7 @@ const MainSabt = () => {
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
               {requestData.expires_at === null
-                ? "ندارد"
+                ? "فاقد محدودیت زمانی"
                 : `محدود مهلت زمانی انتخاب این درخواست تا تاریخ ${requestData.expires_at} میباشد.`}
             </li>
           </ul>
@@ -77,7 +77,7 @@ const MainSabt = () => {
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
               تعداد دفعات مجاز شما برای این درخواست {requestData.max_allocated_request || 0} عدد
-              میباشد و پس از ثبت سومین درخواست، دسترسی به این بخش برای شما مقدور نیست.{" "}
+              میباشد و پس از ثبت {requestData.max_allocated_request || 0} درخواست، دسترسی به این بخش برای شما مقدور نیست.{" "}
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
@@ -88,7 +88,7 @@ const MainSabt = () => {
                 <span>
                   درخواست
                   <span className="text-[#D5B260] font-bold">
-                    {requestData.previous_requests} از {requestData.max_allocated_request}
+                    {requestData.previous_requests + 1} از {requestData.max_allocated_request}
                   </span>
                   (تنها {requestData.max_allocated_request - requestData.previous_requests} درخواست
                   باقی مانده است)
@@ -99,7 +99,7 @@ const MainSabt = () => {
         </div>
       </div>
       <hr className="hidden md:block h-2 mb-10" />
-      <FormSabt id={params.get("id")} />
+      <FormSabt id={params.get("id")} data={requestData} />
     </div>
   );
 };
