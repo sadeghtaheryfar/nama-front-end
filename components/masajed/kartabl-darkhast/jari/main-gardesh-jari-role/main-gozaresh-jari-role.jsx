@@ -333,25 +333,29 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 2xl:gap-6">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل پیوست ویدئو:
-            </h3>
-            
-            <div className="flex flex-wrap w-full gap-[1rem]">
-              <a href={data?.data?.video?.original}>
-                <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                  برای مشاهده فایل کلیک کنید
-                </button>
-                </a>
+          {(data?.data?.video?.original) && (
+            <div className="flex flex-col gap-4 2xl:gap-6">
+              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                فایل پیوست ویدئو:
+              </h3>
+              
+              <div className="flex flex-wrap w-full gap-[1rem]">
+                <a href={data?.data?.video?.original}>
+                  <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
+                    برای مشاهده فایل کلیک کنید
+                  </button>
+                  </a>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
-      <hr className="hidden md:block h-2 my-10" />
 
+      {((data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) || data?.data?.status != "in_progress") && (
+        <hr className="hidden md:block h-2 my-10" />
+      )}
 
-      {(data?.data?.status == "in_progress") && (
+      {(data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) && (
         <div className="w-full bg-white rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
             {(data?.data?.need_offer_amount) ? (

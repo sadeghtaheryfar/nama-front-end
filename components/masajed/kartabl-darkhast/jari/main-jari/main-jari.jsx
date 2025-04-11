@@ -44,8 +44,8 @@ const MainJari = () => {
       </div>
       <MainGardeshJari data={requestData}/>
       
-      {requestData?.data?.step == "finish" && requestData?.data?.report == null ? (
-        <MainGardeshMoshahede2 id={params.get("id")}/>
+      {requestData?.data?.step == "finish" && requestData?.data?.report?.status == 'pending' ? (
+        <MainGardeshMoshahede2 id={params.get("id")} data={requestData}/>
       ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && requestData?.data?.report?.status == 'in_progress' || requestData?.data?.report?.status == 'done' ? (
         <MainGardeshMoshahede1 id={params.get("id")} data={requestData}/>
       ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && requestData?.data?.report?.status == 'rejected' ? (

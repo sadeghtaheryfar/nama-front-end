@@ -6,7 +6,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 const GardeshJariRole = ({data}) => {
   const searchParams = useSearchParams();
   const itemId = searchParams.get("item_id");
-  console.log('>>>>>>>>>>>', data?.data)
 
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">

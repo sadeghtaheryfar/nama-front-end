@@ -275,154 +275,158 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           </div>
         </div>
       </div>
-      <hr className="hidden md:block h-2 my-10" />
-        {(data?.data?.status == "in_progress") && (
-          <div className="w-full bg-white rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-              {(data?.data?.need_offer_amount) ? (
-                <div className="mb-4">
-                  <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-                    هزینه پیشنهادی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      id="amount"
-                      value={amount}
-                      onChange={handleAmountChange}
-                      name="amount"
-                      placeholder="در اینجا تایپ کنید …"
-                      className={`block w-full p-4 border rounded-lg text-gray-700 ${
-                        amountError ? "border-red-500 bg-red-50" : amount ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
-                      }`}
-                    />
-                    {amountError && (
-                      <p className="mt-1 text-xs text-red-500">{amountError}</p>
-                    )}
-                  </div>
-                  {amount && !isNaN(amount) && (
-                    <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
-                  )}
-                </div>
-              ) : (data?.data?.need_final_amount) ? (
-                <div className="mb-4">
-                  <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-                    هزینه پرداختی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      id="amount"
-                      value={amount}
-                      onChange={handleAmountChange}
-                      name="amount"
-                      placeholder="در اینجا تایپ کنید …"
-                      className={`block w-full p-4 border rounded-lg text-gray-700 ${
-                        amountError ? "border-red-500 bg-red-50" : amount ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
-                      }`}
-                    />
-                    {amountError && (
-                      <p className="mt-1 text-xs text-red-500">{amountError}</p>
-                    )}
-                  </div>
-                  {amount && !isNaN(amount) && (
-                    <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
-                  )}
-                </div>
-              ) : (
-                <></>
-              )}
-            </div>
 
-            <div className="mb-4 mt-3">
-              <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-                توضیحات تکمیلی {translateRole(role)} <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
-              </label>
-              <textarea
-                className={`block w-full p-4 border rounded-lg text-gray-700 md:h-24 ${
-                  desError ? "border-red-500 bg-red-50" : des ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
-                }`}
-                id="des"
-                name="des"
-                value={des}
-                onChange={handleDesChange}
-                rows="10"
-                cols="15"
-                placeholder="در اینجا تایپ کنید …"
-              />
-              {desError && (
-                <p className="mt-1 text-xs text-red-500">{desError}</p>
+      {((data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) || data?.data?.status != "in_progress") && (
+        <hr className="hidden md:block h-2 my-10" />
+      )}
+      
+      {(data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) && (
+        <div className="w-full bg-white rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
+            {(data?.data?.need_offer_amount) ? (
+              <div className="mb-4">
+                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  هزینه پیشنهادی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="amount"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    name="amount"
+                    placeholder="در اینجا تایپ کنید …"
+                    className={`block w-full p-4 border rounded-lg text-gray-700 ${
+                      amountError ? "border-red-500 bg-red-50" : amount ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
+                    }`}
+                  />
+                  {amountError && (
+                    <p className="mt-1 text-xs text-red-500">{amountError}</p>
+                  )}
+                </div>
+                {amount && !isNaN(amount) && (
+                  <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
+                )}
+              </div>
+            ) : (data?.data?.need_final_amount) ? (
+              <div className="mb-4">
+                <label htmlFor="amount" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  هزینه پرداختی توسط آرمان <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="amount"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    name="amount"
+                    placeholder="در اینجا تایپ کنید …"
+                    className={`block w-full p-4 border rounded-lg text-gray-700 ${
+                      amountError ? "border-red-500 bg-red-50" : amount ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
+                    }`}
+                  />
+                  {amountError && (
+                    <p className="mt-1 text-xs text-red-500">{amountError}</p>
+                  )}
+                </div>
+                {amount && !isNaN(amount) && (
+                  <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
+                )}
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="mb-4 mt-3">
+            <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+              توضیحات تکمیلی {translateRole(role)} <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+            </label>
+            <textarea
+              className={`block w-full p-4 border rounded-lg text-gray-700 md:h-24 ${
+                desError ? "border-red-500 bg-red-50" : des ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
+              }`}
+              id="des"
+              name="des"
+              value={des}
+              onChange={handleDesChange}
+              rows="10"
+              cols="15"
+              placeholder="در اینجا تایپ کنید …"
+            />
+            {desError && (
+              <p className="mt-1 text-xs text-red-500">{desError}</p>
+            )}
+          </div>
+          
+          <div className="flex justify-center w-full flex-col items-center">
+            <div className="flex justify-center items-center flex-row flex-wrap gap-[1rem]">
+              {back_steps && (
+                <button
+                  onClick={() => setShowModal(true)}
+                  className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
+                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#F3BF19] text-white hover:border hover:border-[#F3BF19] hover:text-[#F3BF19] hover:bg-white"
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? 'صبر کنید ...' : 'ارجاع جهت اصلاح'}
+                </button>
               )}
+
+              <button
+                onClick={() => hnadleForm('accept')}
+                className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#39A894] text-white hover:border hover:border-[#39A894] hover:text-[#39A894] hover:bg-white"
+                }`}
+                disabled={loading}
+              >
+                {loading ? 'صبر کنید ...' : 'تایید درخواست'}
+              </button>
+
+              <button
+                onClick={() => hnadleForm('reject')}
+                className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#D32F2F] text-white hover:border hover:border-[#D32F2F] hover:text-[#D32F2F] hover:bg-white"
+                }`}
+                disabled={loading}
+              >
+                {loading ? 'صبر کنید ...' : 'رد کلی'}
+              </button>
             </div>
             
-            <div className="flex justify-center w-full flex-col items-center">
-              <div className="flex justify-center items-center flex-row flex-wrap gap-[1rem]">
-                {back_steps && (
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
-                      loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#F3BF19] text-white hover:border hover:border-[#F3BF19] hover:text-[#F3BF19] hover:bg-white"
-                    }`}
-                    disabled={loading}
-                  >
-                    {loading ? 'صبر کنید ...' : 'ارجاع جهت اصلاح'}
-                  </button>
-                )}
-
-                <button
-                  onClick={() => hnadleForm('accept')}
-                  className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
-                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#39A894] text-white hover:border hover:border-[#39A894] hover:text-[#39A894] hover:bg-white"
-                  }`}
-                  disabled={loading}
-                >
-                  {loading ? 'صبر کنید ...' : 'تایید درخواست'}
-                </button>
-
-                <button
-                  onClick={() => hnadleForm('reject')}
-                  className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
-                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#D32F2F] text-white hover:border hover:border-[#D32F2F] hover:text-[#D32F2F] hover:bg-white"
-                  }`}
-                  disabled={loading}
-                >
-                  {loading ? 'صبر کنید ...' : 'رد کلی'}
-                </button>
-              </div>
-              
-              {message.text && (
-                <p
-                  className={`mt-4 text-center text-sm p-2 rounded-lg ${
-                    message.type === "success"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {message.text}
-                </p>
-              )}
-              <span className="p-2 text-red-600">{statusSend}</span>
-            </div>
+            {message.text && (
+              <p
+                className={`mt-4 text-center text-sm p-2 rounded-lg ${
+                  message.type === "success"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {message.text}
+              </p>
+            )}
+            <span className="p-2 text-red-600">{statusSend}</span>
           </div>
-        )}
+        </div>
+      )}
 
-        {(data?.data?.status != "in_progress") && (
-          <div>
-            <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                هزینه پرداختی توسط آرمان:
-              </h3>
-              <span className="text-base lg:text-lg font-medium">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}</span>
-            </div>
-
-            <div className="mt-[1rem]">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                نظر {data?.data?.last_updated_by}:
-              </h3>
-              <span className="text-base lg:text-lg font-medium">{data?.data?.message}</span>
-            </div>
+      {(data?.data?.status != "in_progress") && (
+        <div>
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+              هزینه پرداختی توسط آرمان:
+            </h3>
+            <span className="text-base lg:text-lg font-medium">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}</span>
           </div>
-        )}
+
+          <div className="mt-[1rem]">
+            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+              نظر {data?.data?.last_updated_by}:
+            </h3>
+            <span className="text-base lg:text-lg font-medium">{data?.data?.message}</span>
+          </div>
+        </div>
+      )}
 
       <Modal showModal={showModal} setShowModal={setShowModal} hnadleForm={hnadleForm} selectedReason={selectedReason} setSelectedReason={setSelectedReason} backSteps={back_steps}  />
     </div>

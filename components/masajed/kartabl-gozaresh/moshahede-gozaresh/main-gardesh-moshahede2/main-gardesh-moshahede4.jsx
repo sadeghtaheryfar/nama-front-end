@@ -23,6 +23,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
   const [student, setStudent] = useState("");
   const [time, setTime] = useState("");
   const [des, setDes] = useState("");
+  const [cost, setCost] = useState("");
   const [imamLetter, setImamLetter] = useState(null);
   const [connectionLetter, setConntectionLetter] = useState(null);
   const [images, setImages] = useState([]);
@@ -37,6 +38,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
   const [errors, setErrors] = useState({
     student: "",
     time: "",
+    cost: "",
     des: "",
     images: "",
   });
@@ -44,6 +46,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
   // Track if fields have been touched
   const [touched, setTouched] = useState({
     student: false,
+    cost: false,
     time: false,
     des: false,
     images: false,
@@ -110,6 +113,10 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
           errorMessage = "تاریخ برگزاری را انتخاب کنید";
         }
         break;
+      
+      case "cost":
+        if (!value) errorMessage = "هزینه کلی عملیات الزامی است";
+        break;
       case "des":
         if (!value) {
           errorMessage = "توضیحات را وارد کنید";
@@ -143,6 +150,9 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       case "des":
         setDes(value);
         break;
+      case "cost":
+        setCost(value);
+        break;
     }
   };
 
@@ -160,9 +170,77 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     
     return `${baseClass} border-green-500 bg-green-50`;
   };
+  
+  const convertToPersianWords = (num) => {
+    if (!num) return "";
+    
+    const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
+    const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+    const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
+    const sadgan = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+    const scale = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
+    
+    if (num === 0) return "صفر";
+    
+    let result = "";
+    let scaleIndex = 0;
+    
+    const numStr = num.toString();
+    const groups = [];
+    for (let i = numStr.length; i > 0; i -= 3) {
+      const start = Math.max(0, i - 3);
+      groups.unshift(numStr.substring(start, i));
+    }
+    
+    for (let i = 0; i < groups.length; i++) {
+      const groupIndex = groups.length - 1 - i;
+      const group = parseInt(groups[i]);
+      
+      if (group === 0) continue;
+      
+      let groupStr = "";
+      const hundreds = Math.floor(group / 100);
+      const tens = Math.floor((group % 100) / 10);
+      const ones = group % 10;
+      
+      if (hundreds > 0) {
+        groupStr += sadgan[hundreds] + " ";
+      }
+      
+      if (tens === 1) {
+        groupStr += dah_ta_bist[ones] + " ";
+      } else {
+        if (tens > 0) {
+          groupStr += dahgan[tens] + " ";
+        }
+        if (ones > 0) {
+          groupStr += yekan[ones] + " ";
+        }
+      }
+      
+      if (groupStr) {
+        result += groupStr + scale[groupIndex] + " ";
+      }
+    }
+    
+    return result.trim() + " ریال";
+  };
+  
+  function formatToCurrency(amount) {
+    const number = Number(amount);
+    
+    if (isNaN(number)) {
+      return "مقدار وارد شده معتبر نیست";
+    }
+    
+    const formattedNumber = number.toLocaleString("fa-IR");
+    
+    return `${formattedNumber} ریال`;
+  }
 
   const validateForm = () => {
     const validStudent = validateField("student", student);
+    const validCost = validateField("cost", cost);
     const validTime = validateField("time", time);
     const validDes = validateField("des", des);
     const validImages = validateField("images", images);
@@ -171,11 +249,12 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     setTouched({
       student: true,
       time: true,
+      cost: true,
       des: true,
       images: true,
     });
     
-    return validStudent && validTime && validDes && validImages;
+    return validStudent && validTime && validDes && validImages && validCost;
   };
 
   const hnadleForm = async () => {
@@ -201,6 +280,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     formDataToSend.append("students", Number(student));
     formDataToSend.append("body", des);
     formDataToSend.append("date", englishTime);
+    formDataToSend.append("amount", Number(cost));
     images.forEach((img, index) => {
       formDataToSend.append(`images[${index + 1}]`, img);
     });
@@ -271,6 +351,46 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
                 <p className="mt-1 text-sm text-red-500">{errors.student}</p>
               )}
             </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="hesab"
+              className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
+            >
+              هزینه کلی عملیات
+              <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+            </label>
+            <input
+              type="number"
+              id="cost"
+              name="cost"
+              value={cost}
+              onChange={(e) => handleFieldChange("cost", e.target.value)}
+              onBlur={() => validateField("cost", student)}
+              min={1000}
+              max={10000000000000}
+              placeholder="از 1،000 تا 10،000،000،000،000"
+              className={getFieldClass("cost")}
+            />
+            {errors.cost && touched.cost && (
+              <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
+            )}
+            {cost ? (
+              <>
+                <div className="mt-2 text-sm text-gray-600">
+                  <span className="font-medium">مبلغ به حروف: </span>
+                  {convertToPersianWords(Number(cost))}
+                </div>
+
+                <div className="mt-2 text-sm text-gray-600">
+                  <span className="font-medium">مبلغ به عدد: </span>
+                  {formatToCurrency(cost)}
+                </div>
+              </>
+            ) : (
+              <small className="mt-2">&nbsp;</small>
+            )}
           </div>
   
           <div className="mb-4">

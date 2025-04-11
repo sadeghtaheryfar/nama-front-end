@@ -104,8 +104,9 @@ const DarkhasthaGozaresh = () => {
                   <span className="text-xs text-[#202020] min-w-fit lg:text-lg">
                     {filters.status 
                       ? (filters.status === "rejected" ? "رد شده" 
-                        : filters.status === "in_progress" ? "باز" 
+                        : filters.status === "in_progress" ? "جاری" 
                         : filters.status === "action_needed" ? "نیازمند اصلاح" 
+                        : filters.status === "pending" ? "باز" 
                         : filters.status === "done" ? "تایید شده" 
                         : "وضعیت نامشخص") 
                       : "فیلتر درخواست‌ها"}
@@ -116,9 +117,10 @@ const DarkhasthaGozaresh = () => {
                   <div className="absolute mt-2 w-full bg-white border rounded-[8px] shadow">
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>باز</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
                     <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید شده</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'pending' }); setIsFilterOpen(false); }}>باز</div>
                   </div>
                 )}
               </div>
@@ -174,10 +176,12 @@ const DarkhasthaGozaresh = () => {
                   ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                     request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
                     request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                    request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
                     "text-[#D9534F] bg-[#FDECEA]"}`}>
                   {request.status === "rejected" ? "رد شده" : 
-                    request.status === "in_progress" ? "باز" : 
+                    request.status === "in_progress" ? "جاری" : 
                     request.status === "action_needed" ? "نیازمند اصلاح" : 
+                    request.status === "pending" ? "باز" : 
                     request.status === "done" ? "تایید شده" : "نامشخص"}
                 </span>
               </div>
@@ -240,10 +244,12 @@ const DarkhasthaGozaresh = () => {
                       ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                         request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
                         request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                        request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
                         "text-[#D9534F] bg-[#FDECEA]"}`}>
                       {request.status === "rejected" ? "رد شده" : 
-                        request.status === "in_progress" ? "باز" : 
+                        request.status === "in_progress" ? "جاری" : 
                         request.status === "action_needed" ? "نیازمند اصلاح" : 
+                        request.status === "pending" ? "باز" : 
                         request.status === "done" ? "تایید شده" : "نامشخص"}
                     </div>
                   </td>

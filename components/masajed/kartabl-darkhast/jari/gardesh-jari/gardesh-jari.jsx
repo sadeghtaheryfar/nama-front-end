@@ -1,80 +1,25 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const GardeshJari = ({data}) => {
-  const pathname = usePathname();
-  const pathSegments = pathname.split("/");
-  const itemId = pathSegments[1];
+  const searchParams = useSearchParams();
+  const itemId = searchParams.get("item_id");
+
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
-        <h2 className="text-nowrap min-w-min lg:ml-8 text-base font-bold text-center lg:text-lg md:text-right xl:text-xl 2xl:text-[22px]">
+        <h2 className="text-base font-bold text-center lg:text-lg md:text-right xl:text-xl 2xl:text-[22px]">
           گردش کار درخواست شماره {data?.data?.id}
         </h2>
-
-        {data?.data?.status == 'action_needed' && (
-          <div className="w-full bg-[#FEF8E8] rounded-lg pb-5 pt-2 px-3.5 flex flex-col gap-2 lg:items-center lg:flex-row xl:p-4">
-            <div className="flex flex-col gap-2 w-full">
-              <div className="flex items-center gap-3">
-                <Image
-                  width={0}
-                  height={0}
-                  className="w-7 xl:w-9"
-                  alt="#"
-                  src={"/Images/masajed/kartabl-darkhast/eslah/eslah.svg"}
-                />
-                <div className="flex flex-col">
-                  <h3 className="text-sm font-semibold text-[#FABE00] xl:text-[18px]">
-                    نیازمند اصلاح - {data?.data?.last_updated_by}
-                  </h3>
-                  <p className="hidden 2xl:block text-base leading-9 w-full">
-                    {data?.data?.message}
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs leading-5 xl:text-base 2xl:hidden w-full">
-                {data?.data?.message}
-              </p>
-            </div>
-            <Link className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base" href={`/${itemId}/kartabl-darkhast/eslah2?id=` + data?.data?.id}>
-              برای اصلاح کلیک کنید
-            </Link>
-          </div>
-        )}
-
-        {data?.data?.status == 'rejected' && (
-          <div className="bg-[#FBEFEF] rounded-lg pb-2.5 pt-2 px-3.5 flex flex-col gap-2 xl:p-4">
-            <div className="flex items-center gap-3">
-              <Image
-                width={0}
-                height={0}
-                className="w-7 xl:w-9"
-                alt="#"
-                src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
-              />
-              <div className="flex flex-col">
-                <h3 className="text-sm font-semibold text-[#D32F2F] xl:text-[18px]">
-                  علت رد شدن
-                </h3>
-                <p className="hidden 2xl:block text-base leading-9 w-full">
-                  {data?.data?.message}
-                </p>
-              </div>
-            </div>
-            <p className="text-xs leading-5 xl:text-base 2xl:hidden w-full">
-              {data?.data?.message}
-            </p>
-          </div>
-        )}
       </div>
 
       <div className="flex items-center flex-col justify-center font-[sans-serif] w-max lg:hidden">
         {/* تایید سر مربی مسجد */}
-        {data?.data?.step == 'approval_mosque_head_coach' ? (
+        {data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <>
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -85,14 +30,15 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -103,11 +49,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
             ) : (
@@ -121,11 +68,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید سر مربی مسجد</span>
+                  <p>{data?.data?.data?.body}</p>
                 </div>
               </div>
             )}
@@ -145,14 +93,15 @@ const GardeshJari = ({data}) => {
             <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
             <div className="absolute top-1 right-full mr-4 w-max">
               <span className="text-sm text-[#25C7AA]">تایید سر مربی مسجد</span>
+              <p>{data?.data?.data?.body}</p>
             </div>
           </div>
         )}
 
         {/* تایید مسئول فرهنگی مسجد */}
-        {data?.data?.step == 'approval_mosque_cultural_officer' ? (
+        {data?.data?.data?.step == 'approval_mosque_cultural_officer' ? (
           <>
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -163,14 +112,15 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -181,11 +131,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
             ) : (
@@ -199,16 +150,17 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید مسئول فرهنگی مسجد </span>
+                  <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
                 </div>
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -225,6 +177,7 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید مسئول فرهنگی مسجد
               </span>
+              <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
             </div>
           </div>
         ) : (
@@ -244,14 +197,15 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید مسئول فرهنگی مسجد
               </span>
+              <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
             </div>
           </div>
         )}
 
         {/* تایید  رابط منطقه */}
-        {data?.data?.step == 'approval_area_interface' ? (
+        {data?.data?.data?.step == 'approval_area_interface' ? (
           <>
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -262,14 +216,15 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -280,11 +235,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
             ) : (
@@ -298,16 +254,17 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید  رابط منطقه </span>
+                  <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -324,6 +281,7 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#959595]">
               تایید  رابط منطقه 
               </span>
+              <p>{data?.data?.data?.messages?.area_interface}</p>
             </div>
           </div>
         ) : (
@@ -343,14 +301,15 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید  رابط منطقه 
               </span>
+              <p>{data?.data?.data?.messages?.area_interface}</p>
             </div>
           </div>
         )}
 
         {/* تایید معاونت اجرایی مساجد */}
-        {data?.data?.step == 'approval_executive_vice_president_mosques' ? (
+        {data?.data?.data?.step == 'approval_executive_vice_president_mosques' ? (
           <>
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -361,14 +320,15 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -379,11 +339,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
             ) : (
@@ -397,16 +358,17 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید معاونت اجرایی مساجد </span>
+                  <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
                 </div>
               </div>
             )}
           </>
-        ) : data?.data?.step == 'approval_area_interface' || data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_area_interface' || data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -423,6 +385,7 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید معاونت اجرایی مساجد 
               </span>
+              <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
             </div>
           </div>
         ) : (
@@ -442,14 +405,15 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید معاونت اجرایی مساجد 
               </span>
+              <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
             </div>
           </div>
         )}
 
         {/* تایید معاونت طرح و برنامه */}
-        {data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
+        {data?.data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
           <>
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -460,14 +424,15 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#258CC7]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#258CC7]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
                   <Image
@@ -478,11 +443,12 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#D32F2F]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : (
@@ -496,16 +462,17 @@ const GardeshJari = ({data}) => {
                     src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                   />
                 </div>
-    
+
                 <div className="w-0.5 h-[18px] border-r border-dashed border-[#F6BB00]"></div>
                 
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#F6BB00]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             )}
           </>
-        ) : data?.data?.step != 'finish' ? (
+        ) : data?.data?.data?.step != 'finish' ? (
           <div className="flex items-center flex-col relative">
             <div className="flex items-center justify-center ">
               <Image
@@ -522,6 +489,7 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#959595]">
                 تایید معاونت طرح و برنامه 
               </span>
+              <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
             </div>
           </div>
         ) : (
@@ -541,6 +509,7 @@ const GardeshJari = ({data}) => {
               <span className="text-sm text-[#25C7AA]">
                 تایید معاونت طرح و برنامه 
               </span>
+              <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
             </div>
           </div>
         )}
@@ -548,9 +517,9 @@ const GardeshJari = ({data}) => {
 
       <div className="hidden lg:flex items-end justify-between">
         {/* تایید سر مربی مسجد */}
-        {data?.data?.step == 'approval_mosque_head_coach' ? (
+        {data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -566,7 +535,7 @@ const GardeshJari = ({data}) => {
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید سر مربی مسجد</span>
               </>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -615,14 +584,13 @@ const GardeshJari = ({data}) => {
               <div className="w-full h-[2px] border-b border-dashed border-[#25C7AA]"></div>
             </div>
             <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید سر مربی مسجد</span>
-
           </div>
         )}
 
         {/* تایید مسئول فرهنگی مسجد */}
-        {data?.data?.step == 'approval_mosque_cultural_officer' ? (
+        {data?.data?.data?.step == 'approval_mosque_cultural_officer' ? (
           <div className="w-full flex flex-col items-start">
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -638,7 +606,7 @@ const GardeshJari = ({data}) => {
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید مسئول فرهنگی مسجد </span>
               </>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -672,7 +640,7 @@ const GardeshJari = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center ">
@@ -708,9 +676,9 @@ const GardeshJari = ({data}) => {
         )}
         
         {/* تایید  رابط منطقه */}
-        {data?.data?.step == 'approval_area_interface' ? (
+        {data?.data?.data?.step == 'approval_area_interface' ? (
           <div className="w-full flex flex-col items-start">
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -726,7 +694,7 @@ const GardeshJari = ({data}) => {
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید  رابط منطقه </span>
               </>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -760,7 +728,7 @@ const GardeshJari = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center ">
@@ -797,9 +765,9 @@ const GardeshJari = ({data}) => {
         )}
 
         {/* تایید معاونت اجرایی مساجد */}
-        {data?.data?.step == 'approval_executive_vice_president_mosques' ? (
+        {data?.data?.data?.step == 'approval_executive_vice_president_mosques' ? (
           <div className="w-full flex flex-col items-start">
-          {data?.data?.status == 'in_progress' ? (
+          {data?.data?.data?.status == 'in_progress' ? (
             <>
               <div className="flex items-center w-full mr-10 2xl:mr-12">
                 <div className="flex items-center justify-center ">
@@ -815,7 +783,7 @@ const GardeshJari = ({data}) => {
               </div>
               <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت اجرایی مساجد </span>
             </>
-          ) : data?.data?.status == 'rejected' ? (
+          ) : data?.data?.data?.status == 'rejected' ? (
             <>
               <div className="flex items-center w-full mr-10 2xl:mr-12">
                 <div className="flex items-center justify-center ">
@@ -849,7 +817,7 @@ const GardeshJari = ({data}) => {
             </>
           )}
         </div>
-        ) : data?.data?.step == 'approval_area_interface' || data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
+        ) : data?.data?.data?.step == 'approval_area_interface' || data?.data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
             <div className="flex items-center w-full mr-7 2xl:mr-9">
               <div className="flex items-center justify-center">
@@ -884,9 +852,9 @@ const GardeshJari = ({data}) => {
         )}
 
         {/* تایید معاونت طرح و برنامه */}
-        {data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
+        {data?.data?.data?.step == 'approval_deputy_for_planning_and_programming' ? (
           <div className="w-full flex flex-col items-start">
-            {data?.data?.status == 'in_progress' ? (
+            {data?.data?.data?.status == 'in_progress' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -902,7 +870,7 @@ const GardeshJari = ({data}) => {
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
-            ) : data?.data?.status == 'rejected' ? (
+            ) : data?.data?.data?.status == 'rejected' ? (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
                   <div className="flex items-center justify-center ">
@@ -936,7 +904,7 @@ const GardeshJari = ({data}) => {
               </>
             )}
           </div>
-        ) : data?.data?.step != 'finish' ? (
+        ) : data?.data?.data?.step != 'finish' ? (
           <div className="w-full flex flex-col max-w-fit">
             <div className="flex items-center justify-center ml-14 2xl:ml-16">
                 <Image
@@ -947,7 +915,7 @@ const GardeshJari = ({data}) => {
                   src={"/Images/masajed/kartabl-darkhast/jari/tik1.svg"}
                 />
               </div>
-            <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرح و برنامه</span>
+            <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرحی و برنامه</span>
           </div>
         ) : (
           <div className="w-full flex flex-col max-w-fit">
@@ -963,6 +931,28 @@ const GardeshJari = ({data}) => {
             <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرح و برنامه</span>
           </div>
         )}
+      </div>
+      
+      <div className="hidden lg:flex items-end justify-between">
+        <div className="w-full flex flex-col items-start">
+          <p>{data?.data?.data?.body}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.area_interface}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
+        </div>
+
+        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+          <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
+        </div>
       </div>
     </div>
   );

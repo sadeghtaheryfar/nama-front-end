@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import GardeshJariRole from "./../../../../components/masajed/kartabl-darkhast/jari/gardesh-jari-role/gardesh-jari";
+import GardeshJari from "./../../../../components/masajed/kartabl-darkhast/jari/gardesh-jari/gardesh-jari";
 import MainGozareshJariRole from "./../../../../components/masajed/kartabl-darkhast/jari/main-gardesh-jari-role/main-gozaresh-jari-role";
 
 export default function Accept() {
@@ -136,7 +136,7 @@ export default function Accept() {
         <div className="vector-nama md:px-5">
           <div className=" p-6 scroll-kon ">
             <div className="bg-white drop-shadow-3xl rounded-[20px] mb-5 p-3 md:p-6 -mt-[80px] md:-mt-[110px] z-30">
-              <GardeshJariRole data={requestData}/>
+              <GardeshJari data={requestData}/>
             </div>
 
             <MainGozareshJariRole data={requestData?.data} back_steps={requestData?.data?.back_steps}/>

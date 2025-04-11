@@ -608,6 +608,10 @@ img, video {
   margin-left: 3.5rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .mr-1 {
   margin-right: .25rem;
 }
@@ -682,10 +686,6 @@ img, video {
 
 .mt-\[89px\] {
   margin-top: 89px;
-}
-
-.ml-4 {
-  margin-left: 1rem;
 }
 
 .block {
@@ -1044,6 +1044,10 @@ img, video {
   min-width: 167px;
 }
 
+.min-w-\[18rem\] {
+  min-width: 18rem;
+}
+
 .min-w-\[68px\] {
   min-width: 68px;
 }
@@ -1054,34 +1058,6 @@ img, video {
 
 .min-w-full {
   min-width: 100%;
-}
-
-.min-w-min {
-  min-width: min-content;
-}
-
-.min-w-\[10rem\] {
-  min-width: 10rem;
-}
-
-.min-w-\[1rem\] {
-  min-width: 1rem;
-}
-
-.min-w-\[15rem\] {
-  min-width: 15rem;
-}
-
-.min-w-\[rem\] {
-  min-width: rem;
-}
-
-.min-w-\[189rem\] {
-  min-width: 189rem;
-}
-
-.min-w-\[18rem\] {
-  min-width: 18rem;
 }
 
 .max-w-28 {
@@ -1275,6 +1251,10 @@ img, video {
 
 .gap-\[1rem\] {
   gap: 1rem;
+}
+
+.gap-\[2rem\] {
+  gap: 2rem;
 }
 
 .gap-x-\[2rem\] {
@@ -1477,6 +1457,11 @@ img, video {
 .border-\[\#ccc\] {
   --tw-border-opacity: 1;
   border-color: rgb(204 204 204 / var(--tw-border-opacity, 1));
+}
+
+.border-\[\#e22afc\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(226 42 252 / var(--tw-border-opacity, 1));
 }
 
 .border-blue-500 {
@@ -1702,6 +1687,15 @@ img, video {
 .bg-\[\#e0e0e0\] {
   --tw-bg-opacity: 1;
   background-color: rgb(224 224 224 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#e22afc\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 42 252 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#e94fff54\] {
+  background-color: #e94fff54;
 }
 
 .bg-\[\#ff1a1a\] {
@@ -2311,6 +2305,11 @@ img, video {
   color: rgb(192 192 192 / var(--tw-text-opacity, 1));
 }
 
+.text-\[\#e22afc\] {
+  --tw-text-opacity: 1;
+  color: rgb(226 42 252 / var(--tw-text-opacity, 1));
+}
+
 .text-\[\#ff1c1c\] {
   --tw-text-opacity: 1;
   color: rgb(255 28 28 / var(--tw-text-opacity, 1));
@@ -2438,6 +2437,10 @@ img, video {
 
 .outline-\[\#FFD140\]\/30 {
   outline-color: #ffd1404d;
+}
+
+.outline-\[\#e22afc\]\/30 {
+  outline-color: #e22afc4d;
 }
 
 .ring-gray-300 {
@@ -2816,6 +2819,10 @@ th {
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .sm\:gap-8 {

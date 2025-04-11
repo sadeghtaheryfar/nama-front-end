@@ -228,10 +228,17 @@ const MainMasajed = () => {
                       <span className="text-base">{info?.reports?.rejected}</span>
                       <span className="text-xs text-[#808393]"> رد شده</span>
                     </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-[10px] h-[10px] bg-[#e22afc] rounded-sm"></div>
+                      <span className="text-base">{info?.reports?.pending}</span>
+                      <span className="text-xs text-[#808393]">باز</span>
+                    </div>
+
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
                       <span className="text-base">{info?.reports?.in_progress}</span>
-                      <span className="text-xs text-[#808393]">باز</span>
+                      <span className="text-xs text-[#808393]">جاری</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>

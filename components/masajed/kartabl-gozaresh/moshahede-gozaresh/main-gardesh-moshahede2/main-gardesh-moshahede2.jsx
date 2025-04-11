@@ -10,12 +10,13 @@ import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
-const MainGardeshMoshahede2 = ({ id }) => {
+const MainGardeshMoshahede2 = ({ id, data }) => {
   const router = useRouter();
 
   const [student, setStudent] = useState("");
   const [time, setTime] = useState("");
   const [des, setDes] = useState("");
+  const [cost, setCost] = useState("");
   const [imamLetter, setImamLetter] = useState(null);
   const [connectionLetter, setConntectionLetter] = useState(null);
   const [images, setImages] = useState([]);
@@ -29,6 +30,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
   // Validation states for each field
   const [errors, setErrors] = useState({
     student: "",
+    cost: "",
     time: "",
     images: "",
     video: ""
@@ -37,6 +39,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
   // Track if fields have been touched/interacted with
   const [touched, setTouched] = useState({
     student: false,
+    cost: false,
     time: false,
     des: false,
     images: false,
@@ -57,6 +60,9 @@ const MainGardeshMoshahede2 = ({ id }) => {
         break;
       case "time":
         if (!value) error = "تاریخ برگزاری الزامی است";
+        break;
+      case "cost":
+        if (!value) error = "هزینه کلی عملیات الزامی است";
         break;
       case "images":
         if (value.length < 3) error = "حداقل ۳ تصویر الزامی است";
@@ -80,6 +86,9 @@ const MainGardeshMoshahede2 = ({ id }) => {
       case "student":
         value = student;
         break;
+      case "cost":
+        value = cost;
+        break;
       case "time":
         value = time;
         break;
@@ -95,6 +104,16 @@ const MainGardeshMoshahede2 = ({ id }) => {
     
     const error = validateField(name, value);
     setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleCostChange = (event) => {
+    const value = event.target.value;
+    setCost(value);
+    
+    if (touched.cost) {
+      const error = validateField("cost", value);
+      setErrors(prev => ({ ...prev, cost: error }));
+    }
   };
 
   const handleStudentChange = (event) => {
@@ -193,6 +212,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
   const validateForm = () => {
     const formErrors = {
       student: validateField("student", student),
+      cost: validateField("cost", cost),
       time: validateField("time", time),
       images: validateField("images", images),
       video: validateField("video", video)
@@ -201,6 +221,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
     setErrors(formErrors);
     setTouched({
       student: true,
+      cost: true,
       time: true,
       des: true,
       images: true,
@@ -231,6 +252,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
 
     const formDataToSend = new FormData();
     formDataToSend.append("students", Number(student));
+    formDataToSend.append("amount", Number(cost));
     formDataToSend.append("body", des);
     formDataToSend.append("date", englishTime);
     images.forEach((img, index) => {
@@ -244,7 +266,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
 
     try {
       const submitForm = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports/${id}?item_id=${itemId}&role=mosque_head_coach`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports/${data?.data?.report?.id}?_method=PATCH&item_id=${itemId}&role=mosque_head_coach`,
         formDataToSend,
         {
           headers: {
@@ -277,6 +299,73 @@ const MainGardeshMoshahede2 = ({ id }) => {
     return `${baseClass} border-green-500 bg-green-50`;
   };
 
+  const convertToPersianWords = (num) => {
+    if (!num) return "";
+    
+    const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
+    const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+    const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
+    const sadgan = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+    const scale = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
+    
+    if (num === 0) return "صفر";
+    
+    let result = "";
+    let scaleIndex = 0;
+    
+    const numStr = num.toString();
+    const groups = [];
+    for (let i = numStr.length; i > 0; i -= 3) {
+      const start = Math.max(0, i - 3);
+      groups.unshift(numStr.substring(start, i));
+    }
+    
+    for (let i = 0; i < groups.length; i++) {
+      const groupIndex = groups.length - 1 - i;
+      const group = parseInt(groups[i]);
+      
+      if (group === 0) continue;
+      
+      let groupStr = "";
+      const hundreds = Math.floor(group / 100);
+      const tens = Math.floor((group % 100) / 10);
+      const ones = group % 10;
+      
+      if (hundreds > 0) {
+        groupStr += sadgan[hundreds] + " ";
+      }
+      
+      if (tens === 1) {
+        groupStr += dah_ta_bist[ones] + " ";
+      } else {
+        if (tens > 0) {
+          groupStr += dahgan[tens] + " ";
+        }
+        if (ones > 0) {
+          groupStr += yekan[ones] + " ";
+        }
+      }
+      
+      if (groupStr) {
+        result += groupStr + scale[groupIndex] + " ";
+      }
+    }
+    
+    return result.trim() + " ریال";
+  };
+  
+  function formatToCurrency(amount) {
+    const number = Number(amount);
+    
+    if (isNaN(number)) {
+      return "مقدار وارد شده معتبر نیست";
+    }
+    
+    const formattedNumber = number.toLocaleString("fa-IR");
+    
+    return `${formattedNumber} ریال`;
+  }
+
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex items-center justify-between gap-4">
@@ -307,6 +396,46 @@ const MainGardeshMoshahede2 = ({ id }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.student}</p>
               )}
             </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="hesab"
+              className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
+            >
+              هزینه کلی عملیات
+              <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+            </label>
+            <input
+              type="number"
+              id="cost"
+              name="cost"
+              value={cost}
+              onChange={handleCostChange}
+              onBlur={() => handleBlur("cost")}
+              min={1000}
+              max={10000000000000}
+              placeholder="از 1،000 تا 10،000،000،000،000"
+              className={getFieldClass("cost")}
+            />
+            {errors.cost && touched.cost && (
+              <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
+            )}
+            {cost ? (
+              <>
+                <div className="mt-2 text-sm text-gray-600">
+                  <span className="font-medium">مبلغ به حروف: </span>
+                  {convertToPersianWords(Number(cost))}
+                </div>
+
+                <div className="mt-2 text-sm text-gray-600">
+                  <span className="font-medium">مبلغ به عدد: </span>
+                  {formatToCurrency(cost)}
+                </div>
+              </>
+            ) : (
+              <small className="mt-2">&nbsp;</small>
+            )}
           </div>
 
           <div className="mb-4">

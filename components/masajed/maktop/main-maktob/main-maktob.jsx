@@ -206,6 +206,9 @@ const MainMaktob = ({ token }) => {
                         <option value="deputy_for_planning_and_programming">
                           معاونت طرح و برنامه
                         </option>
+                        <option value="arman_bus">
+                          ریاست ستاد آرمان
+                        </option>
                       </select>
                     </div>
                   </div>
