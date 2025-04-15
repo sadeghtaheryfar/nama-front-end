@@ -478,7 +478,7 @@ const FormEslah = ({ data }) => {
               className="hidden"
               onChange={(event) => handleFile1(event)}
             />
-            <small>{statusFile1}</span>
+            <small>{statusFile1}</small>
           </label>
           {imamLetterError && <p className="text-red-500 text-sm mt-1">{imamLetterError}</p>}
         </div>

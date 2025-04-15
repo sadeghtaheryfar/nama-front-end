@@ -16,11 +16,11 @@ const MainGardeshJari = ({data}) => {
 
   const pathname = usePathname();
   const [typeField, setTypeField] = useState(null);
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
 
   useEffect(() => {
     if (!pathname) return;
-    const pathSegments = pathname.split("/");
-    const itemId = pathSegments[1];
 
     const fetching = async () => {
       try {
@@ -43,10 +43,43 @@ const MainGardeshJari = ({data}) => {
   
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
-      <h2 className="text-base font-bold md:text-lg xl:text-2xl">
-        {data?.data?.request_plan?.title || "بدون نام"}
-        <span>({data?.data?.request_plan?.id || 0})</span>
-      </h2>
+      <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
+        <h2 className="text-base font-bold md:text-lg xl:text-2xl">
+          {data?.data?.request_plan?.title || "بدون نام"}
+          <span>({data?.data?.request_plan?.id || 0})</span>
+        </h2>
+
+        {data?.data?.status == 'action_needed' && (
+          <div className="bg-[#FEF8E8] rounded-lg pb-5 pt-2 px-3.5 flex flex-col gap-2 lg:items-center lg:flex-row xl:p-4 lg:min-w-[25rem]">
+            <div className="flex flex-col gap-2 w-full">
+              <div className="flex items-center gap-3">
+                <img
+                  width={0}
+                  height={0}
+                  className="w-7 xl:w-9"
+                  alt="#"
+                  src={"/Images/masajed/kartabl-darkhast/eslah/eslah.svg"}
+                />
+                <div className="flex flex-col">
+                  <h3 className="text-sm font-semibold text-[#FABE00] xl:text-[18px]">
+                    نیازمند اصلاح{" "}
+                  </h3>
+                  <p className="hidden 2xl:block text-base leading-9">
+                    
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs leading-5 xl:text-base 2xl:hidden">
+                {data?.data?.message}
+              </p>
+            </div>
+            <Link href={`/${itemId}/kartabl-darkhast/eslah2?id=${data?.data?.id}`} className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base">
+              برای اصلاح کلیک کنید
+            </Link>
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col items-start bg-[#D5B260]/10 rounded-lg p-3 my-6 md:p-5 lg:p-6 md:my-8 xl:my-10 xl:flex-row xl:gap-6 2xl:gap-10">
         <h2 className="text-base font-semibold text-[#D5B260] md:text-lg xl:text-xl xl:min-w-fit">
           نکات قابل توجه این درخواست
