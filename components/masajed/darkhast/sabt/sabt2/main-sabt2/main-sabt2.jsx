@@ -53,7 +53,7 @@ const MainSabt2 = () => {
   }
 
   function formatPrice(num) {
-    return Math.floor(num).toLocaleString("fa-IR") + " ریال";
+    return Math.floor(num).toLocaleString("fa-IR") + " تومان";
   }
 
   const [requestData, setRequsestData] = useState("");

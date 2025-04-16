@@ -231,7 +231,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
       result += groupText;
     }
     
-    return result.trim() + ' ریال';
+    return result.trim() + ' تومان';
   };
 
   const translateRole = (role) => {

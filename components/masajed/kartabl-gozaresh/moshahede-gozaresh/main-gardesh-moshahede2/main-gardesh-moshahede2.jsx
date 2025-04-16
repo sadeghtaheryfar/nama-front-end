@@ -351,7 +351,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       }
     }
     
-    return result.trim() + " ریال";
+    return result.trim() + " تومان";
   };
   
   function formatToCurrency(amount) {
@@ -363,7 +363,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     
     const formattedNumber = number.toLocaleString("fa-IR");
     
-    return `${formattedNumber} ریال`;
+    return `${formattedNumber} تومان`;
   }
 
   return (
