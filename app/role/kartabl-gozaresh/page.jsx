@@ -121,39 +121,149 @@ export default function Kartabl() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchRequests = async () => {
-    if (!itemId || !role) return;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
 
-    setLoading(true);
-    try {
-      const { search, sort, direction, status } = filters;
-      const response = await axios.get(`/api/darkhast-reports`, {
-        params: {
-          q: search,
-          sort,
-          direction,
-          status,
-          per_page: 100,
-          itemId,
-          role
-        },
-      });
-      
-      setRequests(response.data);
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchRequests = async () => {
+      if (!itemId || !role) return;
+
+      setLoading(true);
+      try {
+        const { search, sort, direction, status } = filters;
+        const response = await axios.get(`/api/darkhast-reports`, {
+          params: {
+            q: search,
+            sort,
+            direction,
+            status,
+            per_page: itemsPerPage,
+            page: currentPage,
+            itemId,
+            role
+          },
+        });
+        
+        setRequests(response.data);
+        if (response.data.meta && response.data.meta.total) {
+          setTotalPages(Math.ceil(response.data.meta.total / itemsPerPage));
+        } else {
+          setTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1);
+        }
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, [currentPage, itemId, filters]);
   
   useEffect(() => {
     setRequests([]);
-    fetchRequests();
+    setCurrentPage(1);
   }, [filters,itemId,role]);
   
   const goBack = (e) => {
     if(e) router.back(); else router.push('/');
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    buttons.push(
+      <button
+        key="prev"
+        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === 1
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        قبلی
+      </button>
+    );
+    
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    if (startPage > 1) {
+      buttons.push(
+        <button
+          key={1}
+          onClick={() => handlePageChange(1)}
+          className="px-3 py-1 rounded-md hover:bg-gray-100"
+        >
+          1
+        </button>
+      );
+      if (startPage > 2) {
+        buttons.push(
+          <span key="ellipsis1" className="px-2">
+            ...
+          </span>
+        );
+      }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 rounded-md ${
+            currentPage === i
+              ? "bg-[#39A894] text-white"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        buttons.push(
+          <span key="ellipsis2" className="px-2">
+            ...
+          </span>
+        );
+      }
+      buttons.push(
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          className="px-3 py-1 rounded-md hover:bg-gray-100"
+        >
+          {totalPages}
+        </button>
+      );
+    }
+    
+    buttons.push(
+      <button
+        key="next"
+        onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        بعدی
+      </button>
+    );
+    
+    return buttons;
   };
 
   return (
@@ -307,8 +417,8 @@ export default function Kartabl() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden">
-                {requests?.data && requests?.data?.map((request) => (
+              <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
+                {(requests?.data && !loading) && requests?.data?.map((request) => (
                   <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
                     <h2 className="text-sm text-[#202020] pb-3">{request?.request_plan?.title || "بدون عنوان"}</h2>
                     
@@ -329,6 +439,16 @@ export default function Kartabl() {
                           request.status === "action_needed" ? "نیازمند اصلاح" : 
                           request.status === "done" ? "تایید و ارسال" : "نامشخص"}
                       </span>
+                    </div>
+
+                    <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                      <span className="text-xs text-[#959595]">سر مربی</span>
+                      <span className="text-sm text-[#202020]">{request?.request.user?.name}</span>
+                    </div>
+
+                    <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                      <span className="text-xs text-[#959595]">واحد حقوقی</span>
+                      <span className="text-sm text-[#202020]">{request?.request.unit?.title}</span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
@@ -358,6 +478,8 @@ export default function Kartabl() {
                       <th className="border border-gray-300 px-7 py-5 text-lg">
                         تاریخ ایجاد
                       </th>
+                      <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
+                      <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">وضعیت</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg"></th>
                     </tr>
@@ -373,7 +495,7 @@ export default function Kartabl() {
                       </tr>
                     )}
 
-                    {requests?.data && requests?.data?.map((request) => (
+                    {(requests?.data && !loading) && requests?.data?.map((request) => (
                       <tr key={request.id}>
                         <td className="border border-gray-300 px-7 py-5 text-base">
                           {request?.request_plan?.title || "بدون عنوان"}
@@ -383,6 +505,12 @@ export default function Kartabl() {
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                        </td>
+                        <td className="border border-gray-300 px-7 py-5 text-base text-center">
+                          {request?.request?.user?.name}
+                        </td>
+                        <td className="border border-gray-300 px-7 py-5 text-base text-center">
+                          {request?.request.unit?.title}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                           <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
@@ -404,6 +532,12 @@ export default function Kartabl() {
                   </tbody>
                 </table>
               </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mb-4 gap-2 text-sm">
+                  {renderPaginationButtons()}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -212,6 +212,13 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           </div>
         )}
       </div>
+
+      <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <p>{data?.data?.item?.title}</p>
+        <p>واحد حقوقی : {data?.data?.unit?.title}</p>
+        <p>سرمربی : {data?.data?.user?.name}</p>
+      </div>
+
       <hr className="hidden md:block h-2 mb-10" />
       <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
         <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">
@@ -253,26 +260,30 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل پیوست نامه امام جماعت:
-            </h3>
-            <a href={data?.data?.imam_letter?.original}>
-              <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                برای مشاهده فایل کلیک کنید
-              </button>
-            </a>
-          </div>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل نامه رابط منطقه:
-            </h3>
-            <a href={data?.data?.area_interface_letter?.original}>
-              <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                برای مشاهده فایل کلیک کنید
-              </button>
-            </a>
-          </div>
+          {data?.data?.imam_letter?.original && (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
+              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                فایل پیوست نامه امام جماعت:
+              </h3>
+              <a href={data?.data?.imam_letter?.original}>
+                <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
+                  برای مشاهده فایل کلیک کنید
+                </button>
+              </a>
+            </div>
+          )}
+          {data?.data?.area_interface_letter?.original && (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
+              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                فایل نامه رابط منطقه:
+              </h3>
+              <a href={data?.data?.area_interface_letter?.original}>
+                <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
+                  برای مشاهده فایل کلیک کنید
+                </button>
+              </a>
+            </div>
+          )}
         </div>
       </div>
 
@@ -305,7 +316,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                   )}
                 </div>
                 {amount && !isNaN(amount) && (
-                  <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
+                  <small className="block mt-2 text-gray-600">{amountInWords} ریال</small>
                 )}
               </div>
             ) : (data?.data?.need_final_amount) ? (
@@ -330,7 +341,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                   )}
                 </div>
                 {amount && !isNaN(amount) && (
-                  <small className="block mt-2 text-gray-600">{amountInWords} تومان</small>
+                  <small className="block mt-2 text-gray-600">{amountInWords} ریال</small>
                 )}
               </div>
             ) : (

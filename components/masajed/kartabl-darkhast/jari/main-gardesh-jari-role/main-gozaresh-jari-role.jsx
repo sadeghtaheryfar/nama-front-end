@@ -231,7 +231,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
       result += groupText;
     }
     
-    return result.trim() + ' تومان';
+    return result.trim() + ' ریال';
   };
 
   const translateRole = (role) => {
@@ -276,6 +276,13 @@ const MainGozareshJariRole = ({data, back_steps}) => {
           </div>
         )}
       </div>
+
+      <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <p>{data?.data?.request?.item?.title}</p>
+        <p>واحد حقوقی : {data?.data?.request?.unit?.title}</p>
+        <p>سرمربی : {data?.data?.request?.user?.name}</p>
+      </div>
+
       <hr className="hidden md:block h-2 mb-10" />
       <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
         <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">

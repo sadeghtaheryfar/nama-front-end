@@ -6,13 +6,18 @@ export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
   const role = searchParams.get("role");
+  const page = parseInt(searchParams.get("page") || "1");
+  const per_page = parseInt(searchParams.get("per_page") || "6");
 
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans?item_id=${itemId}${role ? `&role=${role}` : ''}`, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans?item_id=${itemId}${role ? `&role=${role}` : ''}&page=${page}&per_page=${per_page}`, 
+      {
+        headers: {
+          Authorization: `bearer ${token}`,
+        },
+      }
+    );
 
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {

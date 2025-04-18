@@ -67,6 +67,13 @@ const MainGardesheslah2 = () => {
         </div>
       </div>
 
+      <div className="mb-[1rem] mt-[2rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <p>{requestData?.item?.title}</p>
+        <p>واحد حقوقی : {requestData?.unit?.title}</p>
+        <p>سرمربی : {requestData?.user?.name}</p>
+      </div>
+      <hr className="hidden md:block h-2 mb-10" />
+
       <FormEslah data={requestData}/>
     </div>
   );

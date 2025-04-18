@@ -17,41 +17,157 @@ const CartsDarkhast = () => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
-    const fetching = async () => {
+    const fetchFutureCarts = async () => {
       setFutureCartsLoading(true);
-      setActiveCartsLoading(true);
-
       try {
-        const carts = await axios.get(`/api/future?item_id=${itemId}&role=mosque_head_coach`);
+        const carts = await axios.get(
+          `/api/future?item_id=${itemId}&role=mosque_head_coach`
+        );
         if (carts.data) {
           setFutureCarts(carts.data.data);
         }
       } catch (error) {
         console.log(error);
-      }finally {
+      } finally {
         setFutureCartsLoading(false);
       }
+    };
 
+    fetchFutureCarts();
+  }, [itemId]);
+
+  useEffect(() => {
+    const fetchActiveCarts = async () => {
+      setActiveCartsLoading(true);
       try {
-        const active = await axios.get(`/api/active?item_id=${itemId}&role=mosque_head_coach`);
+        const active = await axios.get(
+          `/api/active?item_id=${itemId}&role=mosque_head_coach&page=${currentPage}&per_page=${itemsPerPage}`
+        );
         if (active.data) {
           setActiveCarts(active.data.data);
+          if (active.data.meta && active.data.meta.total) {
+            setTotalPages(Math.ceil(active.data.meta.total / itemsPerPage));
+          } else {
+            setTotalPages(Math.ceil(active.data.data.length / itemsPerPage) || 1);
+          }
         }
       } catch (error) {
         console.log(error);
-      }finally {
+      } finally {
         setActiveCartsLoading(false);
       }
     };
-    fetching();
-  }, []);
+
+    fetchActiveCarts();
+  }, [currentPage, itemId]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    buttons.push(
+      <button
+        key="prev"
+        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === 1
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        قبلی
+      </button>
+    );
+    
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    if (startPage > 1) {
+      buttons.push(
+        <button
+          key={1}
+          onClick={() => handlePageChange(1)}
+          className="px-3 py-1 rounded-md hover:bg-gray-100"
+        >
+          1
+        </button>
+      );
+      if (startPage > 2) {
+        buttons.push(
+          <span key="ellipsis1" className="px-2">
+            ...
+          </span>
+        );
+      }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 rounded-md ${
+            currentPage === i
+              ? "bg-[#39A894] text-white"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        buttons.push(
+          <span key="ellipsis2" className="px-2">
+            ...
+          </span>
+        );
+      }
+      buttons.push(
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          className="px-3 py-1 rounded-md hover:bg-gray-100"
+        >
+          {totalPages}
+        </button>
+      );
+    }
+    
+    buttons.push(
+      <button
+        key="next"
+        onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        بعدی
+      </button>
+    );
+    
+    return buttons;
+  };
 
   return (
     <>
       <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-x-10">
-        {futureCartsLoading && (
+        {activeCartsLoading && (
           <section className='flex justify-center items-center flex-col w-full h-[20rem]'>
             <div className='w-full relative h-full rounded-[0.5rem] bg-[#e0e0e0] overflow-hidden'>
                 <div className='absolute top-0 left-0 h-full w-full animate-slide'></div>
@@ -61,96 +177,20 @@ const CartsDarkhast = () => {
         )}
 
         {activeCarts &&
+          !activeCartsLoading &&
           activeCarts.length >= 1 &&
           activeCarts.map((item, index) => {
             return <CartsDarkhastActive key={index} item={item} />;
           })}
-        {/* <div className="flex flex-col justify-end gap-4 border rounded-xl p-4 group hover:border-[#39A894] transition-all duration-200">
-          <div className="grid grid-cols-4 items-center gap-4 lg:grid-cols-5 lg:gap-5">
-            <Image
-              className="w-full max-w-28 lg:hidden"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/cart2-darkhast.svg"}
-            />
-            <Image
-              className="hidden lg:block w-full col-span-2 min-w-[167px] max-w-[167px] row-span-2"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/cart12-darkhast.svg"}
-            />
-            <div className="flex flex-col gap-2 col-span-3 lg:mr-2">
-              <h2 className="text-base font-bold group-hover:text-[#39A894] lg:text-lg">
-                نام درخواست مربوطه
-              </h2>
-              <span className="text-xs font-medium lg:text-base">شماره: ۲۰۲ </span>
-            </div>
-
-            <ul className="flex flex-col justify-center gap-1.5 col-span-4 lg:col-span-3 lg:mr-2">
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                سقف تعداد نفرات مورد حمایت: ۲۰
-              </li>
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                سرانه حمایتی هر نفر به مبلغ ۳ میلیون تومان میباشد.
-              </li>
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                محدود مهلت زمانی انتخاب این درخواست تا تاریخ ۱۴۰۳/۱۰/۱۲ میباشد.
-              </li>
-            </ul>
-          </div>
-          <Link href={"/masajed/darkhast/sabt"}>
-            <ButtonSabt />
-          </Link>
-        </div>
-        <div className="flex flex-col justify-end gap-4 border rounded-xl p-4 group hover:border-[#39A894] transition-all duration-200">
-          <div className="grid grid-cols-4 items-center gap-4 lg:grid-cols-5 lg:gap-5">
-            <Image
-              className="w-full max-w-28 lg:hidden"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/cart3-darkhast.svg"}
-            />
-            <Image
-              className="hidden lg:block w-full col-span-2 min-w-[167px] max-w-[167px] row-span-2"
-              alt="#"
-              width={0}
-              height={0}
-              src={"/Images/masajed/darkhast/cart13-darkhast.svg"}
-            />
-            <div className="flex flex-col gap-2 col-span-3 lg:mr-2">
-              <h2 className="text-base font-bold group-hover:text-[#39A894] lg:text-lg">
-                نام درخواست مربوطه
-              </h2>
-              <span className="text-xs font-medium lg:text-base">شماره: ۲۰۲ </span>
-            </div>
-
-            <ul className="flex flex-col justify-center gap-1.5 col-span-4 lg:col-span-3 lg:mr-2">
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                سقف تعداد نفرات مورد حمایت: ۲۰
-              </li>
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                سرانه حمایتی هر نفر به مبلغ ۳ میلیون تومان میباشد.
-              </li>
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-                محدود مهلت زمانی انتخاب این درخواست تا تاریخ ۱۴۰۳/۱۰/۱۲ میباشد.
-              </li>
-            </ul>
-          </div>
-          <Link href={"/masajed/darkhast/sabt"}>
-            <ButtonSabt />
-          </Link>
-        </div> */}
       </div>
-      <div className="mt-8">
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-8 mb-4 gap-2 text-sm">
+            {renderPaginationButtons()}
+          </div>
+        )}
+      <div id="future-carts-section" className="mt-8">
         <hr className="h-2 mb-5 xl:mt-12" />
         <h2 className="text-lg font-semibold md:my-4 lg:my-7 xl:my-9">درخواست های آینده</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-7 lg:gap-9 2xl:gap-10">
@@ -176,6 +216,12 @@ const CartsDarkhast = () => {
                 />
               );
             })}
+            
+          {!futureCartsLoading && futureCarts.length === 0 && (
+            <div className="col-span-full text-center py-8 text-gray-500">
+              درخواستی برای نمایش وجود ندارد
+            </div>
+          )}
         </div>
       </div>
     </>

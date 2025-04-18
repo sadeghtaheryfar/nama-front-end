@@ -19,7 +19,7 @@ const MainGardeshMoshahede2 = () => {
               هزینه کلی عملیات:
             </h3>
             <span className="text-base lg:text-lg font-medium">
-              ۲۵ میلیون تومان
+              ۲۵ میلیون ریال
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">

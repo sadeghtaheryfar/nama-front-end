@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { DateObject } from "react-multi-date-picker";
 
 const convertToPersianText = (num) => {
   if (!num) return "";
@@ -142,6 +143,18 @@ const FormEslah = ({ data }) => {
       setID(data?.id);
       setCost(data?.amount);
       setDes(data?.body);
+
+      if (data?.date) {
+        const gregorianDate = new Date(data.date);
+        
+        const persianDate = new DateObject({
+          date: gregorianDate,
+          calendar: persian
+        });
+        
+        const formattedDate = `${persianDate.year}/${persianDate.month.number.toString().padStart(2, '0')}/${persianDate.day.toString().padStart(2, '0')}`;
+        setTime(formattedDate);
+}
       
 
       if (!data.imam_letter) {
@@ -355,9 +368,9 @@ const FormEslah = ({ data }) => {
         setStatusSend(error.response.data.error);
       } else {
         setStatusSend("خطا در ارسال اطلاعات");
-        if(error.response && error.response.data.errors.amount[0])
+        if(error.response && error.response?.data?.errors?.amount[0])
         {
-          setCostError(error.response.data.errors.amount[0]);
+          setCostError(error.response?.data?.errors?.amount[0]);
         }
       }
     } finally {
@@ -406,7 +419,7 @@ const FormEslah = ({ data }) => {
             }`}
           />
           {costError && <p className="text-red-500 text-sm mt-1">{costError}</p>}
-          {costText && <p className="text-gray-600 text-sm mt-1">{costText} تومان</p>}
+          {costText && <p className="text-gray-600 text-sm mt-1">{costText} ریال</p>}
         </div>
 
         <div className="mb-4">

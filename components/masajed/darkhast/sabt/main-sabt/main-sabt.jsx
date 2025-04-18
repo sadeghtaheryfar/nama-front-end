@@ -64,7 +64,7 @@ const MainSabt = () => {
               سرانه حمایتی هر نفر به مبلغ حداکثر {formatNumber(
                 requestData.support_for_each_person_amount
               )}{" "}
-              تومان میباشد.
+              ریال میباشد.
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>

@@ -351,7 +351,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       }
     }
     
-    return result.trim() + " تومان";
+    return result.trim() + " ریال";
   };
   
   function formatToCurrency(amount) {
@@ -363,7 +363,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     
     const formattedNumber = number.toLocaleString("fa-IR");
     
-    return `${formattedNumber} تومان`;
+    return `${formattedNumber} ریال`;
   }
 
   return (
@@ -373,7 +373,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           ارسال گزارش
         </h2>
       </div>
-
+      
       <hr className="h-2 mt-4 mb-7 md:mb-10" />
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">

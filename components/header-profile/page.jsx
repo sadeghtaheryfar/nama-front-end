@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const Header = ({bgBox,bgRole}) => {
     const [profile, setProfile] = useState(null);
     const [loadingProfile, setLoadingProfile] = useState(true);
+    const [placeText, setPlaceText] = useState("");
     
     const router = useRouter();
     const pathname = usePathname();
@@ -16,6 +17,17 @@ const Header = ({bgBox,bgRole}) => {
     const [showRoleMenu, setShowRoleMenu] = useState(false);
 
     useEffect(() => {
+        // Set the place text based on itemId
+        if (itemId === "2") {
+            setPlaceText("مساجد");
+        } else if (itemId === "3") {
+            setPlaceText("مدارس");
+        } else if (itemId === "4") {
+            setPlaceText("مراکز تعالی");
+        } else {
+            setPlaceText("");
+        }
+
         const fetching = async () => {
             try {
                 const response = await axios.get(`/api/profile?item_id=${itemId}`);
@@ -28,7 +40,6 @@ const Header = ({bgBox,bgRole}) => {
                 );
 
                 if (!hasHeadCoachRole) {
-
                     if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
                         router.push("/" + itemId);
                     }
@@ -42,11 +53,12 @@ const Header = ({bgBox,bgRole}) => {
         fetching();
     }, [itemId]);
 
-    const roleOptions = [
-        { key: 'mosque_head_coach', label: 'سرمربی مسجد' },
-        { key: 'mosque_cultural_officer', label: 'مسئول فرهنگی مسجد' },
+    // Updated role options to use dynamic place text
+    const getRoleOptions = () => [
+        { key: 'mosque_head_coach', label: `سرمربی ${placeText}` },
+        { key: 'mosque_cultural_officer', label: `مسئول فرهنگی ${placeText}` },
         { key: 'area_interface', label: 'رابط منطقه' },
-        { key: 'executive_vice_president_mosques', label: 'معاونت اجرایی مساجد' },
+        { key: 'executive_vice_president_mosques', label: `معاونت اجرایی ${placeText}` },
         { key: 'deputy_for_planning_and_programming', label: 'معاونت طرح و برنامه' }
     ];
 
@@ -74,15 +86,16 @@ const Header = ({bgBox,bgRole}) => {
         }
     };
 
+    // Updated translateNama to use dynamic place text
     const translateNama = (role) => {
         if (role === "mosque_head_coach") {
-            return "سرمربی مسجد";
+            return `سرمربی ${placeText}`;
         } else if (role === "mosque_cultural_officer") {
-            return " مسئول فرهنگی مسجد";
+            return `مسئول فرهنگی ${placeText}`;
         } else if (role === "area_interface") {
             return "رابط منطقه";
         } else if (role === "executive_vice_president_mosques") {
-            return "معاونت اجرایی مساجد";
+            return `معاونت اجرایی ${placeText}`;
         } else if (role === "deputy_for_planning_and_programming") {
             return "معاونت طرح و برنامه";
         } else {
@@ -119,9 +132,9 @@ const Header = ({bgBox,bgRole}) => {
                                     <a
                                         href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
                                         key={role.role_en}
-                                        className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex'
+                                        className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex text-[14px]'
                                     >
-                                        {role.role}
+                                        {role.role} {placeText}
                                     </a>
                                 ))}
                             </div>

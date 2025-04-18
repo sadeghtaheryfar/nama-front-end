@@ -13,8 +13,8 @@ import persian_fa from "react-date-object/locales/persian_fa";
 // Function to convert numbers to Persian text
 const convertToPersianText = (number) => {
   // This is a placeholder function - you would implement the actual conversion here
-  // For example: 25000 -> "بیست و پنج هزار تومان"
-  return `${number} تومان`;
+  // For example: 25000 -> "بیست و پنج هزار ریال"
+  return `${number} ریال`;
 };
 
 const MainGardeshMoshahede4 = ({ id, data }) => {
@@ -223,7 +223,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       }
     }
     
-    return result.trim() + " تومان";
+    return result.trim() + " ریال";
   };
   
   function formatToCurrency(amount) {
@@ -235,7 +235,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     
     const formattedNumber = number.toLocaleString("fa-IR");
     
-    return `${formattedNumber} تومان`;
+    return `${formattedNumber} ریال`;
   }
 
   const validateForm = () => {

@@ -40,7 +40,7 @@ const CartsDarkhastActive = ({ item }) => {
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
             سرانه حمایتی هر نفر به مبلغ حداکثر {formatNumber(item.support_for_each_person_amount)} میلیون
-            تومان میباشد.
+            ریال میباشد.
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>

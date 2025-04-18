@@ -80,7 +80,7 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
               <>
                 <div className="mt-2 text-sm text-gray-600">
                   <span className="font-medium">مبلغ به عدد: </span>
-                  {formatPrice(data?.data?.report?.amount)} تومان
+                  {formatPrice(data?.data?.report?.amount)} ریال
                 </div>
               </>
             )}

@@ -50,7 +50,7 @@ const FormSabt1 = ({ data }) => {
             <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
               هزینه کلی عملیات{" "}
             </label>
-            {<div className="py-2">{data.cost ? formatNumber(data.cost) + " تومان" : "0 تومان"}</div>}
+            {<div className="py-2">{data.cost ? formatNumber(data.cost) + " ریال" : "0 ریال"}</div>}
           </div>
 
           <div className="mb-4">

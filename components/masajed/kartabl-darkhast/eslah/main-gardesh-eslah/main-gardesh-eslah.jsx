@@ -23,7 +23,7 @@ const MainGardesheslah = () => {
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              سرانه حمایتی هر نفر به مبلغ ۳ میلیون تومان{" "}
+              سرانه حمایتی هر نفر به مبلغ ۳ میلیون ریال{" "}
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
@@ -61,7 +61,7 @@ const MainGardesheslah = () => {
               هزینه کلی عملیات:
             </h3>
             <span className="text-base lg:text-lg font-medium">
-              ۲۵ میلیون تومان
+              ۲۵ میلیون ریال
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">

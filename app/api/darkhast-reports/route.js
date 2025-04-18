@@ -6,15 +6,16 @@ export const GET = async (req) => {
     const token = cookies().get("token")?.value;
     try {
         const { searchParams } = new URL(req.url);
-        const per_page = searchParams.get("per_page") || 100;
         const sort = searchParams.get("sort") || "created_at";
         const direction = searchParams.get("direction") || "desc";
         const status = searchParams.get("status");
         const q = searchParams.get("q") || "";
         const item_id = searchParams.get("itemId");
         const role = searchParams.get("role");
+        const page = parseInt(searchParams.get("page") || "1");
+        const per_page = parseInt(searchParams.get("per_page") || "6");
 
-        const params = { item_id, per_page, sort, direction, q };
+        const params = { item_id, per_page, page, sort, direction, q };
         
         if (role) params.role = role;
         if (status) params.status = status;

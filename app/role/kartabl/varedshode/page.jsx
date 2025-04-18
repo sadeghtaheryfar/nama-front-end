@@ -207,7 +207,7 @@ export default function Enter() {
                 </div>
                 <div className="flex justify-between text-[12px] md:text-[15px] my-2">
                   هزینه پیشنهادی معاونت مساجد:{" "}
-                  <span className="font-bold text-left">4500000 تومان</span>
+                  <span className="font-bold text-left">4500000 ریال</span>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-6 my-6">

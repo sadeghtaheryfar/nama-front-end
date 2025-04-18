@@ -14,6 +14,59 @@ const MainGardeshJari = ({data}) => {
     }
   }
 
+  const toPersianText = (num) => {
+    if (num === 0) return 'صفر';
+    if (!num) return '';
+    
+    const yekan = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+    const dahgan = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+    const dahyek = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+    const sadgan = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+    const basex = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون'];
+    
+    let result = '';
+    let base = 0;
+    
+    num = Math.floor(num);
+    
+    while (num > 0) {
+      const text3 = convertLessThan1000(num % 1000);
+      if (text3 !== '') {
+        result = text3 + (base > 0 ? ' ' + basex[base] + ' ' : '') + result;
+      }
+      
+      num = Math.floor(num / 1000);
+      base++;
+    }
+    
+    return result.trim() + ' ریال';
+    
+    function convertLessThan1000(num) {
+      const n1 = num % 10;
+      const n2 = Math.floor((num % 100) / 10);
+      const n3 = Math.floor(num / 100);
+      
+      let result = '';
+      
+      if (n3 > 0) {
+        result += sadgan[n3] + ' ';
+      }
+      
+      if (n2 === 1) {
+        result += dahyek[n1] + ' ';
+      } else if (n2 > 1) {
+        result += dahgan[n2] + ' ';
+        if (n1 > 0) {
+          result += 'و ' + yekan[n1] + ' ';
+        }
+      } else if (n1 > 0) {
+        result += yekan[n1] + ' ';
+      }
+      
+      return result.trim();
+    }
+  }
+
   const pathname = usePathname();
   const [typeField, setTypeField] = useState(null);
   const pathSegments = pathname.split("/");
@@ -46,7 +99,7 @@ const MainGardeshJari = ({data}) => {
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
         <h2 className="text-base font-bold md:text-lg xl:text-2xl">
           {data?.data?.request_plan?.title || "بدون نام"}
-          <span>({data?.data?.request_plan?.id || 0})</span>
+          <span>({data?.data?.request_plan?.id || 0} {data?.data?.unit?.code ? `- ${data?.data?.unit?.code}` : ''})</span>
         </h2>
 
         {data?.data?.status == 'action_needed' && (
@@ -95,7 +148,7 @@ const MainGardeshJari = ({data}) => {
               سرانه حمایتی هر نفر به مبلغ {formatNumber(
                 data?.data?.request_plan?.support_for_each_person_amount
               )}{" "}
-              میلیون تومان میباشد.
+              میلیون ریال میباشد.
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
@@ -129,6 +182,18 @@ const MainGardeshJari = ({data}) => {
           </ul>
         </div>
       </div>
+
+      <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <p>سرمربی {data?.data?.item?.title}</p>
+        <p>وابسته به واحد حقوقی  : {data?.data?.unit?.title}</p>
+        <p>سرمربی : {data?.data?.user?.name}</p>
+        <p>کد ملی سرمربی : {data?.data?.user?.national_id}</p>
+        <p>شهر : {data?.data?.unit?.city?.title ? data?.data?.unit?.city?.title : '------'}</p>
+        <p>شماره تماس سرمربی : {data?.data?.user?.phone}</p>
+        <p>منطقه : {data?.data?.unit?.region?.title ? data?.data?.unit?.region?.title : '------'}</p>
+        <p>محله : {data?.data?.unit?.neighborhood?.title ? data?.data?.unit?.neighborhood?.title : '------'}</p>
+      </div>
+
       <hr className="hidden md:block h-2 mb-10" />
       <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
         <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">
@@ -143,7 +208,7 @@ const MainGardeshJari = ({data}) => {
               هزینه کلی عملیات:
             </h3>
             <span className="text-base lg:text-lg font-medium">
-              {formatPrice(data?.data?.amount)}
+              {formatPrice(data?.data?.amount)} ریال ({toPersianText(data?.data?.amount)})
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
@@ -162,26 +227,30 @@ const MainGardeshJari = ({data}) => {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل پیوست نامه {typeField}:
-            </h3>
-            <a href={data?.data?.imam_letter?.original}>
-              <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                برای مشاهده فایل کلیک کنید
-              </button>
-            </a>
-          </div>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              فایل نامه رابط منطقه:
-            </h3>
-            <a href={data?.data?.area_interface_letter?.original}>
-              <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                برای مشاهده فایل کلیک کنید
-              </button>
-            </a>
-          </div>
+          {data?.data?.imam_letter?.original && (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
+              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                فایل پیوست نامه {typeField}:
+              </h3>
+              <a href={data?.data?.imam_letter?.original}>
+                <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
+                  برای مشاهده فایل کلیک کنید
+                </button>
+              </a>
+            </div>
+          )}
+          {data?.data?.area_interface_letter?.original && (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
+              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                فایل نامه رابط منطقه:
+              </h3>
+              <a href={data?.data?.area_interface_letter?.original}>
+                <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
+                  برای مشاهده فایل کلیک کنید
+                </button>
+              </a>
+            </div>
+          )}
           {(data?.data?.final_amount || data?.data?.offer_amount) && (
             <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
               <span className="text-base lg:text-lg">

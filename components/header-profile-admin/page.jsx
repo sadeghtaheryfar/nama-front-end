@@ -7,15 +7,27 @@ const Header = ({ bgBox, bgRole }) => {
     const [profile, setProfile] = useState(null);
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [showRoleMenu, setShowRoleMenu] = useState(false);
+    const [placeText, setPlaceText] = useState("");
     const router = useRouter();
     
     const searchParams = useSearchParams();
     const roleFromUrl = searchParams.get('role');
     const itemIdFromUrl = searchParams.get('item_id');
+    const itemId = searchParams.get('item_id');
     const idFromUrl = searchParams.get('id');
     const [currentRole, setCurrentRole] = useState(roleFromUrl);
 
     useEffect(() => {
+        if (itemId === "2") {
+            setPlaceText("مساجد");
+        } else if (itemId === "3") {
+            setPlaceText("مدارس");
+        } else if (itemId === "4") {
+            setPlaceText("مراکز تعالی");
+        } else {
+            setPlaceText("");
+        }
+
         const fetching = async () => {
             try {
                 const response = await axios.get(`/api/profile?item_id=${itemIdFromUrl}`);
@@ -29,7 +41,7 @@ const Header = ({ bgBox, bgRole }) => {
             }
         };
         fetching();
-    }, []);
+    }, [itemId]);
 
     const roleOptions = profile?.data?.roles?.map(role => ({
         key: role.role_en,
@@ -105,10 +117,10 @@ const Header = ({ bgBox, bgRole }) => {
                         {profile?.data?.roles?.map((role) => (
                             <div
                                 key={role.role_en}
-                                className='px-4 py-2 hover:bg-gray-200 cursor-pointer'
+                                className='px-4 py-2 hover:bg-gray-200 cursor-pointer text-[14px]'
                                 onClick={() => handleRoleChange(role.role_en)}
                             >
-                                {role.role}
+                                {role.role} {placeText}
                             </div>
                         ))}
                     </div>

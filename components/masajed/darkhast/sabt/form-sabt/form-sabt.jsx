@@ -137,7 +137,7 @@ const FormSabt = ({ id,data }) => {
       }
     }
     
-    return result.trim() + " تومان";
+    return result.trim() + " ریال";
   };
 
   const handleFile1 = (event) => {
@@ -382,7 +382,7 @@ const FormSabt = ({ id,data }) => {
     
     const formattedNumber = number.toLocaleString("fa-IR");
     
-    return `${formattedNumber} تومان`;
+    return `${formattedNumber} ریال`;
   }
 
   return (
