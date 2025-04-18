@@ -110,7 +110,7 @@ const Header = ({bgBox,bgRole}) => {
                 alt="user"
                 width={0}
                 height={0}
-                src={profile?.data?.avatar || '/Images/home/Ellipse 477.svg'}
+                src={profile?.data?.avatar || '/Images/home/user.jpg'}
             />
                 <div className="flex flex-col gap-1 leading-5">
                 <span className="text-xs lg:text-lg font-medium text-right" dir="rtl">سلام {profile?.data?.name || ' '}!</span>
