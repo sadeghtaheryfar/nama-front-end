@@ -109,7 +109,7 @@ export default function Kartabl() {
         setIsSortOpen(false);
       }
     };
-
+ 
     document.addEventListener('click', handleClickOutside);
 
     return () => {
@@ -420,7 +420,7 @@ export default function Kartabl() {
               <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
                 {(requests?.data && !loading) && requests?.data?.map((request) => (
                   <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
-                    <h2 className="text-sm text-[#202020] pb-3">{request?.request_plan?.title || "بدون عنوان"}</h2>
+                    <h2 className="text-sm text-[#202020] pb-3">{request?.request?.request_plan?.title || "بدون عنوان"}</h2>
                     
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">شماره</span>
@@ -432,11 +432,13 @@ export default function Kartabl() {
                       <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
                         ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                           request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                          request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
                           request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                           "text-[#D9534F] bg-[#FDECEA]"}`}>
                         {request.status === "rejected" ? "رد شده" : 
                           request.status === "in_progress" ? "جاری" : 
                           request.status === "action_needed" ? "نیازمند اصلاح" : 
+                          request.status === "pending" ? "باز" : 
                           request.status === "done" ? "تایید و ارسال" : "نامشخص"}
                       </span>
                     </div>
@@ -498,7 +500,7 @@ export default function Kartabl() {
                     {(requests?.data && !loading) && requests?.data?.map((request) => (
                       <tr key={request.id}>
                         <td className="border border-gray-300 px-7 py-5 text-base">
-                          {request?.request_plan?.title || "بدون عنوان"}
+                          {request?.request?.request_plan?.title || "بدون عنوان"}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {request.id}
@@ -516,16 +518,20 @@ export default function Kartabl() {
                           <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                             ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                               request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                              request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
                               request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                               "text-[#D9534F] bg-[#FDECEA]"}`}>
                             {request.status === "rejected" ? "رد شده" : 
                               request.status === "in_progress" ? "جاری" : 
                               request.status === "action_needed" ? "نیازمند اصلاح" : 
+                              request.status === "pending" ? "باز" : 
                               request.status === "done" ? "تایید و ارسال" : "نامشخص"}
                           </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                          <Link href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
+                          {request.status != "pending" && (
+                            <Link href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
+                          )}
                         </td>
                       </tr>
                     ))}
