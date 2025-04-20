@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'header': "url('/Images/home/frame 2.svg')",
+        'header': "url('/Images/home/HomeHeader.svg')",
         'header-masjed': "url('/Images/masajed/header.svg')",
         'header-masjed-desktop': "url('/Images/masajed/header-desktop-msj.svg')",
         'background': "url('/Images/vector.svg')",

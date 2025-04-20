@@ -1,3 +1,4 @@
+'use client'
 import Image from "next/image";
 import tik from "./../../../../public/assets/tik.svg";
 import close from "./../../../../public/assets/close.png";
