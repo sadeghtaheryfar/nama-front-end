@@ -50,8 +50,7 @@ export default function RootLayout({ children }) {
         try {
           const url = await axios.get("/api/url");
           if (url.data) {
-            console.log('>>>>>>>>>>>', url.data)
-            // router.push(url.data.verify_url);
+            router.push(url.data.verify_url);
           }
         } catch (error) {
           console.log(error);
