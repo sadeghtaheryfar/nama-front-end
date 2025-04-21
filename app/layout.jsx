@@ -11,7 +11,6 @@ export default function RootLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const [axiosActiveRequests, setAxiosActiveRequests] = useState(0);
 
-  // Axios Interceptor to show/hide loading globally
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use((config) => {
       setAxiosActiveRequests((prev) => prev + 1);
@@ -51,7 +50,8 @@ export default function RootLayout({ children }) {
         try {
           const url = await axios.get("/api/url");
           if (url.data) {
-            router.push(url.data.verify_url);
+            console.log('>>>>>>>>>>>', url.data)
+            // router.push(url.data.verify_url);
           }
         } catch (error) {
           console.log(error);
