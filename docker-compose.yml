@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  nama:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    image: metafly_front
+    working_dir: /app
+    container_name: nama
+    environment:
+      - NEXT_PUBLIC_BASE_URL=http://arman.armaniran.org
+      - NEXT_PUBLIC_AUTH=https://armanishoo.com
+      - NEXT_PUBLIC_CB_URL=http://localhost:3000
+    networks:
+      - nama
+networks:
+  nama:
+    name: nama
+    driver: bridge
