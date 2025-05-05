@@ -13,7 +13,7 @@ services:
     environment:
       - NEXT_PUBLIC_BASE_URL=http://arman.armaniran.org
       - NEXT_PUBLIC_AUTH=https://armanishoo.com
-      - NEXT_PUBLIC_CB_URL=http://localhost:3000
+      - NEXT_PUBLIC_CB_URL=${NEXT_PUBLIC_CB_URL}
     networks:
       - nama
 networks:
