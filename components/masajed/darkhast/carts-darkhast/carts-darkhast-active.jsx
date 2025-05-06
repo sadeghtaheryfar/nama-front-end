@@ -50,10 +50,9 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-            {item.previous_requests > item.max_allocated_request && (
+            {(item.max_allocated_request - item.previous_requests) == 0 ? (
               <span className="font-bold">در خواستی باقی نمانده.</span>
-            )}
-            {item.previous_requests <= item.max_allocated_request && (
+            ) : (
               <span>
                 درخواست
                 <span className="text-[#D5B260] font-bold">
@@ -66,7 +65,7 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
         </ul>
       </div>
-        {(Number(item.max_allocated_request - item.previous_requests) > 1 ) ? (
+        {(Number(item.max_allocated_request - item.previous_requests) >= 1 ) ? (
           <Link href={`/${itemId}/darkhast/sabt?id=${item.id}`}>
             <ButtonSabt />
           </Link>
