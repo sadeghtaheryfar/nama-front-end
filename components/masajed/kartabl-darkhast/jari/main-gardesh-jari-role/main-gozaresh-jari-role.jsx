@@ -156,7 +156,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
 
     try {
       const submitForm = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports/${id}/admin-submit?item_id=${itemId}&role=${role}`,
+        `http://arman.armaniran.org/api/v1/reports/${id}/admin-submit?item_id=${itemId}&role=${role}`,
         formDataToSend,
         {
           headers: {
