@@ -327,7 +327,7 @@ const FormSabt = ({ id,data }) => {
 
     try {
       const submitForm = await axios.post(
-        `http://arman.armaniran.org/api/v1/requests?item_id=${itemId}&role=mosque_head_coach`,
+        `https://arman.armaniran.org/api/v1/requests?item_id=${itemId}&role=mosque_head_coach`,
         formDataToSend,
         {
           headers: {

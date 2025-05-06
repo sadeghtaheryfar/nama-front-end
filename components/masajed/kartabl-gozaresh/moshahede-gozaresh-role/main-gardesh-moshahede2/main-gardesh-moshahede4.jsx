@@ -125,7 +125,7 @@ const MainGardeshMoshahede4 = ({ id,data }) => {
 
     try {
       const submitForm = await axios.post(
-        `http://arman.armaniran.org/api/v1/reports/${data?.data?.report?.id}?_method=PATCH&item_id=${itemId}`,
+        `https://arman.armaniran.org/api/v1/reports/${data?.data?.report?.id}?_method=PATCH&item_id=${itemId}`,
         formDataToSend,
         {
           headers: {
