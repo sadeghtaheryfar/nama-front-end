@@ -310,11 +310,11 @@ const Darkhastha = () => {
                 </span>
               </div>
 
-              <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>
+              <a target="_blank" href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>
                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                   مشاهده درخواست
                 </button>
-              </Link>
+              </a>
             </div>
           ))}
         </div>
@@ -377,7 +377,7 @@ const Darkhastha = () => {
                     </div>
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                    <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>مشاهده درخواست</Link>
+                    <a target="_blank" href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>مشاهده درخواست</a>
                   </td>
                 </tr>
               ))}

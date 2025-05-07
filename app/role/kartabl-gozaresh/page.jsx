@@ -158,15 +158,15 @@ export default function Kartabl() {
       }
     };
     fetchRequests();
-  }, [currentPage, itemId, filters]);
+  }, [currentPage, itemId, filters, role]);
   
   useEffect(() => {
-    setRequests([]);
     setCurrentPage(1);
   }, [filters,itemId,role]);
   
   const goBack = (e) => {
-    if(e) router.back(); else router.push('/');
+    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+    router.push(newPath);
   };
 
   const handlePageChange = (page) => {
@@ -460,11 +460,11 @@ export default function Kartabl() {
                       </span>
                     </div>
 
-                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
+                    <a target="_blank" href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
-                    </Link>
+                    </a>
                   </div>
                 ))}
               </div>
@@ -530,7 +530,7 @@ export default function Kartabl() {
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
                           {request.status != "pending" && (
-                            <Link href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
+                            <a target="_blank" href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</a>
                           )}
                         </td>
                       </tr>

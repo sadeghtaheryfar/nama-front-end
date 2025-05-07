@@ -7,7 +7,8 @@ const Header = () => {
   const router = useRouter();
 
   const goBack = (e) => {
-    if(e) router.back(); else router.push('/');
+    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+    router.push(newPath);
   };
 
   return (
