@@ -192,7 +192,7 @@ export default function Role() {
                     className="max-h-[20rem] !flex !items-center rounded-xl !overflow-hidden"
                   >
                     <img
-                      className="w-full rounded-xl object-cover"
+                      className="w-full rounded-xl aspect-[16/10] object-cover"
                       src={banner?.image}
                       alt={banner?.title}
                     />

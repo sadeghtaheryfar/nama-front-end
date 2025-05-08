@@ -102,7 +102,7 @@ const MainMasajed = () => {
             }}
             loop={true}
             modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-            className="swiper-masajed relative min-h-[20rem]"
+            className="swiper-masajed relative"
             breakpoints={{
               1024: {
                 pagination: {
@@ -115,10 +115,10 @@ const MainMasajed = () => {
               banners?.data?.map((banner) => (
                 <SwiperSlide
                   key={banner?.id}
-                  className="max-h-[20rem] !flex !items-center rounded-xl !overflow-hidden"
+                  className="!flex !items-center rounded-xl !overflow-hidden"
                 >
                   <img
-                    className="w-full rounded-xl object-cover"
+                    className="w-full rounded-xl aspect-[16/8] lg:aspect-[16/4] object-cover"
                     src={banner?.image}
                     alt={banner?.title}
                   />
