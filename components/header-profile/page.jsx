@@ -99,7 +99,7 @@ const Header = ({bgBox,bgRole}) => {
         } else if (role === "deputy_for_planning_and_programming") {
             return "معاونت طرح و برنامه";
         } else {
-            return "سرمربی مساجد";
+            return "نامشخص";
         }
     };
 

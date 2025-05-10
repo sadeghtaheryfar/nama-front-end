@@ -118,8 +118,14 @@ export default function Role() {
   }, [item_id]);
 
   const goBack = (e) => {
-    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    router.push(newPath);
+    if(e)
+    {
+      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      // router.push(newPath);
+      router.back();
+    }else{
+      router.push('/');
+    }
   };
 
   return (
@@ -192,8 +198,14 @@ export default function Role() {
                     className="max-h-[20rem] !flex !items-center rounded-xl !overflow-hidden"
                   >
                     <img
-                      className="w-full rounded-xl aspect-[16/10] object-cover"
+                      className="w-full rounded-xl aspect-[16/5] object-cover hidden lg:flex"
                       src={banner?.image}
+                      alt={banner?.title}
+                    />
+                    
+                    <img
+                      className="w-full rounded-xl aspect-[16/14] object-cover block lg:hidden"
+                      src={banner?.mobile_image}
                       alt={banner?.title}
                     />
                   </SwiperSlide>

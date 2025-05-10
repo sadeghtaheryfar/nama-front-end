@@ -1,18 +1,21 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-import Carts2 from "../carts2/carts2";
-import Table from "../table/table";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Darkhastha = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  // Initialize filters from URL query parameters
   const [filters, setFilters] = useState({
-    search: "",
-    sort: "created_at",
-    direction: "",
-    status: null,
+    search: searchParams.get("search") || "",
+    sort: searchParams.get("sort") || "created_at",
+    direction: searchParams.get("direction") || "",
+    status: searchParams.get("status") || null,
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -37,17 +40,36 @@ const Darkhastha = () => {
     };
   }, []);
 
-
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // Get current page from URL or default to 1
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
+
+  // Update URL with current filters and pagination
+  const updateURL = (newFilters, newPage) => {
+    const params = new URLSearchParams();
+    
+    if (newFilters.search) params.set("search", newFilters.search);
+    if (newFilters.sort) params.set("sort", newFilters.sort);
+    if (newFilters.direction) params.set("direction", newFilters.direction);
+    if (newFilters.status) params.set("status", newFilters.status);
+    if (newPage > 1) params.set("page", newPage.toString());
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Update filters and URL when filters change
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    updateURL(newFilters, 1); // Reset to page 1 when filters change
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -84,11 +106,11 @@ const Darkhastha = () => {
   
   useEffect(() => {
     setRequests([]);
-    setCurrentPage(1);
   }, [filters]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    updateURL(filters, page);
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -200,7 +222,12 @@ const Darkhastha = () => {
                 alt="#"
                 src={"/Images/masajed/kartabl-darkhast/Search.svg"}
               />
-                <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
+                <input 
+                  placeholder="جستجو کنید ..." 
+                  className="w-full bg-transparent h-full focus:outline-none" 
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} 
+                />
             </div>
             <div className="flex items-center gap-4">
               <div ref={filterRef} className="relative inline-block mr-4">
@@ -225,11 +252,11 @@ const Darkhastha = () => {
 
                 {isFilterOpen && (
                   <div className="absolute mt-2 w-full bg-white border rounded-[8px] shadow">
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید شده</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید شده</div>
                   </div>
                 )}
               </div>
@@ -254,8 +281,8 @@ const Darkhastha = () => {
 
                 {isSortOpen && (
                   <div className="absolute mt-2 w-full bg-white border rounded shadow">
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
-                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
+                    <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
                   </div>
                 )}
               </div>
@@ -310,11 +337,11 @@ const Darkhastha = () => {
                 </span>
               </div>
 
-              <a target="_blank" href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>
+              <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>
                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                   مشاهده درخواست
                 </button>
-              </a>
+              </Link>
             </div>
           ))}
         </div>
@@ -377,7 +404,7 @@ const Darkhastha = () => {
                     </div>
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                    <a target="_blank" href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>مشاهده درخواست</a>
+                    <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>مشاهده درخواست</Link>
                   </td>
                 </tr>
               ))}

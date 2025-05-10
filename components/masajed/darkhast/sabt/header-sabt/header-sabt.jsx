@@ -87,8 +87,14 @@ const HeaderSabt = () => {
   const router = useRouter();
 
   const goBack = (e) => {
-    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    router.push(newPath);
+    if(e)
+    {
+      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      // router.push(newPath);
+      router.back();
+    }else{
+      router.push('/');
+    }
   };
 
   return (

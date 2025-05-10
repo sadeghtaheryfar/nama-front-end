@@ -37,9 +37,30 @@ const Carts = () => {
         }
     };
     fetching();
-}, []);
+  }, []);
 
-console.log('>>>>>>>>>>>', profile)
+  const getLinkForItem = (item) => {
+    if (profile?.data?.roles && profile.data.roles.length > 0) {
+      const mosqueHeadCoachRole = profile.data.roles.find(role => 
+        role.role_en === 'mosque_head_coach' && 
+        role?.item_id?.id === item?.id
+      );
+      
+      if (mosqueHeadCoachRole) {
+        return `/${item?.id}`;
+      } else {
+        const itemRole = profile.data.roles.find(role => role?.item_id?.id === item?.id);
+        if (itemRole) {
+          return `/role?role=${itemRole.role_en}&item_id=${item?.id}`;
+        } else {
+          const firstRole = profile.data.roles[0];
+          return `/role?role=${firstRole.role_en}&item_id=${item?.id}`;
+        }
+      }
+    }
+    
+    return '/default-link';
+  };
 
   return (
     <div className="bg-white rounded-2xl flex flex-wrap justify-center gap-6 p-6 sm:p-9 lg:p-11 xl:p-12 text-white drop-drop-shadow-3xl sm:gap-8 md:gap-9 lg:gap-11 xl:gap-14">
@@ -52,15 +73,15 @@ console.log('>>>>>>>>>>>', profile)
         </section>
       )}
 
-      {Items && Items?.map((item) => {
-        const hasRoleWithItemId = profile?.data?.roles?.some(role => 
+        {Items && Items?.map((item) => {
+          const hasRoleWithItemId = profile?.data?.roles?.some(role => 
           role.item_id && role.item_id.id === item?.id
         );
 
         if(hasRoleWithItemId)
         {
           return (
-            <Link href={(item?.id) ? `/${item?.id}` : '/default-link'} key={item?.id}>
+            <Link href={getLinkForItem(item)} key={item?.id}>
               <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
                 <img
                   className="w-full h-full rounded-md object-cover"

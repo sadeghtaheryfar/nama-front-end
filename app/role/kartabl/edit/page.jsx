@@ -7,14 +7,21 @@ import mosque from "./../../../../public/assets/mosque.png";
 import man from "./../../../../public/assets/man.png";
 import menu from "./../../../../public/assets/menu.svg";
 import notif from "./../../../../public/assets/notif.svg";
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 
 export default function Edit() {
   const router = useRouter();
+  const pathname = usePathname();
   const goBack = (e) => {
-    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    router.push(newPath);
+    if(e)
+    {
+      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      // router.push(newPath);
+      router.back();
+    }else{
+      router.push('/');
+    }
   };
   
   return (

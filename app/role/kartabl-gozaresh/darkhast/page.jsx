@@ -10,7 +10,7 @@ import notif from "./../../../../public/assets/notif.svg";
 import HeaderProfile from "./../../../../components/header-profile-admin/page";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import GardeshJariRole from "./../../../../components/masajed/kartabl-darkhast/jari/gardesh-jari/gardesh-jari-role";
 import MainGozareshJariRole from "./../../../../components/masajed/kartabl-darkhast/jari/main-gardesh-jari-role/main-gozaresh-jari-role";
@@ -90,9 +90,16 @@ export default function Accept() {
     fetching();
   }, [item_id,role]);
 
+  const pathname = usePathname();
   const goBack = (e) => {
-    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    router.push(newPath);
+    if(e)
+    {
+      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      // router.push(newPath);
+      router.back();
+    }else{
+      router.push('/');
+    }
   };
   
   return (

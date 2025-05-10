@@ -118,10 +118,16 @@ const MainMasajed = () => {
                   className="!flex !items-center rounded-xl !overflow-hidden"
                 >
                   <img
-                    className="w-full rounded-xl aspect-[16/8] lg:aspect-[16/4] object-cover"
-                    src={banner?.image}
-                    alt={banner?.title}
-                  />
+                      className="w-full rounded-xl aspect-[16/5] object-cover hidden lg:block"
+                      src={banner?.image}
+                      alt={banner?.title}
+                    />
+                    
+                    <img
+                      className="w-full rounded-xl aspect-[16/14] object-cover block lg:hidden"
+                      src={banner?.mobile_image}
+                      alt={banner?.title}
+                    />
                 </SwiperSlide>
               ))}
 

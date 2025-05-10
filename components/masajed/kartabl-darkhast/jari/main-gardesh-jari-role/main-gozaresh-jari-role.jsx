@@ -17,6 +17,62 @@ const MainGozareshJariRole = ({data, back_steps}) => {
       return Math.floor(num / 1000000) + " میلیون";
     }
   }
+
+  const convertToPersianWords = (num) => {
+    if (!num) return "";
+    
+    const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
+    const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+    const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
+    const sadgan = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+    const scale = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
+    
+    if (num === 0) return "صفر";
+    
+    let result = "";
+    let scaleIndex = 0;
+    
+    // Convert to string and process in groups of 3 digits
+    const numStr = num.toString();
+    const groups = [];
+    for (let i = numStr.length; i > 0; i -= 3) {
+      const start = Math.max(0, i - 3);
+      groups.unshift(numStr.substring(start, i));
+    }
+    
+    for (let i = 0; i < groups.length; i++) {
+      const groupIndex = groups.length - 1 - i;
+      const group = parseInt(groups[i]);
+      
+      if (group === 0) continue;
+      
+      let groupStr = "";
+      const hundreds = Math.floor(group / 100);
+      const tens = Math.floor((group % 100) / 10);
+      const ones = group % 10;
+      
+      if (hundreds > 0) {
+        groupStr += sadgan[hundreds] + " ";
+      }
+      
+      if (tens === 1) {
+        groupStr += dah_ta_bist[ones] + " ";
+      } else {
+        if (tens > 0) {
+          groupStr += dahgan[tens] + " ";
+        }
+        if (ones > 0) {
+          groupStr += yekan[ones] + " ";
+        }
+      }
+      
+      if (groupStr) {
+        result += groupStr + scale[groupIndex] + " ";
+      }
+    }
+    
+    return result.trim() + " ریال";
+  };
   
   const searchParams = useSearchParams();
   const [amount, setAmount] = useState("");

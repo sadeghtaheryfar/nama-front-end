@@ -10,7 +10,7 @@ import mosque from "./../../../public/assets/mosque.png";
 import man from "./../../../public/assets/man.png";
 import menu from "./../../../public/assets/menu.svg";
 import notif from "./../../../public/assets/notif.svg";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -90,10 +90,10 @@ export default function Kartabl() {
   }, [item_id,role]);
 
   const [filters, setFilters] = useState({
-    search: "",
-    sort: "created_at",
-    direction: "",
-    status: null,
+    search: searchParams.get("search") || "",
+    sort: searchParams.get("sort") || "created_at",
+    direction: searchParams.get("direction") || "",
+    status: searchParams.get("status") || null,
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -122,9 +122,30 @@ export default function Kartabl() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
+
+  const updateURL = (newFilters, newPage) => {
+    const params = new URLSearchParams();
+    
+    if (newFilters.search) params.set("search", newFilters.search);
+    if (newFilters.sort) params.set("sort", newFilters.sort);
+    if (newFilters.direction) params.set("direction", newFilters.direction);
+    if (newFilters.status) params.set("status", newFilters.status);
+    if (newPage > 1) params.set("page", newPage.toString());
+    params.set("role", role)
+    params.set("item_id", itemId)
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Update filters and URL when filters change
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    updateURL(newFilters, 1); // Reset to page 1 when filters change
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -165,9 +186,16 @@ export default function Kartabl() {
     setCurrentPage(1);
   }, [filters,itemId,role]);
   
+  const pathname = usePathname();
   const goBack = (e) => {
-    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    router.push(newPath);
+    if(e)
+    {
+      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      // router.push(newPath);
+      router.back();
+    }else{
+      router.push('/');
+    }
   };
 
   const handlePageChange = (page) => {
@@ -310,25 +338,25 @@ export default function Kartabl() {
         <div className="h-full vector-nama md:px-5">
           <div className="bg-white absolute top-[150px] md:top-[160px] inset-x-6 md:inset-x-11 rounded p-3 md:p-6 scroll-kon">
             <div className="grid grid-cols-1 md:grid-cols-4 text-[12px] md:text-[15px] gap-8 my-7">
-              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#25c7aa59] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#25C7AA] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.in_progress}</div>
                 </div>
                 برای مشاهده جاری کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#77b7dc80] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.done}</div>
                 </div>
                 برای مشاهده تایید و ارسال کلیک کنید
               </div>
-              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#dc262680] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-red-600 rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.rejected}</div>
                 </div>
                 برای مشاهده رد شده کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#ffd14080] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-[#FFD140] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.action_needed}</div>
                 </div>
@@ -350,7 +378,7 @@ export default function Kartabl() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
+                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} />
                   </div>
                   <div className="flex items-center gap-4">
                     <div ref={filterRef} className="relative inline-block mr-4">
@@ -375,11 +403,11 @@ export default function Kartabl() {
 
                       {isFilterOpen && (
                         <div className="absolute mt-2 w-full bg-white border rounded-[8px] shadow">
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید و ارسال</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید و ارسال</div>
                         </div>
                       )}
                     </div>
@@ -404,8 +432,8 @@ export default function Kartabl() {
 
                       {isSortOpen && (
                         <div className="absolute mt-2 w-full bg-white border rounded shadow">
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { setFilters({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
                         </div>
                       )}
                     </div>
@@ -460,11 +488,11 @@ export default function Kartabl() {
                       </span>
                     </div>
 
-                    <a target="_blank" href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
+                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
-                    </a>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -527,7 +555,7 @@ export default function Kartabl() {
                           </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                          <a target="_blank" href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</a>
+                          <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
                         </td>
                       </tr>
                     ))}
