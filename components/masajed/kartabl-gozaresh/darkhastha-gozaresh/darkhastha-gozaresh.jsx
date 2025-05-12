@@ -68,7 +68,7 @@ const DarkhasthaGozaresh = () => {
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    updateURL(newFilters, 1); // Reset to page 1 when filters change
+    // updateURL(newFilters, 1); // Reset to page 1 when filters change
     setCurrentPage(1);
   };
 

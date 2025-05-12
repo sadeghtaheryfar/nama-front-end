@@ -120,9 +120,9 @@ export default function Role() {
   const goBack = (e) => {
     if(e)
     {
-      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-      // router.push(newPath);
-      router.back();
+      const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      router.push(newPath);
+      // router.back();
     }else{
       router.push('/');
     }
@@ -240,7 +240,7 @@ export default function Role() {
                     </div>
                     <div className="flex items-center">
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
-                        {info?.requests?.done}
+                        {info?.requests?.done_temp}
                       </span>
                       تایید و ارسال
                     </div>
@@ -288,7 +288,7 @@ export default function Role() {
                     </div>
                     <div className="flex items-center">
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
-                        {info?.reports?.done}
+                        {info?.reports?.done_temp}
                       </span>
                       تایید و ارسال
                     </div>

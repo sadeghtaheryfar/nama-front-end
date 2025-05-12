@@ -25,6 +25,10 @@ export default function Kartabl() {
   const itemIdParam = searchParams.get("item_id");
   const [header, setHeader] = useState(null);
   const [loadingHeader, setLoadingHeader] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState("");
+  const [planSearch, setPlanSearch] = useState("");
+  const [unitSearch, setUnitSearch] = useState("");
 
   useEffect(() => {
     const roleParam = searchParams.get("role");
@@ -94,6 +98,8 @@ export default function Kartabl() {
     sort: searchParams.get("sort") || "created_at",
     direction: searchParams.get("direction") || "",
     status: searchParams.get("status") || null,
+    plan_id: searchParams.get("plan_id") || null,
+    unit_id: searchParams.get("unit_id") || null,
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -133,6 +139,8 @@ export default function Kartabl() {
     if (newFilters.sort) params.set("sort", newFilters.sort);
     if (newFilters.direction) params.set("direction", newFilters.direction);
     if (newFilters.status) params.set("status", newFilters.status);
+    if (newFilters.plan_id) params.set("plan_id", newFilters.plan_id);
+    if (newFilters.unit_id) params.set("unit_id", newFilters.unit_id);
     if (newPage > 1) params.set("page", newPage.toString());
     params.set("role", role)
     params.set("item_id", itemId)
@@ -140,10 +148,49 @@ export default function Kartabl() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
+  
+  const [units, setUnits] = useState([]);
+  useEffect(() => {
+    if(!itemId) return;
+    const fetchFutureCarts = async () => {
+      try {
+        const carts = await axios.get(
+          `/api/unit?item_id=${itemId}&role=${role}`
+        );
+        if (carts.data) {
+          setUnits(carts.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchFutureCarts();
+  }, [itemId]);
+  
+  const [plans, setPlans] = useState([]);
+  useEffect(() => {
+    if(!itemId) return;
+    const fetchFutureCarts = async () => {
+      try {
+        const carts = await axios.get(
+          `/api/plans?item_id=${itemId}`
+        );
+        if (carts.data) {
+          setPlans(carts.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchFutureCarts();
+  }, [itemId]);
+
   // Update filters and URL when filters change
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    updateURL(newFilters, 1); // Reset to page 1 when filters change
+    // updateURL(newFilters, 1); // Reset to page 1 when filters change
     setCurrentPage(1);
   };
 
@@ -153,13 +200,15 @@ export default function Kartabl() {
 
       setLoading(true);
       try {
-        const { search, sort, direction, status } = filters;
+        const { search, sort, direction, status, plan_id, unit_id } = filters;
         const response = await axios.get(`/api/darkhast`, {
           params: {
             q: search,
             sort,
             direction,
             status,
+            plan_id,
+            unit_id,
             per_page: itemsPerPage,
             page: currentPage,
             itemId,
@@ -188,12 +237,18 @@ export default function Kartabl() {
   
   const pathname = usePathname();
   const goBack = (e) => {
-    if(e)
-    {
-      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-      // router.push(newPath);
-      router.back();
-    }else{
+    const query = router.query;
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryString = searchParams.toString();
+    
+    if(e) {
+      const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      if (queryString) {
+        router.push(`${newPath}?${queryString}`);
+      } else {
+        router.push(newPath);
+      }
+    } else {
       router.push('/');
     }
   };
@@ -295,6 +350,9 @@ export default function Kartabl() {
     return buttons;
   };
 
+  console.log(units);
+  
+
   return (
     <>
       <div className=" h-screen relative">
@@ -391,23 +449,119 @@ export default function Kartabl() {
                           src={"/Images/masajed/kartabl-darkhast/filter.svg"}
                         />
                         <span className="text-xs text-[#202020] min-w-fit lg:text-lg">
-                          {filters.status 
-                            ? (filters.status === "rejected" ? "رد شده" 
-                              : filters.status === "in_progress" ? "جاری" 
-                              : filters.status === "action_needed" ? "نیازمند اصلاح" 
-                              : filters.status === "done" ? "تایید و ارسال" 
-                              : "وضعیت نامشخص") 
-                            : "فیلتر درخواست‌ها"}
+                          فیلتر
                         </span>
                       </button>
 
                       {isFilterOpen && (
-                        <div className="absolute mt-2 w-full bg-white border rounded-[8px] shadow">
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: '' }); setIsFilterOpen(false); }}>همه</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>رد شده</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>جاری</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>نیازمند اصلاح</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>تایید و ارسال</div>
+                        <div className="absolute z-10 mt-2 w-72 bg-white border rounded-[8px] shadow">
+                          <div className="p-2 border-b">
+                            <div className="font-bold mb-2">وضعیت</div>
+                            <div className="px-2">
+                              <select 
+                                className="w-full p-2 border rounded"
+                                value={filters.status || ''}
+                                onChange={(e) => handleFilterChange({ ...filters, status: e.target.value })}
+                              >
+                                <option value="">همه</option>
+                                <option value="rejected">رد شده</option>
+                                <option value="in_progress">جاری</option>
+                                <option value="action_needed">نیازمند اصلاح</option>
+                                <option value="done">تایید و ارسال</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          <div className="p-2 border-b">
+                            <div className="font-bold mb-2">اکشن پلن ها</div>
+                            <div className="px-2 mb-2">
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  placeholder="جستجوی اکشن پلن..."
+                                  className="w-full p-2 border rounded mb-2"
+                                  value={planSearch}
+                                  onChange={(e) => setPlanSearch(e.target.value)}
+                                />
+                                <select
+                                  className="w-full p-2 border rounded"
+                                  value={filters.plan_id || ''}
+                                  onChange={(e) => handleFilterChange({ ...filters, plan_id: e.target.value })}
+                                  size={planSearch ? Math.min(5, plans.filter(plan => 
+                                    plan.title.toLowerCase().includes(planSearch.toLowerCase())
+                                  ).length + 1) : 1}
+                                >
+                                  <option value="">همه</option>
+                                  {plans
+                                    .filter(plan => plan.title.toLowerCase().includes(planSearch.toLowerCase()))
+                                    .map(plan => (
+                                      <option key={plan.id} value={plan.id}>
+                                        {plan.title}
+                                      </option>
+                                    ))
+                                  }
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-2 border-b">
+                            <div className="font-bold mb-2">واحد های سازمانی</div>
+                            <div className="px-2 mb-2">
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  placeholder="جستجوی واحد سازمانی..."
+                                  className="w-full p-2 border rounded mb-2"
+                                  value={unitSearch}
+                                  onChange={(e) => setUnitSearch(e.target.value)}
+                                />
+                                <select
+                                  className="w-full p-2 border rounded"
+                                  value={filters.unit_id || ''}
+                                  onChange={(e) => handleFilterChange({ ...filters, unit_id: e.target.value })}
+                                  size={unitSearch ? Math.min(5, units.filter(unit => 
+                                    unit.title.toLowerCase().includes(unitSearch.toLowerCase())
+                                  ).length + 1) : 1}
+                                >
+                                  <option value="">همه</option>
+                                  {units
+                                    .filter(unit => unit.title.toLowerCase().includes(unitSearch.toLowerCase()))
+                                    .map(unit => (
+                                      <option key={unit.id} value={unit.id}>
+                                        {unit.title}
+                                      </option>
+                                    ))
+                                  }
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-2 border-t flex flex-col gap-2">
+                            <button 
+                              className="w-full p-2 bg-[#39A894] text-white rounded"
+                              onClick={() => setIsFilterOpen(false)}
+                            >
+                              اعمال فیلتر
+                            </button>
+                            <button 
+                              className="w-full p-2 bg-white text-red-500 border border-red-500 rounded"
+                              onClick={() => {
+                                handleFilterChange({ 
+                                  ...filters, 
+                                  status: '', 
+                                  plan_id: '', 
+                                  unit_id: '' 
+                                });
+                                setPlanSearch('');
+                                setUnitSearch('');
+                                setIsFilterOpen(false);
+                              }}
+                            >
+                              حذف فیلتر
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -467,7 +621,7 @@ export default function Kartabl() {
                         {request.status === "rejected" ? "رد شده" : 
                           request.status === "in_progress" ? "جاری" : 
                           request.status === "action_needed" ? "نیازمند اصلاح" : 
-                          request.status === "done" ? "تایید و ارسال" : "نامشخص"}
+                          (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                       </span>
                     </div>
 
@@ -551,7 +705,7 @@ export default function Kartabl() {
                             {request.status === "rejected" ? "رد شده" : 
                               request.status === "in_progress" ? "جاری" : 
                               request.status === "action_needed" ? "نیازمند اصلاح" : 
-                              request.status === "done" ? "تایید و ارسال" : "نامشخص"}
+                              (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                           </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">

@@ -92,12 +92,18 @@ export default function Accept() {
 
   const pathname = usePathname();
   const goBack = (e) => {
-    if(e)
-    {
-      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-      // router.push(newPath);
-      router.back();
-    }else{
+    const query = router.query;
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryString = searchParams.toString();
+    
+    if(e) {
+      const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      if (queryString) {
+        router.push(`${newPath}?${queryString}`);
+      } else {
+        router.push(newPath);
+      }
+    } else {
       router.push('/');
     }
   };

@@ -9,9 +9,9 @@ const Header = () => {
   const goBack = (e) => {
     if(e)
     {
-      // const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-      // router.push(newPath);
-      router.back();
+      const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      router.push(newPath);
+      // router.back();
     }else{
       router.push('/');
     }

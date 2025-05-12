@@ -866,7 +866,6 @@ const GardeshJariRole = ({data}) => {
                       src={"/Images/masajed/kartabl-darkhast/jari/jari.svg"}
                     />
                   </div>
-                  <div className="w-full h-[2px] border-b border-dashed border-[#258CC7]"></div>
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
@@ -882,7 +881,6 @@ const GardeshJariRole = ({data}) => {
                       src={"/Images/masajed/kartabl-darkhast/rad/rad.svg"}
                     />
                   </div>
-                  <div className="w-full h-[2px] border-b border-dashed border-[#D32F2F]"></div>
                 </div>
                 <span className="text-sm text-[#D32F2F] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
@@ -898,7 +896,6 @@ const GardeshJariRole = ({data}) => {
                       src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                     />
                   </div>
-                  <div className="w-full h-[2px] border-b border-dashed border-[#F6BB00]"></div>
                 </div>
                 <span className="text-sm text-[#F6BB00] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
