@@ -128,13 +128,13 @@ export default function Accept() {
               </div>
               <div className="flex">
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px] md:mx-4 mx-2"
+                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
                   alt=""
                   src={menu}
                   onClick={() => goBack()}
                 />
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px]"
+                  className="cursor-pointer w-[36px] md:w-[69px]"
                   src={notif}
                   alt=""
                   onClick={() => goBack(true)}

@@ -29,7 +29,7 @@ const Header = () => {
         />
         
         <div className="flex justify-center items-center flex-row-reverse">
-          <div className="flex justify-self-start md:col-start-8 lg:gap-4 xl:gap-6">
+          <div className="flex justify-center items-center lg:gap-4 xl:gap-6 bg-[#1A4162] p-[0.75rem] lg:p-[1rem] w-[3rem] h-[3rem] lg:w-[4rem] lg:h-[4rem] rounded-full">
             <a href="https://armaniran.app/dashboard#">
               <img
                 className="w-10 lg:w-12 xl:w-16 cursor-pointer"

@@ -242,6 +242,18 @@ const MainGardeshJariRole = ({data,back_steps}) => {
     }
   };
 
+  function formatToCurrency(amount) {
+    const number = Number(amount);
+    
+    if (isNaN(number)) {
+      return "مقدار وارد شده معتبر نیست";
+    }
+    
+    const formattedNumber = number.toLocaleString("fa-IR");
+    
+    return `${formattedNumber} ریال`;
+  }
+
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
       <div className="flex justify-between items-center pb-[2rem]">
@@ -270,9 +282,12 @@ const MainGardeshJariRole = ({data,back_steps}) => {
       </div>
 
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <p>شناسه یکتا واحد : {data?.data?.item?.id}</p>
         <p>{data?.data?.item?.title}</p>
         <p>واحد حقوقی : {data?.data?.unit?.title}</p>
         <p>سرمربی : {data?.data?.user?.name}</p>
+        <p>منطقه : {data?.data?.unit?.area?.title}</p>
+        <p>محله : {data?.data?.unit?.neighborhood?.title}</p>
       </div>
 
       <hr className="hidden md:block h-2 mb-10" />
@@ -288,24 +303,24 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه کلی عملیات:
             </h3>
-            <span className="text-base lg:text-lg font-medium">
+            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => navigator.clipboard.writeText(formatPrice(data?.data?.amount))}>
               {formatPrice(data?.data?.amount)}
             </span>
+          </div>
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+              هزینه پیشنهادی آرمان:
+            </h3>
+            <span onClick={(e) => navigator.clipboard.writeText(formatPrice((data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
           </div>
           {(data?.data?.offer_amount) && (
             <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
               <h3 className="text-base lg:text-lg text-[#3B3B3B]">
                 هزینه پیشنهادی معاونت مساجد:
               </h3>
-              <span className="text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
+              <span onClick={(e) => navigator.clipboard.writeText(formatPrice(data?.data?.offer_amount))} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
             </div>
           )}
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه پیشنهادی آرمان:
-            </h3>
-            <span className="text-base lg:text-lg font-medium">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
-          </div>
         </div>
         <div className="flex flex-col gap-3 lg:flex-row lg:gap-6 xl:gap-8 2xl:gap-10">
           <h3 className="text-base lg:text-base text-[#3B3B3B] min-w-fit">
@@ -346,6 +361,17 @@ const MainGardeshJariRole = ({data,back_steps}) => {
       {((data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) || data?.data?.status != "in_progress") && (
         <hr className="hidden md:block h-2 my-10" />
       )}
+
+      {data?.data?.total_amount && (
+        <div class="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
+          <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+          </svg>
+          <div>
+            <p>حداکثر مبلغ قابل پرداخت : {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
+          </div>
+        </div>
+      )}
       
       {(data?.data?.status == "in_progress" && data?.data?.role?.[0] == role) && (
         <div className="w-full bg-white rounded-lg">
@@ -372,7 +398,17 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                   )}
                 </div>
                 {amount && !isNaN(amount) && (
-                  <small className="block mt-2 text-gray-600">{convertToPersianWords(Number(amount))}</small>
+                  <>
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به حروف: </span>
+                      {convertToPersianWords(Number(amount))}
+                    </div>
+                  
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به عدد: </span>
+                      {formatToCurrency(Number(amount))}
+                    </div>
+                  </>
                 )}
               </div>
             ) : (data?.data?.need_final_amount) ? (
@@ -397,7 +433,17 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                   )}
                 </div>
                 {amount && !isNaN(amount) && (
-                  <small className="block mt-2 text-gray-600">{convertToPersianWords(Number(amount))}</small>
+                  <>
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به حروف: </span>
+                      {convertToPersianWords(Number(amount))}
+                    </div>
+                  
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به عدد: </span>
+                      {formatToCurrency(Number(amount))}
+                    </div>
+                  </>
                 )}
               </div>
             ) : (
@@ -473,17 +519,6 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               </p>
             )}
             <span className="p-2 text-red-600">{statusSend}</span>
-          </div>
-        </div>
-      )}
-
-      {data?.data?.total_amount && (
-        <div class="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
-          <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-          </svg>
-          <div>
-            <p>حداکثر مبلغ قابل پرداخت : {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
           </div>
         </div>
       )}

@@ -52,12 +52,12 @@ export default function Enter() {
               </div>
               <div className="flex">
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px] md:mx-4 mx-2"
+                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
                   src={menu}
                   onClick={() => goBack()}
                 />
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px]"
+                  className="cursor-pointer w-[36px] md:w-[69px]"
                   src={notif}
                   onClick={() => goBack(true)}
                 />

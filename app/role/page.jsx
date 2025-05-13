@@ -130,7 +130,7 @@ export default function Role() {
 
   return (
     <>
-      <div className=" h-screen relative">
+      <div className="h-[150vh] lg:h-screen relative">
         <div className="bg-[#1b4264d5] vector-nama2 h-1/3 bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854]">
           <div className="flex justify-between items-center px-6 py-2 md:px-12">
             <div className="flex items-center">
@@ -149,7 +149,7 @@ export default function Role() {
               </div>
               <div className="flex">
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px] md:mx-4 mx-2"
+                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
                   width={0}
                   height={0}
                   alt=""
@@ -157,7 +157,7 @@ export default function Role() {
                   onClick={() => goBack()}
                 />
                 <Image
-                  className="cursor-pointer w-[24px] md:w-[69px]"
+                  className="cursor-pointer w-[36px] md:w-[69px]"
                   width={0}
                   height={0}
                   src={notif}
@@ -173,7 +173,7 @@ export default function Role() {
         </div>
 
         <div className="h-full vector-nama md:px-5">
-          <div className="bg-white absolute top-[150px] md:top-[160px] inset-x-6 md:inset-x-11 rounded-[12px] p-3 md:p-6 scroll-kon">
+          <div className="bg-white absolute top-[150px] md:top-[160px] inset-x-6 md:inset-x-11 rounded-[28px] p-3 md:p-6 scroll-kon">
             <Swiper
               navigation={true}
               pagination={{
@@ -182,7 +182,7 @@ export default function Role() {
               }}
               loop={true}
               modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-              className="swiper-masajed relative min-h-[20rem]"
+              className="swiper-masajed relative"
               breakpoints={{
                 1024: {
                   pagination: {
@@ -225,7 +225,7 @@ export default function Role() {
                     <Image className="w-[50px]" src={ax} alt="" />
                     <h3 className="text-[18px] mt-[0.5rem] group-hover:text-[#345894] font-[500] transition-all duration-200">کارتابل درخواست ها</h3>
                   </div>
-                  <div className="w-2/3 md:w-1/2 grid grid-cols-2 gap-2 md:gap-4 ">
+                  <div className="w-2/3 md:w-1/2 grid grid-cols-2 text-[10px] gap-0 md:gap-4 ">
                     <div className="flex items-center">
                       <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#77B7DC] text-white inline-block">
                         {info?.requests?.in_progress}
