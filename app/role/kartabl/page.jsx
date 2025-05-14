@@ -402,9 +402,9 @@ export default function Kartabl() {
                 </div>
                 برای مشاهده جاری کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done_temp' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#77b7dc80] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
-                  <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.done}</div>
+                  <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.done_temp}</div>
                 </div>
                 برای مشاهده تایید و ارسال کلیک کنید
               </div>
@@ -467,7 +467,8 @@ export default function Kartabl() {
                                 <option value="rejected">رد شده</option>
                                 <option value="in_progress">جاری</option>
                                 <option value="action_needed">نیازمند اصلاح</option>
-                                <option value="done">تایید و ارسال</option>
+                                <option value="done_temp">تایید و ارسال</option>
+                                <option value="done">تایید شده</option>
                               </select>
                             </div>
                           </div>

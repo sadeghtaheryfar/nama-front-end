@@ -270,6 +270,10 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           <div className="text-sm font-semibold text-[#3C98CE] bg-[#D9EFFE] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">
             جاری
           </div>
+        ): data?.data?.status == 'done' ? (
+          <div className="text-sm font-semibold text-[#25C7AA] bg-[#D9EFFE] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">
+            تاید و ارسال
+          </div>
         ) : data?.data?.status == 'action_needed' ? (
           <div className="text-sm font-semibold text-[#FFC200] bg-[#FEF4D9] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">
             نیازمند اصلاح
@@ -303,7 +307,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه کلی عملیات:
             </h3>
-            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => navigator.clipboard.writeText(formatPrice(data?.data?.amount))}>
+            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => navigator.clipboard.writeText(data?.data?.amount)}>
               {formatPrice(data?.data?.amount)}
             </span>
           </div>
@@ -311,14 +315,14 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            <span onClick={(e) => navigator.clipboard.writeText(formatPrice((data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
+            <span onClick={(e) => navigator.clipboard.writeText((data?.data?.final_amount ? data?.data?.final_amount : data?.data?.total_amount))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
           </div>
           {(data?.data?.offer_amount) && (
             <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
               <h3 className="text-base lg:text-lg text-[#3B3B3B]">
                 هزینه پیشنهادی معاونت مساجد:
               </h3>
-              <span onClick={(e) => navigator.clipboard.writeText(formatPrice(data?.data?.offer_amount))} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
+              <span onClick={(e) => navigator.clipboard.writeText(data?.data?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
             </div>
           )}
         </div>
@@ -368,7 +372,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
           </svg>
           <div>
-            <p>حداکثر مبلغ قابل پرداخت : {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
+            <p>حداکثر مبلغ قابل پرداخت در مرحله درخواست : {formatPrice(Number(data.data.total_amount * 0.5))} / {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
           </div>
         </div>
       )}
@@ -456,6 +460,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               توضیحات تکمیلی {translateRole(role)} <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
             </label>
             <textarea
+              type="text"
               className={`block w-full p-4 border rounded-lg text-gray-700 md:h-24 ${
                 desError ? "border-red-500 bg-red-50" : des ? "border-green-500 bg-green-50" : "border-[#DFDFDF]"
               }`}
@@ -465,6 +470,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               onChange={handleDesChange}
               rows="10"
               cols="15"
+              autoComplete="on"
               placeholder="در اینجا تایپ کنید …"
             />
             {desError && (

@@ -2,6 +2,53 @@ import Image from "next/image";
 import Link from "next/link";
 import ButtonSabt from "../button-sabt/button-sabt";
 import { usePathname } from "next/navigation";
+
+function numberToPersianWords(num) {
+  const ones = [
+    "", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه",
+    "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده",
+    "هفده", "هجده", "نوزده"
+  ];
+  const tens = ["", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+  const hundreds = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+  const units = ["", "هزار", "میلیون", "میلیارد"];
+
+  if (num === 0) return "صفر";
+
+  const splitByThousand = [];
+  while (num > 0) {
+    splitByThousand.push(num % 1000);
+    num = Math.floor(num / 1000);
+  }
+
+  function threeDigitToWords(n) {
+    let result = [];
+    if (n >= 100) {
+      result.push(hundreds[Math.floor(n / 100)]);
+      n %= 100;
+    }
+    if (n >= 20) {
+      result.push(tens[Math.floor(n / 10)]);
+      n %= 10;
+    }
+    if (n > 0) {
+      result.push(ones[n]);
+    }
+    return result.join(" و ");
+  }
+
+  return splitByThousand
+    .map((group, index) => {
+      if (group === 0) return null;
+      const words = threeDigitToWords(group);
+      const unit = units[index];
+      return words + (unit ? " " + unit : "");
+    })
+    .filter(Boolean)
+    .reverse()
+    .join(" و ");
+}
+
 const CartsDarkhastActive = ({ item }) => {
   function formatNumber(num) {
     return Math.floor(num / 1000000);
@@ -39,8 +86,7 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-            سرانه حمایتی هر نفر به مبلغ حداکثر {formatNumber(item.support_for_each_person_amount)} میلیون
-            ریال میباشد.
+              سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(item.support_for_each_person_amount)} ریال می باشد
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>

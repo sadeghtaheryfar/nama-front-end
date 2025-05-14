@@ -5,6 +5,52 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 
+function numberToPersianWords(num) {
+  const ones = [
+    "", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه",
+    "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده",
+    "هفده", "هجده", "نوزده"
+  ];
+  const tens = ["", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
+  const hundreds = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+  const units = ["", "هزار", "میلیون", "میلیارد"];
+
+  if (num === 0) return "صفر";
+
+  const splitByThousand = [];
+  while (num > 0) {
+    splitByThousand.push(num % 1000);
+    num = Math.floor(num / 1000);
+  }
+
+  function threeDigitToWords(n) {
+    let result = [];
+    if (n >= 100) {
+      result.push(hundreds[Math.floor(n / 100)]);
+      n %= 100;
+    }
+    if (n >= 20) {
+      result.push(tens[Math.floor(n / 10)]);
+      n %= 10;
+    }
+    if (n > 0) {
+      result.push(ones[n]);
+    }
+    return result.join(" و ");
+  }
+
+  return splitByThousand
+    .map((group, index) => {
+      if (group === 0) return null;
+      const words = threeDigitToWords(group);
+      const unit = units[index];
+      return words + (unit ? " " + unit : "");
+    })
+    .filter(Boolean)
+    .reverse()
+    .join(" و ");
+}
+
 const MainGardeshJari = ({data}) => {
   function formatNumber(num) {
     if (num < 1000000) {
@@ -145,10 +191,7 @@ const MainGardeshJari = ({data}) => {
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              سرانه حمایتی هر نفر به مبلغ {formatNumber(
-                data?.data?.request_plan?.support_for_each_person_amount
-              )}{" "}
-              میلیون ریال میباشد.
+              سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(data?.data?.request_plan?.support_for_each_person_amount)} ریال می باشد
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>

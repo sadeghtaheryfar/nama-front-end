@@ -6,7 +6,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 const GardeshJariRole = ({data}) => {
   const searchParams = useSearchParams();
   const itemId = searchParams.get("item_id");
-  console.log('>>>>>>>>>>>', data)
 
   return (
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
@@ -56,6 +55,25 @@ const GardeshJariRole = ({data}) => {
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید سر مربی مسجد</span>
                   <p>{data?.data?.data?.body}</p>
+                </div>
+              </div>
+            ) : data?.data?.data?.status == 'done' ? (
+              <div className="flex items-center flex-col relative">
+                <div className="flex items-center justify-center ">
+                  <Image
+                    width={0}
+                    height={0}
+                    className="w-8"
+                    alt="#"
+                    src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                  />
+                </div>
+
+                <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
+                
+                <div className="absolute top-1 right-full mr-4 w-max">
+                  <span className="text-sm text-[#25C7AA]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : (
@@ -138,6 +156,25 @@ const GardeshJariRole = ({data}) => {
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید مسئول فرهنگی مسجد </span>
                   <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
+                </div>
+              </div>
+            ) : data?.data?.data?.status == 'done' ? (
+              <div className="flex items-center flex-col relative">
+                <div className="flex items-center justify-center ">
+                  <Image
+                    width={0}
+                    height={0}
+                    className="w-8"
+                    alt="#"
+                    src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                  />
+                </div>
+
+                <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
+                
+                <div className="absolute top-1 right-full mr-4 w-max">
+                  <span className="text-sm text-[#25C7AA]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : (
@@ -244,6 +281,25 @@ const GardeshJariRole = ({data}) => {
                   <p>{data?.data?.data?.messages?.area_interface}</p>
                 </div>
               </div>
+            ) : data?.data?.data?.status == 'done' ? (
+              <div className="flex items-center flex-col relative">
+                <div className="flex items-center justify-center ">
+                  <Image
+                    width={0}
+                    height={0}
+                    className="w-8"
+                    alt="#"
+                    src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                  />
+                </div>
+
+                <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
+                
+                <div className="absolute top-1 right-full mr-4 w-max">
+                  <span className="text-sm text-[#25C7AA]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
+                </div>
+              </div>
             ) : (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
@@ -346,6 +402,25 @@ const GardeshJariRole = ({data}) => {
                 <div className="absolute top-1 right-full mr-4 w-max">
                   <span className="text-sm text-[#D32F2F]">تایید معاونت اجرایی مساجد </span>
                   <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
+                </div>
+              </div>
+            ) : data?.data?.data?.status == 'done' ? (
+              <div className="flex items-center flex-col relative">
+                <div className="flex items-center justify-center ">
+                  <Image
+                    width={0}
+                    height={0}
+                    className="w-8"
+                    alt="#"
+                    src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                  />
+                </div>
+
+                <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
+                
+                <div className="absolute top-1 right-full mr-4 w-max">
+                  <span className="text-sm text-[#25C7AA]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
             ) : (
@@ -452,6 +527,25 @@ const GardeshJariRole = ({data}) => {
                   <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
                 </div>
               </div>
+            ) : data?.data?.data?.status == 'done' ? (
+              <div className="flex items-center flex-col relative">
+                <div className="flex items-center justify-center ">
+                  <Image
+                    width={0}
+                    height={0}
+                    className="w-8"
+                    alt="#"
+                    src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                  />
+                </div>
+
+                <div className="w-0.5 h-[18px] border-r border-dashed border-[#25C7AA]"></div>
+                
+                <div className="absolute top-1 right-full mr-4 w-max">
+                  <span className="text-sm text-[#25C7AA]">تایید معاونت طرح و برنامه </span>
+                  <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
+                </div>
+              </div>
             ) : (
               <div className="flex items-center flex-col relative">
                 <div className="flex items-center justify-center ">
@@ -535,6 +629,21 @@ const GardeshJariRole = ({data}) => {
                   <div className="w-full h-[2px] border-b border-dashed border-[#258CC7]"></div>
                 </div>
                 <span className="text-sm text-[#258CC7] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید سر مربی مسجد</span>
+              </>
+            ) : data?.data?.data?.status == 'done' ? (
+              <>
+                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                  <div className="flex items-center justify-center ">
+                    <Image
+                      width={0}
+                      height={0}
+                      className="min-w-9 xl:min-w-10 2xl:min-w-[50px]"
+                      alt="#"
+                      src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
             ) : data?.data?.data?.status == 'rejected' ? (
               <>
@@ -623,6 +732,21 @@ const GardeshJariRole = ({data}) => {
                 </div>
                 <span className="text-sm text-[#D32F2F] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید مسئول فرهنگی مسجد </span>
               </>
+            ) : data?.data?.data?.status == 'done' ? (
+              <>
+                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                  <div className="flex items-center justify-center ">
+                    <Image
+                      width={0}
+                      height={0}
+                      className="min-w-9 xl:min-w-10 2xl:min-w-[50px]"
+                      alt="#"
+                      src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
+              </>
             ) : (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
@@ -710,6 +834,21 @@ const GardeshJariRole = ({data}) => {
                   <div className="w-full h-[2px] border-b border-dashed border-[#D32F2F]"></div>
                 </div>
                 <span className="text-sm text-[#D32F2F] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید  رابط منطقه </span>
+              </>
+            ) : data?.data?.data?.status == 'done' ? (
+              <>
+                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                  <div className="flex items-center justify-center ">
+                    <Image
+                      width={0}
+                      height={0}
+                      className="min-w-9 xl:min-w-10 2xl:min-w-[50px]"
+                      alt="#"
+                      src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
             ) : (
               <>
@@ -800,6 +939,21 @@ const GardeshJariRole = ({data}) => {
               </div>
               <span className="text-sm text-[#D32F2F] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت اجرایی مساجد </span>
             </>
+          ) : data?.data?.data?.status == 'done' ? (
+              <>
+                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                  <div className="flex items-center justify-center ">
+                    <Image
+                      width={0}
+                      height={0}
+                      className="min-w-9 xl:min-w-10 2xl:min-w-[50px]"
+                      alt="#"
+                      src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
+              </>
           ) : (
             <>
               <div className="flex items-center w-full mr-10 2xl:mr-12">
@@ -885,6 +1039,21 @@ const GardeshJariRole = ({data}) => {
                 </div>
                 <span className="text-sm text-[#D32F2F] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>
+            ) : data?.data?.data?.status == 'done' ? (
+              <>
+                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                  <div className="flex items-center justify-center ">
+                    <Image
+                      width={0}
+                      height={0}
+                      className="min-w-9 xl:min-w-10 2xl:min-w-[50px]"
+                      alt="#"
+                      src={"/Images/masajed/kartabl-darkhast/rad/tik.svg"}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm text-[#25C7AA] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
+              </>
             ) : (
               <>
                 <div className="flex items-center w-full mr-10 2xl:mr-12">
@@ -897,7 +1066,6 @@ const GardeshJariRole = ({data}) => {
                       src={"/Images/masajed/kartabl-darkhast/eslah/eslah1.svg"}
                     />
                   </div>
-                  
                 </div>
                 <span className="text-sm text-[#F6BB00] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit">تایید معاونت طرح و برنامه </span>
               </>

@@ -163,7 +163,7 @@ const MainMasajed = () => {
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/darkhast`}>
+                <Link href={`/${itemId}/darkhast`} className="mt-auto">
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -207,7 +207,7 @@ const MainMasajed = () => {
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/kartabl-darkhast`}>
+                <Link href={`/${itemId}/kartabl-darkhast`} className="mt-auto">
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -258,7 +258,7 @@ const MainMasajed = () => {
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/kartabl-gozaresh`}>
+                <Link href={`/${itemId}/kartabl-gozaresh`} className="mt-auto">
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -277,7 +277,7 @@ const MainMasajed = () => {
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/maktob`}>
+                <Link href={`/${itemId}/maktob`} className="mt-auto">
                   <ButtonMoshahede />
                 </Link>
               </div>

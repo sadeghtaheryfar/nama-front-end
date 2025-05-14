@@ -124,7 +124,9 @@ const Header = ({bgBox,bgRole}) => {
                             <img className='w-5' alt='#' width={0} height={0} src={'/Images/home/edit-2.svg'} />
                         </div>
                         <span className='text-[10px] lg:text-sm'>
-                            {translateNama(profile?.data?.nama_role)}
+                            {translateNama(
+                                profile?.data?.roles?.find(role => role.role_en === 'mosque_head_coach')?.role_en
+                            )}
                         </span>
                         {(showRoleMenu && itemId) && (
                             <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
