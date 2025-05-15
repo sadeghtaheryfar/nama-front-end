@@ -351,7 +351,10 @@ export default function Kartabl() {
   return (
     <>
       <div className=" h-screen relative">
-        <div className="bg-[#002a4fd5] vector-nama2 h-1/3 bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] ">
+        <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden">
+          <div className="absolute top-[9rem] lg:top-[11rem] w-full">
+            <img className="w-full opacity-20" src="/assets/Vector.png" alt="" />
+          </div>
           <div className="flex justify-between items-center px-6 py-2 md:px-12">
             <div className="flex items-center">
               <img
@@ -606,21 +609,21 @@ export default function Kartabl() {
                       <span className="text-sm text-[#202020]">{request.id}</span>
                     </div>
 
-                    <div className="flex items-center justify-between pl-0.5 pr-2">
-                      <span className="text-xs text-[#959595]">وضعیت</span>
-                      <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
-                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                          request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
-                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
-                          "text-[#D9534F] bg-[#FDECEA]"}`}>
-                        {request.status === "rejected" ? "رد شده" : 
-                          request.status === "in_progress" ? "جاری" : 
-                          request.status === "action_needed" ? "نیازمند اصلاح" : 
-                          request.status === "pending" ? "باز" : 
-                          (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
-                      </span>
-                    </div>
+                    {request?.status && (
+                      <div className="flex items-center justify-between pl-0.5 pr-2">
+                        <span className="text-xs text-[#959595]">وضعیت</span>
+                        <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
+                          ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                            request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                            request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                            "text-[#D9534F] bg-[#FDECEA]"}`}>
+                          {request.status === "rejected" ? "رد شده" : 
+                            request.status === "in_progress" ? "جاری" : 
+                            request.status === "action_needed" ? "نیازمند اصلاح" : 
+                            (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">سر مربی</span>
@@ -694,18 +697,18 @@ export default function Kartabl() {
                           {request?.request.unit?.title}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
-                          <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
-                            ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                              request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                              request.status === "pending" ? "text-[#e22afc] bg-[#e94fff54]" : 
-                              request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
-                              "text-[#D9534F] bg-[#FDECEA]"}`}>
-                            {request.status === "rejected" ? "رد شده" : 
-                              request.status === "in_progress" ? "جاری" : 
-                              request.status === "action_needed" ? "نیازمند اصلاح" : 
-                              request.status === "pending" ? "باز" : 
-                            (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
-                          </div>
+                          {request?.status && (
+                            <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
+                              ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                                request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                                request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                                "text-[#D9534F] bg-[#FDECEA]"}`}>
+                              {request.status === "rejected" ? "رد شده" : 
+                                request.status === "in_progress" ? "جاری" : 
+                                request.status === "action_needed" ? "نیازمند اصلاح" : 
+                                (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                            </div>
+                          )}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
                           {request.status != "pending" && (

@@ -87,6 +87,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html dir="rtl" lang="fa">
+      <head>
+        <title>نما</title>
+        <link rel="shortcut icon" href="/assets/logo-arman.png" type="image/x-icon" />
+      </head>
       <body className="relative">
         {showGlobalLoading && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white">

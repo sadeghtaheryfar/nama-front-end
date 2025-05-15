@@ -10,6 +10,7 @@ import MainGardeshMoshahede2 from "../../../../../components/masajed/kartabl-goz
 import MainGardeshMoshahede1 from "../../../../../components/masajed/kartabl-gozaresh/moshahede-gozaresh/main-gardesh-moshahede2/main-gardesh-moshahede1";
 import MainGardeshMoshahede3 from "../../../../../components/masajed/kartabl-gozaresh/moshahede-gozaresh/main-gardesh-moshahede2/main-gardesh-moshahede3";
 import MainGardeshMoshahede4 from "../../../../../components/masajed/kartabl-gozaresh/moshahede-gozaresh/main-gardesh-moshahede2/main-gardesh-moshahede4";
+import MainGardeshMoshahede5 from "../../../../../components/masajed/kartabl-gozaresh/moshahede-gozaresh/main-gardesh-moshahede2/main-gardesh-moshahede5";
 
 const MainJari = () => {
   const params = useSearchParams();
@@ -50,8 +51,10 @@ const MainJari = () => {
         <MainGardeshMoshahede1 id={params.get("id")} data={requestData}/>
       ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && requestData?.data?.report?.status == 'rejected' ? (
         <MainGardeshMoshahede3 id={params.get("id")} data={requestData}/>
-      ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && requestData?.data?.report?.status == 'action_needed' || requestData?.data?.report?.status == 'done' ? (
+      ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && (requestData?.data?.report?.status == 'action_needed' && requestData?.data?.report?.step == 'approval_mosque_head_coach') || requestData?.data?.report?.status == 'done' ? (
         <MainGardeshMoshahede4 id={params.get("id")} data={requestData}/>
+      ) : requestData?.data?.step == "finish" && requestData?.data?.report != null && requestData?.data?.report?.status == 'action_needed' || requestData?.data?.report?.status == 'done' ? (
+        <MainGardeshMoshahede5 id={params.get("id")} data={requestData}/>
       ) : (
         <></>
       )}

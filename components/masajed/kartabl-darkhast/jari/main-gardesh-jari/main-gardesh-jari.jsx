@@ -172,9 +172,11 @@ const MainGardeshJari = ({data}) => {
                 {data?.data?.message}
               </p>
             </div>
-            <Link href={`/${itemId}/kartabl-darkhast/eslah2?id=${data?.data?.id}`} className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base">
-              برای اصلاح کلیک کنید
-            </Link>
+            {data?.data?.step == 'approval_mosque_head_coach' && (
+              <Link href={`/${itemId}/kartabl-darkhast/eslah2?id=${data?.data?.id}`} className="w-full flex items-center justify-center self-center md:max-w-56 text-[#FFC200] text-xs font-semibold h-10 rounded-[10px] border border-[#FFC200] px-4 lg:text-white lg:bg-[#FFC200] xl:h-12 xl:text-base">
+                برای اصلاح کلیک کنید
+              </Link>
+            )}
           </div>
         )}
       </div>

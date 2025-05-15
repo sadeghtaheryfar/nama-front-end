@@ -111,7 +111,10 @@ export default function Accept() {
   return (
     <>
       <div className=" h-screen relative">
-        <div className="bg-[#002a4fd5] vector-nama2 h-1/3 bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] ">
+        <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden">
+          <div className="absolute top-[9rem] lg:top-[11rem] w-full">
+            <img className="w-full opacity-20" src="/assets/Vector.png" alt="" />
+          </div>
           <div className="flex justify-between items-center px-6 py-2 md:px-12">
             <div className="flex items-center">
               <img
@@ -147,7 +150,7 @@ export default function Accept() {
           </div>
         </div>
 
-        <div className="vector-nama md:px-5">
+        <div className="vector-nama md:px-5 mt-[-2.8rem] lg:mt-[-4.5rem]">
           <div className=" p-6 scroll-kon ">
             <div className="bg-white drop-shadow-3xl rounded-[20px] mb-5 p-3 md:p-6 -mt-[80px] md:-mt-[110px] z-30">
               <GardeshJariRole data={requestData}/>

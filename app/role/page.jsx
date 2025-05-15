@@ -131,7 +131,10 @@ export default function Role() {
   return (
     <>
       <div className="h-[150vh] lg:h-screen relative">
-        <div className="bg-[#1b4264d5] vector-nama2 h-1/3 bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854]">
+        <div className="bg-[#1b4264d5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden">
+          <div className="absolute top-[9rem] lg:top-[11rem] w-full">
+            <img className="w-full opacity-20" src="/assets/Vector.png" alt="" />
+          </div>
           <div className="flex justify-between items-center px-6 py-2 md:px-12">
             <div className="flex items-center">
               <img
@@ -218,101 +221,117 @@ export default function Role() {
               )}
             </Swiper>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[2rem] gap-y-3 mt-[2rem]">
-              <div className="border border-[#ccc] bg-white py-4 px-3 md:px-5 rounded-[12px] group hover:border-[#345894] transition-all duration-200">
-                <div className="flex text-[10px] md:text-[13px]">
-                  <div className="flex flex-col w-1/3 md:w-1/2">
-                    <Image className="w-[50px]" src={ax} alt="" />
-                    <h3 className="text-[18px] mt-[0.5rem] group-hover:text-[#345894] font-[500] transition-all duration-200">کارتابل درخواست ها</h3>
-                  </div>
-                  <div className="w-2/3 md:w-1/2 grid grid-cols-2 text-[10px] gap-0 md:gap-4 ">
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#77B7DC] text-white inline-block">
-                        {info?.requests?.in_progress}
-                      </span>
-                      وارد شده
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-red-600 text-white inline-block">
-                        {info?.requests?.rejected}
-                      </span>
-                      رد شده
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
-                        {info?.requests?.done_temp}
-                      </span>
-                      تایید و ارسال
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#FFD140] text-white inline-block">
-                        {info?.requests?.action_needed}
-                      </span>
-                      ارجاع جهت اصلاح
+            <div className="mt-7 grid grid-cols-1 lg:grid-cols-2 md:mt-9 gap-6 md:gap-7">
+              {/* کارت درخواست‌های فعال */}
+              <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#345894] transition-all duration-200">
+                <div className="flex justify-between">
+                  <Image
+                    className="min-w-16 w-16 pb-4 ml-[1rem]"
+                    alt="#"
+                    width={0}
+                    height={0}
+                    src={ax}
+                  />
+                  <div>
+                    <div className="grid grid-cols-2 gap-1 lg:gap-2 lg:gap-y-4">
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#77B7DC] rounded-[0.5rem]">
+                          <p>{info?.requests?.in_progress}</p>
+                        </div>
+
+                        <p className="text-[#77B7DC]">وارد شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#D32F2F] rounded-[0.5rem]">
+                          <p>{info?.requests?.rejected}</p>
+                        </div>
+
+                        <p className="text-[#D32F2F]">رد شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#25C7AA] rounded-[0.5rem]">
+                          <p>{info?.requests?.done_temp}</p>
+                        </div>
+
+                        <p className="text-[#25C7AA]">تایید شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#FFC200] rounded-[0.5rem]">
+                          <p>{info?.requests?.action_needed}</p>
+                        </div>
+
+                        <p className="text-[#FFC200]">ارجاع جهت اصلاح</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p className="my-4">
-                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
-                  استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و
-                  مجله در ستون و سطرآنچنان که لازم است.
+                <h2 className="text-base font-extrabold group-hover:text-[#345894]">کارتابل درخواست ها</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
                 </p>
-                <Link
-                  href={`/role/kartabl?role=${roleParam}&item_id=${item_id}`}
-                  className="border border-[#345894] text-[#345894] group-hover:bg-[#345894] group-hover:text-white transition-all duration-200 w-full inline-block text-center rounded-[12px] py-1 md:py-2"
-                >
-                  مشاهده بیشتر
+                <Link href={`/role/kartabl?role=${roleParam}&item_id=${item_id}`} className="mt-auto">
+                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white">مشاهده بیشتر</button>
                 </Link>
-                {/* <button className="bg-[#345894] text-white w-full rounded-sm py-1 ">
-          </button> */}
               </div>
 
-              <div className="border border-[#ccc] bg-white py-4 px-3 md:px-5 rounded-[12px] group hover:border-[#345894] transition-all duration-200">
-                <div className="flex text-[10px] md:text-[13px]">
-                  <div className="flex flex-col w-1/3 md:w-1/2">
-                    <Image className="w-[50px]" src={ax} alt="" />
-                    <h3 className="text-[18px] mt-[0.5rem] group-hover:text-[#345894] font-[500] transition-all duration-200">کارتابل گزارش ها</h3>
-                  </div>
-                  <div className="w-2/3 md:w-1/2 grid grid-cols-2 gap-2 md:gap-4 ">
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#77B7DC] text-white inline-block">
-                        {info?.reports?.in_progress}
-                      </span>
-                      وارد شده
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-red-600 text-white inline-block">
-                        {info?.reports?.rejected}
-                      </span>
-                      رد شده
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#25C7AA] text-white inline-block">
-                        {info?.reports?.done_temp}
-                      </span>
-                      تایید و ارسال
-                    </div>
-                    <div className="flex items-center">
-                      <span className="rounded-md md:px-3 px-2 md:me-2 me-1 py-1 bg-[#FFD140] text-white inline-block">
-                        {info?.reports?.action_needed}
-                      </span>
-                      ارجاع جهت اصلاح
+              {/* کارت درخواست‌های فعال */}
+              <div className="flex flex-col justify-end gap-5 border rounded-xl p-6 group hover:border-[#345894] transition-all duration-200">
+                <div className="flex justify-between">
+                  <Image
+                    className="min-w-16 w-16 pb-4 ml-[1rem]"
+                    alt="#"
+                    width={0}
+                    height={0}
+                    src={ax}
+                  />
+                  <div>
+                    <div className="grid grid-cols-2 gap-2 gap-y-4">
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#77B7DC] rounded-[0.5rem]">
+                          <p>{info?.reports?.in_progress}</p>
+                        </div>
+
+                        <p className="text-[#77B7DC]">وارد شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#D32F2F] rounded-[0.5rem]">
+                          <p>{info?.reports?.rejected}</p>
+                        </div>
+
+                        <p className="text-[#D32F2F]">رد شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#25C7AA] rounded-[0.5rem]">
+                          <p>{info?.reports?.done_temp}</p>
+                        </div>
+
+                        <p className="text-[#25C7AA]">تایید شده</p>
+                      </div>
+
+                      <div className="flex justify-start items-center gap-[0.5rem] text-[10px] lg:text-[20px] font-semibold">
+                        <div className="text-white w-[1.5rem] min-w-[1.5rem] h-[1.5rem] lg:w-[2.5rem] lg:min-w-[2.rem] lg:h-[2.5rem] flex justify-center items-center bg-[#FFC200] rounded-[0.5rem]">
+                          <p>{info?.reports?.action_needed}</p>
+                        </div>
+
+                        <p className="text-[#FFC200]">ارجاع جهت اصلاح</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p className="my-4">
-                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
-                  استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و
-                  مجله در ستون و سطرآنچنان که لازم است.
+                <h2 className="text-base font-bold group-hover:text-[#345894]">کارتابل گزارش ها</h2>
+                <p className="text-xs font-medium text-slate-400 leading-6">
+                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
+                  گرافیک است.
                 </p>
-                <Link
-                  href={`/role/kartabl-gozaresh?role=${roleParam}&item_id=${item_id}`}
-                  className="border border-[#345894] text-[#345894] group-hover:bg-[#345894] group-hover:text-white transition-all duration-200 w-full inline-block text-center rounded-[12px] py-1 md:py-2"
-                >
-                  مشاهده بیشتر
+                <Link href={`/role/kartabl-gozaresh?role=${roleParam}&item_id=${item_id}`} className="mt-auto">
+                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white">مشاهده بیشتر</button>
                 </Link>
-                {/* <button className="bg-[#345894] text-white w-full rounded-sm py-1 ">
-          </button> */}
               </div>
             </div>
           </div>
