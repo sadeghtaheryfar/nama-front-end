@@ -131,7 +131,7 @@ const MainSabt = () => {
                 <span>
                   درخواست
                   <span className="text-[#D5B260] font-bold">
-                    {requestData.previous_requests + 1} از {requestData.max_allocated_request}
+                    {Number(requestData.previous_requests) + 1} از {requestData.max_allocated_request}
                   </span>
                   (تنها {requestData.max_allocated_request - requestData.previous_requests} درخواست
                   باقی مانده است)
