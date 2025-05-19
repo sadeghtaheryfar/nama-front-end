@@ -7,9 +7,11 @@ export const GET = async (req) => {
   const token = (await cookies()).get("token")?.value;
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
+  console.log(token);
+  
 
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/profile${itemId ? `?item_id=${itemId}` : ''}`, {
+    const response = await axios.get(`http://arman.armaniran.org/api/v1/users/profile${itemId ? `?item_id=${itemId}` : ''}`, {
       headers: {
         Accept: "application/json",
         Authorization: `bearer ${token}`,
