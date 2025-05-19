@@ -3,7 +3,6 @@ import axios from "axios";
 import Link from "next/link";
 import { usePathname,useRouter  } from "next/navigation";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 
 const Header = ({bgBox,bgRole}) => {
     const [profile, setProfile] = useState(null);
@@ -103,11 +102,6 @@ const Header = ({bgBox,bgRole}) => {
             return "نامشخص";
         }
     };
-    
-    const logout = () => {
-        Cookies.remove('token');
-        window.location.href = '/';
-    }
 
     return (
         <>
@@ -152,9 +146,7 @@ const Header = ({bgBox,bgRole}) => {
 
                 <div className="flex flex-col leading-7">
                 <span className="text-xs lg:text-base font-medium">سطح دسترسی</span>
-                <span className="text-[10px] lg:text-sm flex">{translateRole(profile?.data?.arman_role)} | <span onClick={logout} className='cursor-pointer mr-[0.2rem] flex justify-center items-center'>
-                    خروج            
-                </span></span>
+                <span className="text-[10px] lg:text-sm flex">{translateRole(profile?.data?.arman_role)}</span>
             </div>
         </>
     );
