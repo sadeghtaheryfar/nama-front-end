@@ -117,6 +117,25 @@ const Carts = () => {
           )
         }
       })}
+
+      <Link href={'/loop'}>
+        <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
+          <img
+            className="w-full h-full rounded-md object-cover"
+            alt={'افزودن حلقه ها'}
+            width={0}
+            src="https://arman.armaniran.org/storage/base/photo_2025-04-04_20-12-46.jpg"
+            height={0}
+          />
+          <div className="backdrop-blur bg-black bg-opacity-30 space-y-3 absolute bottom-5 right-5 left-5 rounded-xl p-3">
+            <h2 className="text-lg font-bold leading-6 lg:text-xl">افزودن حلقه ها</h2>
+            <p className="text-xs lg:text-sm font-medium leading-6">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، متنوع با هدف بهبود کاربردی.</p>
+          </div>
+        </div>
+      </Link>
+
+      <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
+      <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
     </div>
   );
 };
