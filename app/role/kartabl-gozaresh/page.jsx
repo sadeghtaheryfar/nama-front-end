@@ -11,10 +11,10 @@ import menu from "./../../../public/assets/menu.svg";
 import notif from "./../../../public/assets/notif.svg";
 import { usePathname, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react"; // Added useCallback
 import axios from "axios";
 
-export default function Kartabl() {
+export default function KartablGozaresh() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [item_id, setItem_id] = useState();
@@ -28,6 +28,8 @@ export default function Kartabl() {
   const [selectedUnit, setSelectedUnit] = useState("");
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
+
+  const LOCAL_STORAGE_KEY = "kartablGozareshFilters"; // Define local storage key
 
   useEffect(() => {
     const roleParam = searchParams.get("role");
@@ -92,13 +94,32 @@ export default function Kartabl() {
     fetching();
   }, [item_id,role]);
 
-  const [filters, setFilters] = useState({
-    search: searchParams.get("search") || "",
-    sort: searchParams.get("sort") || "created_at",
-    direction: searchParams.get("direction") || "",
-    status: searchParams.get("status") || null,
-    plan_id: searchParams.get("plan_id") || null,
-    unit_id: searchParams.get("unit_id") || null,
+  const [filters, setFilters] = useState(() => {
+    // Initialize filters from search params or local storage
+    const storedFilters = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
+    if (storedFilters) {
+      const parsed = JSON.parse(storedFilters);
+      if (parsed.fromRequestPage) { // Check if navigation was from a request page
+        // If coming back from a request page, use stored filters
+        return {
+          search: parsed.filters.search || "",
+          sort: parsed.filters.sort || "created_at",
+          direction: parsed.filters.direction || "",
+          status: parsed.filters.status || null,
+          plan_id: parsed.filters.plan_id || null,
+          unit_id: parsed.filters.unit_id || null,
+        };
+      }
+    }
+    // Default initialization if not returning from a request page or no stored filters
+    return {
+      search: searchParams.get("search") || "",
+      sort: searchParams.get("sort") || "created_at",
+      direction: searchParams.get("direction") || "",
+      status: searchParams.get("status") || null,
+      plan_id: searchParams.get("plan_id") || null,
+      unit_id: searchParams.get("unit_id") || null,
+    };
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -127,7 +148,16 @@ export default function Kartabl() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
+  const [currentPage, setCurrentPage] = useState(() => {
+    const storedFilters = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
+    if (storedFilters) {
+      const parsed = JSON.parse(storedFilters);
+      if (parsed.fromRequestPage) {
+        return parseInt(parsed.page || "1");
+      }
+    }
+    return parseInt(searchParams.get("page") || "1");
+  });
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
@@ -229,27 +259,52 @@ export default function Kartabl() {
     fetchRequests();
   }, [currentPage, itemId, filters, role]);
   
+  // This useEffect ensures that filters and current page are only cleared from localStorage
+  // if the page is loaded directly and not via a "back" navigation from a request detail page.
+  useEffect(() => {
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.fromRequestPage) {
+        // If coming from a request page, do not clear storage yet, just set flag to false
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...parsed, fromRequestPage: false }));
+      } else {
+        // If not coming from a request page, clear storage
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      }
+    }
+  }, [router]); // Depend on router to detect navigation
+  
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters,itemId,role]);
+  }, [filters, itemId, role]);
   
   const pathname = usePathname();
-  const goBack = (e) => {
-    const query = router.query;
-    const searchParams = new URLSearchParams(window.location.search);
-    const queryString = searchParams.toString();
-    
-    if(e) {
+
+  // Modified goBack function to handle localStorage
+  const goBack = useCallback((fromRequestPage = false) => {
+    if (fromRequestPage) {
+      // If navigating to a request page, save current filters and page
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
+      }
+      router.push(`/role/kartabl-gozaresh/darkhast?id=${searchParams.get("id")}&role=${roleParam}&item_id=${itemIdParam}`);
+    } else {
+      // If navigating back from KartablGozaresh itself (e.g., to the previous admin page)
+      // Clear local storage as we are leaving the main kartabl page flow
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      }
       const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+      const queryString = searchParams.toString();
       if (queryString) {
         router.push(`${newPath}?${queryString}`);
       } else {
         router.push(newPath);
       }
-    } else {
-      router.push('/');
     }
-  };
+  }, [filters, currentPage, router, pathname, searchParams, roleParam, itemIdParam]);
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -374,13 +429,13 @@ export default function Kartabl() {
                   className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
                   alt=""
                   src={menu}
-                  onClick={() => goBack()}
+                  onClick={() => router.back()} // Changed this to go to previous page
                 />
                 <Image
                   className="cursor-pointer w-[36px] md:w-[69px]"
                   alt=""
                   src={notif}
-                  onClick={() => goBack(true)}
+                  onClick={() => goBack(true)} // This button will now save state when going to a request page
                 />
               </div>
             </div>
@@ -433,7 +488,7 @@ export default function Kartabl() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} />
+                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} value={filters.search}/>
                   </div>
                   <div className="flex items-center gap-4">
                     <div ref={filterRef} className="relative inline-block mr-4">
@@ -609,21 +664,21 @@ export default function Kartabl() {
                       <span className="text-sm text-[#202020]">{request.id}</span>
                     </div>
 
-                    {request?.status && (
-                      <div className="flex items-center justify-between pl-0.5 pr-2">
-                        <span className="text-xs text-[#959595]">وضعیت</span>
-                        <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
-                          ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                            request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                            request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
-                            "text-[#D9534F] bg-[#FDECEA]"}`}>
-                          {request.status === "rejected" ? "رد شده" : 
-                            request.status === "in_progress" ? "جاری" : 
-                            request.status === "action_needed" ? "نیازمند اصلاح" : 
-                            (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-between pl-0.5 pr-2">
+                      <span className="text-xs text-[#959595]">وضعیت</span>
+                      <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
+                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                          !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
+                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                          "text-[#D9534F] bg-[#FDECEA]"}`}>
+                        {request.status === "rejected" ? "رد شده" : 
+                          request.status === "in_progress" ? "جاری" : 
+                          !request.status ? "هنوز ارجاع نشده" : 
+                          request.status === "action_needed" ? "نیازمند اصلاح" : 
+                          (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                      </span>
+                    </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">سر مربی</span>
@@ -642,7 +697,15 @@ export default function Kartabl() {
                       </span>
                     </div>
 
-                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
+                    {/* Modified Link to save state when navigating to request detail */}
+                    <Link 
+                      href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
+                      onClick={() => {
+                        if (typeof window !== 'undefined') {
+                          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
+                        }
+                      }}
+                    >
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
@@ -680,7 +743,7 @@ export default function Kartabl() {
                     )}
 
                     {(requests?.data && !loading) && requests?.data?.map((request) => (
-                      <tr key={request.id}>
+                      <tr key={request.id} className="border">
                         <td className="border border-gray-300 px-7 py-5 text-base">
                           {request?.request?.request_plan?.title || "بدون عنوان"}
                         </td>
@@ -696,23 +759,31 @@ export default function Kartabl() {
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {request?.request.unit?.title}
                         </td>
-                        <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
-                          {request?.status && (
+                        <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                             <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                               ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                                !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
                                 request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
                                 request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                                 "text-[#D9534F] bg-[#FDECEA]"}`}>
                               {request.status === "rejected" ? "رد شده" : 
                                 request.status === "in_progress" ? "جاری" : 
+                                !request.status ? "هنوز ارجاع نشده" : 
                                 request.status === "action_needed" ? "نیازمند اصلاح" : 
                                 (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                             </div>
-                          )}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
                           {request.status != "pending" && (
-                            <Link href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
+                            // Modified Link to save state when navigating to request detail
+                            <Link 
+                              href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
+                              onClick={() => {
+                                if (typeof window !== 'undefined') {
+                                  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
+                                }
+                              }}
+                            >مشاهده درخواست</Link>
                           )}
                         </td>
                       </tr>

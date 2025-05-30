@@ -262,7 +262,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           <span>({data?.data?.request_plan?.id || 0})</span>
         </h2>
 
-        {data?.data?.status == 'rejected' ? (
+        {/* {data?.data?.status == 'rejected' ? (
           <div className="text-sm font-semibold text-[#D32F2F] bg-[#F8E0E0] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">
             رد شده 
           </div>
@@ -282,7 +282,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
           <div className="text-sm font-semibold text-[#25C7AA] bg-[#DEF7F2] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">
             تایید شده
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">

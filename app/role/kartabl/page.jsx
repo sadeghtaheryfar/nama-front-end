@@ -93,14 +93,34 @@ export default function Kartabl() {
     fetching();
   }, [item_id,role]);
 
-  const [filters, setFilters] = useState({
-    search: searchParams.get("search") || "",
-    sort: searchParams.get("sort") || "created_at",
-    direction: searchParams.get("direction") || "",
-    status: searchParams.get("status") || null,
-    plan_id: searchParams.get("plan_id") || null,
-    unit_id: searchParams.get("unit_id") || null,
+  // --- تغییرات برای localStorage ---
+  const [filters, setFilters] = useState(() => {
+    // هنگام بارگذاری اولیه، ابتدا localStorage را بررسی کنید
+    if (typeof window !== 'undefined') { // اطمینان از اینکه کد فقط در سمت کلاینت اجرا می شود
+      const storedFilters = localStorage.getItem('kartabl_filters_from_detail');
+      const cameFromDetailPage = localStorage.getItem('came_from_kartabl_detail');
+      
+      if (storedFilters && cameFromDetailPage === 'true') {
+        localStorage.removeItem('came_from_kartabl_detail'); // پرچم را پس از استفاده حذف کنید
+        return JSON.parse(storedFilters);
+      } else {
+        // اگر از صفحه جزئیات نیامده‌اید یا فیلتری ذخیره نشده است، localStorage را پاک کنید
+        localStorage.removeItem('kartabl_filters_from_detail');
+        localStorage.removeItem('came_from_kartabl_detail');
+      }
+    }
+    // سپس از searchParams استفاده کنید
+    return {
+      search: searchParams.get("search") || "",
+      sort: searchParams.get("sort") || "created_at",
+      direction: searchParams.get("direction") || "",
+      status: searchParams.get("status") || null,
+      plan_id: searchParams.get("plan_id") || null,
+      unit_id: searchParams.get("unit_id") || null,
+    };
   });
+  // --- پایان تغییرات برای localStorage ---
+
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -180,7 +200,7 @@ export default function Kartabl() {
           setPlans(carts.data.data);
         }
       } catch (error) {
-        console.log(error);
+          console.log(error);
       }
     };
 
@@ -190,8 +210,8 @@ export default function Kartabl() {
   // Update filters and URL when filters change
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    // updateURL(newFilters, 1); // Reset to page 1 when filters change
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to page 1 when filters change
+    updateURL(newFilters, 1); // URL را نیز به‌روزرسانی کنید
   };
 
   useEffect(() => {
@@ -233,7 +253,8 @@ export default function Kartabl() {
   
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters,itemId,role]);
+    updateURL(filters, 1); // اطمینان از به‌روزرسانی URL هنگام تغییر فیلترها یا itemId/role
+  }, [filters, itemId, role]);
   
   const pathname = usePathname();
   const goBack = (e) => {
@@ -255,6 +276,7 @@ export default function Kartabl() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    updateURL(filters, page); // URL را نیز هنگام تغییر صفحه به‌روزرسانی کنید
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -411,13 +433,13 @@ export default function Kartabl() {
               </div>
               <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#dc262680] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
-                  <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-red-600 rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.rejected}</div>
+                  <div className="md:h-[40px] w-[20px] md:w-[40px] bg-red-600 rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.rejected}</div>
                 </div>
                 برای مشاهده رد شده کلیک کنید
               </div>
               <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#ffd14080] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
-                  <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-[#FFD140] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.action_needed}</div>
+                  <div className="md:h-[40px] w-[20px] md:w-[40px] bg-[#FFD140] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.action_needed}</div>
                 </div>
                 برای مشاهده نیازمند اصلاح کلیک کنید
               </div>
@@ -437,7 +459,12 @@ export default function Kartabl() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} />
+                      <input 
+                        placeholder="جستجو کنید ..." 
+                        className="w-full bg-transparent h-full focus:outline-none" 
+                        value={filters.search} // مقدار ورودی را به فیلترها وصل کنید
+                        onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} 
+                      />
                   </div>
                   <div className="flex items-center gap-4">
                     <div ref={filterRef} className="relative inline-block mr-4">
@@ -551,10 +578,12 @@ export default function Kartabl() {
                               className="w-full p-2 bg-white text-red-500 border border-red-500 rounded"
                               onClick={() => {
                                 handleFilterChange({ 
-                                  ...filters, 
-                                  status: '', 
-                                  plan_id: '', 
-                                  unit_id: '' 
+                                  search: "", // جستجو را هم پاک کنید
+                                  sort: "created_at",
+                                  direction: "",
+                                  status: null, 
+                                  plan_id: null, 
+                                  unit_id: null 
                                 });
                                 setPlanSearch('');
                                 setUnitSearch('');
@@ -613,21 +642,21 @@ export default function Kartabl() {
                       <span className="text-sm text-[#202020]">{request.id}</span>
                     </div>
 
-                    {request?.status && (
-                      <div className="flex items-center justify-between pl-0.5 pr-2">
-                        <span className="text-xs text-[#959595]">وضعیت</span>
-                        <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
-                          ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                            request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                            request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
-                            "text-[#D9534F] bg-[#FDECEA]"}`}>
-                          {request.status === "rejected" ? "رد شده" : 
-                            request.status === "in_progress" ? "جاری" : 
-                            request.status === "action_needed" ? "نیازمند اصلاح" : 
-                            (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-between pl-0.5 pr-2">
+                      <span className="text-xs text-[#959595]">وضعیت</span>
+                      <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
+                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                          !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
+                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                          "text-[#D9534F] bg-[#FDECEA]"}`}>
+                        {request.status === "rejected" ? "رد شده" : 
+                          request.status === "in_progress" ? "جاری" : 
+                          !request.status ? "هنوز ارجاع نشده" : 
+                          request.status === "action_needed" ? "نیازمند اصلاح" : 
+                          (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                      </span>
+                    </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">سر مربی</span>
@@ -646,7 +675,15 @@ export default function Kartabl() {
                       </span>
                     </div>
 
-                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>
+                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
+                      onClick={() => {
+                        // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
+                        if (typeof window !== 'undefined') {
+                            localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
+                            localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
+                        }
+                      }}
+                    >
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
@@ -684,7 +721,7 @@ export default function Kartabl() {
                     )}
 
                     {(requests?.data && !loading) && requests?.data?.map((request) => (
-                      <tr key={request.id}>
+                      <tr key={request.id} className="border">
                         <td className="border border-gray-300 px-7 py-5 text-base">
                           {request?.request_plan?.title || "بدون عنوان"}
                         </td>
@@ -700,22 +737,30 @@ export default function Kartabl() {
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {request?.unit?.title}
                         </td>
-                        <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
-                          {request?.status && (
+                        <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                             <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                               ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                                !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
                                 request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
                                 request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                                 "text-[#D9534F] bg-[#FDECEA]"}`}>
                               {request.status === "rejected" ? "رد شده" : 
                                 request.status === "in_progress" ? "جاری" : 
+                                !request.status ? "هنوز ارجاع نشده" : 
                                 request.status === "action_needed" ? "نیازمند اصلاح" : 
                                 (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                             </div>
-                          )}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                          <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}>مشاهده درخواست</Link>
+                          <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
+                            onClick={() => {
+                              // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
+                              if (typeof window !== 'undefined') {
+                                  localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
+                                  localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
+                              }
+                            }}
+                          >مشاهده درخواست</Link>
                         </td>
                       </tr>
                     ))}
@@ -736,4 +781,4 @@ export default function Kartabl() {
       
     </>
   );
-  }
+}
