@@ -118,7 +118,7 @@ const Carts = () => {
         }
       })}
 
-      <Link href={'/loop'}>
+      {/* <Link href={'/loop'}>
         <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
           <img
             className="w-full h-full rounded-md object-cover"
@@ -135,7 +135,7 @@ const Carts = () => {
       </Link>
 
       <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
-      <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
+      <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div> */}
     </div>
   );
 };
