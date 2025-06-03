@@ -93,7 +93,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="relative">
         {showGlobalLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white">
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white loading-container-main">
             <p className="text-lg">لطفاً صبر کنید ...</p>
           </div>
         )}

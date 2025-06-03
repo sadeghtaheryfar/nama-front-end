@@ -9,6 +9,9 @@ import { formatPrice } from "../../../../../components/utils/formatPrice";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import '../../../../../styles/form.css';
 
 const MainGardeshMoshahede2 = ({ id, data }) => {
   const router = useRouter();
@@ -26,6 +29,8 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Validation states for each field
   const [errors, setErrors] = useState({
@@ -263,6 +268,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     }
     
     setLoading(true);
+    setIsUploading(true);
 
     try {
       const submitForm = await axios.post(
@@ -272,6 +278,12 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           headers: {
             Authorization: `bearer ${Cookies.get("token")}`,
             Accept: "application/json",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
           },
         }
       );
@@ -288,6 +300,8 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       }
     } finally {
       setLoading(false);
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -587,6 +601,27 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           >
             {loading ? 'صبر کنید ...' : 'تایید و ثبت اطلاعات'}
           </button>
+
+          {isUploading && uploadProgress > 0 && (
+            <div className="mt-4 w-24 h-24"> 
+              <CircularProgressbar
+                value={uploadProgress}
+                text={`${uploadProgress}%`}
+                styles={buildStyles({
+                  rotation: 0.25,
+                  strokeLinecap: 'butt',
+                  textSize: '16px',
+                  pathTransitionDuration: 0.5,
+                  pathColor: `rgba(57, 168, 148, ${uploadProgress / 100})`,
+                  textColor: '#39A894',
+                  trailColor: '#d6d6d6',
+                  backgroundColor: '#3e98c7',
+                })}
+              />
+              <p className="text-center text-sm mt-2">در حال آپلود فایل‌ها...</p>
+            </div>
+          )}
+
           {message.text && (
             <p
               className={`mt-4 text-center text-sm p-2 rounded-lg ${

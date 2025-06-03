@@ -9,6 +9,9 @@ import { formatPrice } from "../../../../../components/utils/formatPrice";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import '../../../../../styles/form.css';
 
 const FormSabt = ({ id,data }) => {
   const router = useRouter();
@@ -29,6 +32,8 @@ const FormSabt = ({ id,data }) => {
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [isImamLetterRequired, setIsImamLetterRequired] = useState(false);
   const [isAreaLetterRequired, setIsAreaLetterRequired] = useState(false);
@@ -324,6 +329,7 @@ const FormSabt = ({ id,data }) => {
     }
 
     setLoading(true);
+    setIsUploading(true);
 
     try {
       const submitForm = await axios.post(
@@ -333,6 +339,12 @@ const FormSabt = ({ id,data }) => {
           headers: {
             Authorization: `bearer ${Cookies.get("token")}`,
             Accept: "application/json",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
           },
         }
       );
@@ -360,6 +372,8 @@ const FormSabt = ({ id,data }) => {
       }
     } finally {
       setLoading(false);
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -630,6 +644,28 @@ const FormSabt = ({ id,data }) => {
         </button>
         <span className="p-2 text-red-600">{statusSend}</span>
       </div>
+
+      {isUploading && uploadProgress > 0 && (
+        <div className="flex justify-center w-full items-center">
+          <div className="mt-4 w-24 h-24"> 
+            <CircularProgressbar
+              value={uploadProgress}
+              text={`${uploadProgress}%`}
+              styles={buildStyles({
+                rotation: 0.25,
+                strokeLinecap: 'butt',
+                textSize: '16px',
+                pathTransitionDuration: 0.5,
+                pathColor: `rgba(57, 168, 148, ${uploadProgress / 100})`,
+                textColor: '#39A894',
+                trailColor: '#d6d6d6',
+                backgroundColor: '#3e98c7',
+              })}
+            />
+            <p className="text-center text-sm mt-2">در حال آپلود فایل‌ها...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

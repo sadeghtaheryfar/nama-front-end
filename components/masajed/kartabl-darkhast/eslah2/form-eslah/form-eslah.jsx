@@ -9,6 +9,9 @@ import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { DateObject } from "react-multi-date-picker";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import '../../../../../styles/form.css';
 
 const convertToPersianText = (num) => {
   if (!num) return "";
@@ -132,6 +135,8 @@ const FormEslah = ({ data }) => {
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
@@ -346,6 +351,7 @@ const FormEslah = ({ data }) => {
     }
     
     setLoading(true);
+    setIsUploading(true);
 
     try {
       const submitForm = await axios.post(
@@ -355,6 +361,12 @@ const FormEslah = ({ data }) => {
           headers: {
             Authorization: `bearer ${Cookies.get("token")}`,
             Accept: "application/json",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
           },
         }
       );
@@ -375,6 +387,8 @@ const FormEslah = ({ data }) => {
       }
     } finally {
       setLoading(false);
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -557,6 +571,28 @@ const FormEslah = ({ data }) => {
         </button>
         {statusSend && <span className="p-2 text-red-600">{statusSend}</span>}
       </div>
+
+      {isUploading && uploadProgress > 0 && (
+        <div className="flex justify-center w-full items-center">
+          <div className="mt-4 w-24 h-24"> 
+            <CircularProgressbar
+              value={uploadProgress}
+              text={`${uploadProgress}%`}
+              styles={buildStyles({
+                rotation: 0.25,
+                strokeLinecap: 'butt',
+                textSize: '16px',
+                pathTransitionDuration: 0.5,
+                pathColor: `rgba(57, 168, 148, ${uploadProgress / 100})`,
+                textColor: '#39A894',
+                trailColor: '#d6d6d6',
+                backgroundColor: '#3e98c7',
+              })}
+            />
+            <p className="text-center text-sm mt-2">در حال آپلود فایل‌ها...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
