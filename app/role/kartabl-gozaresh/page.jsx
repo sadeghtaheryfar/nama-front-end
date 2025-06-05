@@ -159,7 +159,7 @@ export default function KartablGozaresh() {
     return parseInt(searchParams.get("page") || "1");
   });
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 2;
 
   const updateURL = (newFilters, newPage) => {
     const params = new URLSearchParams();
@@ -262,22 +262,23 @@ export default function KartablGozaresh() {
   // This useEffect ensures that filters and current page are only cleared from localStorage
   // if the page is loaded directly and not via a "back" navigation from a request detail page.
   useEffect(() => {
+    // This useEffect ensures that filters and current page are only cleared from localStorage
+    // if the page is loaded directly and not via a "back" navigation from a request detail page.
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
       if (parsed.fromRequestPage) {
-        // If coming from a request page, do not clear storage yet, just set flag to false
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...parsed, fromRequestPage: false }));
+        // If coming from a request page, set the current page from storage
+        setCurrentPage(parseInt(parsed.page || "1")); // Set currentPage from stored value
+        // Also ensure filters are applied from storage if they haven't been yet by the initial useState
+        setFilters(parsed.filters); // Apply stored filters
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...parsed, fromRequestPage: false })); // Reset the flag
       } else {
         // If not coming from a request page, clear storage
         localStorage.removeItem(LOCAL_STORAGE_KEY);
       }
     }
-  }, [router]); // Depend on router to detect navigation
-  
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, itemId, role]);
+  }, []); // Depend on router to detect navigation
   
   const pathname = usePathname();
 
@@ -291,7 +292,7 @@ export default function KartablGozaresh() {
       router.push(`/role/kartabl-gozaresh/darkhast?id=${searchParams.get("id")}&role=${roleParam}&item_id=${itemIdParam}`);
     } else {
       // If navigating back from KartablGozaresh itself (e.g., to the previous admin page)
-      // Clear local storage as we are leaving the main kartabl page flow
+      // Clear local storage as we are leaving the main karta bl page flow
       if (typeof window !== 'undefined') {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
       }

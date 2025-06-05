@@ -93,23 +93,42 @@ export default function Kartabl() {
     fetching();
   }, [item_id,role]);
 
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const cameFromDetailPage = localStorage.getItem('came_from_kartabl_detail');
+      if (cameFromDetailPage === 'true') {
+        const storedPage = localStorage.getItem('kartabl_currentPage_from_detail');
+        if (storedPage) {
+          localStorage.removeItem('kartabl_currentPage_from_detail'); // حالا بعد از استفاده حذف شود
+          return parseInt(storedPage);
+        }
+      } else {
+        // اگر از صفحه جزئیات نیامده‌اید، مطمئن شوید که صفحه ذخیره شده پاک شده است
+        localStorage.removeItem('kartabl_currentPage_from_detail'); 
+      }
+    }
+    // اگر از localStorage مقداری نبود یا پرچم true نبود، از searchParams استفاده کنید
+    return parseInt(searchParams.get("page") || "1");
+  });
+
   // --- تغییرات برای localStorage ---
   const [filters, setFilters] = useState(() => {
-    // هنگام بارگذاری اولیه، ابتدا localStorage را بررسی کنید
-    if (typeof window !== 'undefined') { // اطمینان از اینکه کد فقط در سمت کلاینت اجرا می شود
+    if (typeof window !== 'undefined') {
       const storedFilters = localStorage.getItem('kartabl_filters_from_detail');
+      const storedPage = localStorage.getItem('kartabl_currentPage_from_detail'); // Add this line
       const cameFromDetailPage = localStorage.getItem('came_from_kartabl_detail');
       
       if (storedFilters && cameFromDetailPage === 'true') {
-        localStorage.removeItem('came_from_kartabl_detail'); // پرچم را پس از استفاده حذف کنید
+        localStorage.removeItem('came_from_kartabl_detail');
+        // Remove currentPage from localStorage after use if you want to apply it only once
+        localStorage.removeItem('kartabl_currentPage_from_detail'); 
         return JSON.parse(storedFilters);
       } else {
-        // اگر از صفحه جزئیات نیامده‌اید یا فیلتری ذخیره نشده است، localStorage را پاک کنید
         localStorage.removeItem('kartabl_filters_from_detail');
         localStorage.removeItem('came_from_kartabl_detail');
+        localStorage.removeItem('kartabl_currentPage_from_detail'); // Clear page as well
       }
     }
-    // سپس از searchParams استفاده کنید
     return {
       search: searchParams.get("search") || "",
       sort: searchParams.get("sort") || "created_at",
@@ -148,7 +167,6 @@ export default function Kartabl() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
@@ -207,11 +225,10 @@ export default function Kartabl() {
     fetchFutureCarts();
   }, [itemId]);
 
-  // Update filters and URL when filters change
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setCurrentPage(1); // Reset to page 1 when filters change
-    updateURL(newFilters, 1); // URL را نیز به‌روزرسانی کنید
+    setCurrentPage(1);
+    updateURL(newFilters, 1);
   };
 
   useEffect(() => {
@@ -252,8 +269,7 @@ export default function Kartabl() {
   }, [currentPage, itemId, filters,role]);
   
   useEffect(() => {
-    setCurrentPage(1);
-    updateURL(filters, 1); // اطمینان از به‌روزرسانی URL هنگام تغییر فیلترها یا itemId/role
+    updateURL(filters, currentPage);
   }, [filters, itemId, role]);
   
   const pathname = usePathname();
@@ -680,6 +696,7 @@ export default function Kartabl() {
                         // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
                         if (typeof window !== 'undefined') {
                             localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
+                            localStorage.setItem('kartabl_currentPage_from_detail', currentPage.toString()); // Add this line
                             localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
                         }
                       }}
@@ -757,6 +774,7 @@ export default function Kartabl() {
                               // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
                               if (typeof window !== 'undefined') {
                                   localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
+                                  localStorage.setItem('kartabl_currentPage_from_detail', currentPage.toString()); // Add this line
                                   localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
                               }
                             }}
