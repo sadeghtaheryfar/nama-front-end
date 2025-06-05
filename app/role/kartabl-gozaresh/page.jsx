@@ -159,7 +159,7 @@ export default function KartablGozaresh() {
     return parseInt(searchParams.get("page") || "1");
   });
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   const updateURL = (newFilters, newPage) => {
     const params = new URLSearchParams();
