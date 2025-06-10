@@ -442,6 +442,7 @@ const FormEslah = ({ data }) => {
           </label>
           <div className="relative">
             <DatePicker
+              editable={false}
               calendar={persian}
               locale={persian_fa}
               calendarPosition="bottom-right"

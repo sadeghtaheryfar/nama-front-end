@@ -205,6 +205,7 @@ const MainGardeshMoshahede4 = ({ id,data }) => {
             </label>
             <div className="relative w-full">
               <DatePicker
+                editable={false}
                 value={time}
                 onChange={setTime}
                 calendar={persian}

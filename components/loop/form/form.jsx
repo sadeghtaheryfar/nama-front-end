@@ -363,6 +363,7 @@ const DataLoop = () => {
                                             </label>
                                             <DatePicker
                                                 calendar={persian}
+                                                editable={false}
                                                 locale={persian_fa}
                                                 value={field.value}
                                                 onChange={(date) => {
@@ -622,6 +623,7 @@ const DataLoop = () => {
                                                 تاریخ تولد *
                                             </label>
                                             <DatePicker
+                                                editable={false}
                                                 calendar={persian}
                                                 locale={persian_fa}
                                                 value={field.value}

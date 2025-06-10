@@ -458,6 +458,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             </label>
             <div className="relative w-full">
               <DatePicker
+                editable={false}
                 value={time}
                 onChange={handleTimeChange}
                 onOpen={() => setTouched(prev => ({ ...prev, time: true }))}

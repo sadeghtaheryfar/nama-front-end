@@ -141,9 +141,7 @@ const Header = ({ bgBox, bgRole }) => {
             </div>
             <div className='flex flex-col leading-7 whitespace-nowrap'>
                 <span className='text-xs lg:text-base font-medium'>سطح دسترسی</span>
-                <span className='text-[10px] lg:text-sm flex'>{translateRole(profile?.data?.arman_role)} | <span onClick={logout} className='cursor-pointer mr-[0.2rem] flex justify-center items-center'>
-                    خروج            
-                </span></span>
+                <span className='text-[10px] lg:text-sm flex'>{translateRole(profile?.data?.arman_role)}</span>
             </div>
             {portalMenu}
         </>
