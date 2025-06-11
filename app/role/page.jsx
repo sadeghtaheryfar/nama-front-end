@@ -152,7 +152,7 @@ export default function Role() {
               </div>
               <div className="flex">
                 <Image
-                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
+                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2 hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
                   width={0}
                   height={0}
                   alt=""
@@ -160,7 +160,7 @@ export default function Role() {
                   onClick={() => goBack()}
                 />
                 <Image
-                  className="cursor-pointer w-[36px] md:w-[69px]"
+                  className="cursor-pointer w-[36px] md:w-[69px] hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
                   width={0}
                   height={0}
                   src={notif}
@@ -274,7 +274,7 @@ export default function Role() {
                   گرافیک است.
                 </p>
                 <Link href={`/role/kartabl?role=${roleParam}&item_id=${item_id}`} className="mt-auto">
-                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white">مشاهده بیشتر</button>
+                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white hover:scale-[1.03] active:scale-[1] transition-[0.9s]">مشاهده بیشتر</button>
                 </Link>
               </div>
 
@@ -330,7 +330,7 @@ export default function Role() {
                   گرافیک است.
                 </p>
                 <Link href={`/role/kartabl-gozaresh?role=${roleParam}&item_id=${item_id}`} className="mt-auto">
-                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white">مشاهده بیشتر</button>
+                  <button className="w-full h-12 text-[#345894] text-base font-medium rounded-[10px] border border-[#345894] group-hover:bg-[#345894] group-hover:text-white hover:scale-[1.03] active:scale-[1] transition-[0.9s]">مشاهده بیشتر</button>
                 </Link>
               </div>
             </div>

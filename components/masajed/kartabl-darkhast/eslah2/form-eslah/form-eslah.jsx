@@ -373,7 +373,12 @@ const FormEslah = ({ data }) => {
 
       if (submitForm.data) {
         localStorage.setItem("submittedForm", JSON.stringify(submitForm.data));
-        router.push(`/${itemId}/kartabl-darkhast`);
+        toast.success("عملیات با موفقیت انجام شد . به زودی به صفحه اصلی منتقل می شوید",{
+          duration: 3000,
+        });
+        setTimeout(() => {
+          router.push(`/${itemId}/kartabl-darkhast`);
+        }, 3000);
       }
     } catch (error) {
       if (error.response && error.response.data.error) {

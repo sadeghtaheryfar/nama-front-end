@@ -315,7 +315,12 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       );
 
       if (submitForm) {
-        setMessage({ text: "فرم با موفقیت ارسال شد!", type: "success" });
+        toast.success("عملیات با موفقیت انجام شد . به زودی به صفحه اصلی منتقل می شوید",{
+          duration: 3000,
+        });
+        setTimeout(() => {
+          router.push(`/${itemId}/kartabl-gozaresh`);
+        }, 3000);
       }
     } catch (error) {
       console.log(error);

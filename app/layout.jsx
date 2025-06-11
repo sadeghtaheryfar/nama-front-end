@@ -7,6 +7,7 @@ import axios from "axios";
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import { relative } from "path";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({ children }) {
   const router = useRouter();
@@ -101,6 +102,8 @@ export default function RootLayout({ children }) {
               <p className="text-lg">لطفاً صبر کنید ...</p>
             </div>
           )}
+          
+          <Toaster/>
 
           {!loading && children}
         </Provider>

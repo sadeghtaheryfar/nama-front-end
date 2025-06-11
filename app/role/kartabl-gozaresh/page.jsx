@@ -405,14 +405,14 @@ export default function KartablGozaresh() {
               </div>
               <div className="flex">
                 <Image
-                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
+                  className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2 hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
                   alt=""
                   src={menu}
                   onClick={() => goBack()}
                 />
                 <Image
 
-                  className="cursor-pointer w-[36px] md:w-[69px]"
+                  className="cursor-pointer w-[36px] md:w-[69px] hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
                   alt=""
                   src={notif}
                   onClick={() => goBack(true)}

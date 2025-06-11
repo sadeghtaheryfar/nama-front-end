@@ -82,7 +82,7 @@ const Carts = () => {
         {
           return (
             <Link href={getLinkForItem(item)} key={item?.id}>
-              <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
+              <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80 hover:scale-[1.05] active:scale-[1] transition-[0.9s]">
                 <img
                   className="w-full h-full rounded-md object-cover"
                   alt={item?.title}

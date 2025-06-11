@@ -8,6 +8,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
+import toast from "react-hot-toast";
 
 const MainGardeshJariRole = ({data,back_steps}) => {
   function formatNumber(num) {
@@ -213,7 +214,12 @@ const MainGardeshJariRole = ({data,back_steps}) => {
       );
 
       if (submitForm) {
-        router.push(`/role/kartabl?role=${role}&item_id=${itemId}`);
+        toast.success("عملیات با موفقیت انجام شد . به زودی به صفحه اصلی منتقل می شوید",{
+          duration: 3000,
+        });
+        setTimeout(() => {
+          router.push(`/role/kartabl?role=${role}&item_id=${itemId}`);
+        }, 3000);
       }
     } catch (error) {
       console.log(error);

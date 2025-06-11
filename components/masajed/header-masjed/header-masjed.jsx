@@ -114,7 +114,7 @@ const HeaderMasjed = () => {
         <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
           <Image
             onClick={() => goBack()}
-            className="w-10 lg:w-12 xl:w-16 p-2 lg:p-3 xl:p-5 cursor-pointer rounded-full"
+            className="w-10 lg:w-12 xl:w-16 p-2 lg:p-3 xl:p-5 cursor-pointer rounded-full hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
             alt="#"
             width={0}
             height={0}
@@ -123,7 +123,7 @@ const HeaderMasjed = () => {
           />
           <Image
             onClick={() => goBack(true)}
-            className="w-10 lg:w-12 xl:w-16 p-2 lg:p-3 xl:p-5 cursor-pointer rounded-full"
+            className="w-10 lg:w-12 xl:w-16 p-2 lg:p-3 xl:p-5 cursor-pointer rounded-full hover:scale-[1.05] active:scale-[1] transition-[0.9s]"
             alt="#"
             width={0}
             height={0}
