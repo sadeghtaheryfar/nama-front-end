@@ -220,7 +220,7 @@ const MainMaktob = ({ token }) => {
                     </h3>
                     <label
                       htmlFor="letter"
-                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getFieldBorderStyle("letter")}`}
+                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getFieldBorderStyle("letter")}`}
                     >
                       <div className="flex items-center justify-between pt-5 pb-6">
                         <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
@@ -253,7 +253,7 @@ const MainMaktob = ({ token }) => {
                     </h3>
                     <label
                       htmlFor="sign"
-                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getFieldBorderStyle("sign")}`}
+                      className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getFieldBorderStyle("sign")}`}
                     >
                       <div className="flex items-center justify-between pt-5 pb-6">
                         <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">

@@ -351,7 +351,7 @@ const DarkhasthaGozaresh = () => {
 
               <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request?.request?.id}>
                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
-                  مشاهده درخواست
+                  مشاهده گزارش
                 </button>
               </Link>
             </div>
@@ -422,7 +422,7 @@ const DarkhasthaGozaresh = () => {
                     </div>
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                    <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request?.request?.id}>مشاهده درخواست</Link>
+                    <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request?.request?.id}>مشاهده گزارش</Link>
                   </td>
                 </tr>
               ))}

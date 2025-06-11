@@ -528,7 +528,7 @@ const FormSabt = ({ id,data }) => {
           </h3>
           <label
             htmlFor="file-upload_1"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getBorderStyle(
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
               "imamLetter"
             )}`}
           >
@@ -575,7 +575,7 @@ const FormSabt = ({ id,data }) => {
           </h3>
           <label
             htmlFor="file-upload_2"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${getBorderStyle(
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
               "connectionLetter"
             )}`}
           >

@@ -296,7 +296,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         <p>{data?.data?.item?.title}</p>
         <p>واحد حقوقی : {data?.data?.unit?.title}</p>
         <p>سرمربی : {data?.data?.user?.name}</p>
-        <p>منطقه : {data?.data?.unit?.area?.title}</p>
+        <p>منطقه : {data?.data?.unit?.region?.title}</p>
         <p>محله : {data?.data?.unit?.neighborhood?.title}</p>
       </div>
 

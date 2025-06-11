@@ -359,7 +359,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
         <p>{data?.data?.request?.item?.title}</p>
         <p>واحد حقوقی : {data?.data?.request?.unit?.title}</p>
         <p>سرمربی : {data?.data?.request?.user?.name}</p>
-        <p>منطقه : {data?.data?.request?.unit?.area?.title}</p>
+        <p>منطقه : {data?.data?.request?.unit?.region?.title}</p>
         <p>محله : {data?.data?.request?.unit?.neighborhood?.title}</p>
       </div>
 

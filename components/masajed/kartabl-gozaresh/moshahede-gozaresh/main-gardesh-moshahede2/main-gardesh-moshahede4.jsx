@@ -463,7 +463,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
             </h3>
             <label
               htmlFor="file-upload_1"
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
                 touched.images && errors.images 
                   ? "border-red-500 bg-red-50" 
                   : images.length >= 3 

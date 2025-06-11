@@ -489,7 +489,7 @@ const FormEslah = ({ data }) => {
           </h3>
           <label
             htmlFor="file-upload_1"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
               imamLetterError ? 'border-red-500' : file1Uploaded ? 'border-green-500' : 'border-gray-300'
             }`}
           >
@@ -523,7 +523,7 @@ const FormEslah = ({ data }) => {
           </h3>
           <label
             htmlFor="file-upload_2"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
               connectionLetterError ? 'border-red-500' : file2Uploaded ? 'border-green-500' : 'border-gray-300'
             }`}
           >

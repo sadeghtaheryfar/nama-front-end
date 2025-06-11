@@ -507,7 +507,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             </h3>
             <label
               htmlFor="file-upload_1"
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
                 touched.images
                   ? errors.images
                     ? "border-red-500 bg-red-50"
@@ -547,7 +547,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری) </h3>
             <label
               htmlFor="file-upload_2"
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer ${
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
                 touched.video
                   ? errors.video
                     ? "border-red-500 bg-red-50"
