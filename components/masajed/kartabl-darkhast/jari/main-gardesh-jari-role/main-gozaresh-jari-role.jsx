@@ -350,12 +350,12 @@ const MainGozareshJariRole = ({data, back_steps}) => {
       </div>
 
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <p>شناسه یکتا واحد : {data?.data?.item?.id}</p>
-        <p>{data?.data?.item?.title}</p>
-        <p>واحد حقوقی : {data?.data?.unit?.title}</p>
-        <p>سرمربی : {data?.data?.user?.name}</p>
-        <p>منطقه : {data?.data?.unit?.area?.title}</p>
-        <p>محله : {data?.data?.unit?.neighborhood?.title}</p>
+        <p>شناسه یکتا واحد : {data?.data?.request?.item?.id}</p>
+        <p>{data?.data?.request?.item?.title}</p>
+        <p>واحد حقوقی : {data?.data?.request?.unit?.title}</p>
+        <p>سرمربی : {data?.data?.request?.user?.name}</p>
+        <p>منطقه : {data?.data?.request?.unit?.area?.title}</p>
+        <p>محله : {data?.data?.request?.unit?.neighborhood?.title}</p>
       </div>
 
       <hr className="hidden md:block h-2 mb-10" />
@@ -422,11 +422,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               </h3>
               
               <div className="flex flex-wrap w-full gap-[1rem]">
-                <a href={data?.data?.video?.original}>
-                  <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                    برای مشاهده فایل کلیک کنید
-                  </button>
-                  </a>
+                <video controls src={data?.data?.video?.original}></video>
               </div>
             </div>
           )}

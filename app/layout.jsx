@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
+import { relative } from "path";
 
 export default function RootLayout({ children }) {
   const router = useRouter();
@@ -91,14 +94,16 @@ export default function RootLayout({ children }) {
         <title>نما</title>
         <link rel="shortcut icon" href="/assets/logo-arman.png" type="image/x-icon" />
       </head>
-      <body className="relative">
-        {showGlobalLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white loading-container-main">
-            <p className="text-lg">لطفاً صبر کنید ...</p>
-          </div>
-        )}
+      <body style={{ position:relative }}>
+        <Provider store={store}>
+          {showGlobalLoading && (
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white loading-container-main">
+              <p className="text-lg">لطفاً صبر کنید ...</p>
+            </div>
+          )}
 
-        {!loading && children}
+          {!loading && children}
+        </Provider>
       </body>
     </html>
   );

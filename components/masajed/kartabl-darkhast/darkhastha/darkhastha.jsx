@@ -5,6 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+const options = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+};
+
 const Darkhastha = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -206,6 +212,15 @@ const Darkhastha = () => {
     return buttons;
   };
 
+  const stepTitles = {
+    'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
+    'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
+    'approval_area_interface': 'در انتظار تایید رابط منطقه',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مساجد',
+    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+    'finish': 'به اتمام رسیده',
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4 lg:gap-16 xl:gap-6">
@@ -326,6 +341,11 @@ const Darkhastha = () => {
               </div>
 
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                <span className="text-xs text-[#959595]">مرحله</span>
+                <span className="text-sm text-[#202020]">{stepTitles[request?.step]}</span>
+              </div>
+
+              <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">واحد حقوقی</span>
                 <span className="text-sm text-[#202020]">{request?.unit?.title}</span>
               </div>
@@ -333,7 +353,7 @@ const Darkhastha = () => {
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">تاریخ ایجاد</span>
                 <span className="text-sm text-[#202020]">
-                  {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                  {new Date(request.created_at).toLocaleDateString("fa-IR",options)}
                 </span>
               </div>
 
@@ -359,6 +379,7 @@ const Darkhastha = () => {
                 </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
+                <th className="border border-gray-300 px-7 py-5 text-lg">مرحله</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">وضعیت</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg"></th>
               </tr>
@@ -383,7 +404,7 @@ const Darkhastha = () => {
                     {request.id} {request?.unit?.code ? `- ${request?.unit?.code}` : ''}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                    {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                    {new Date(request.created_at).toLocaleDateString("fa-IR",options)}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request?.user?.name}
@@ -391,7 +412,10 @@ const Darkhastha = () => {
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request?.unit?.title}
                   </td>
-                  <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
+                  <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
+                    {stepTitles[request?.step]}
+                  </td>
+                  <td className="border border-b-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                     <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                       ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                         request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 

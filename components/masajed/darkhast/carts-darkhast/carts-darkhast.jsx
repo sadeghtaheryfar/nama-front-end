@@ -7,7 +7,7 @@ import CartsDarkhastFuture from "./carts-darkhast-future";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CartsDarkhastActive from "./carts-darkhast-active";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 const CartsDarkhast = () => {
   const [futureCarts, setFutureCarts] = useState([]);
@@ -18,9 +18,19 @@ const CartsDarkhast = () => {
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
   
-  const [currentPage, setCurrentPage] = useState(1);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    const pageFromUrl = searchParams.get("page");
+    if (pageFromUrl) {
+      setCurrentPage(Number(pageFromUrl));
+    }
+  }, [searchParams]);
+
 
   useEffect(() => {
     const fetchFutureCarts = async () => {
@@ -65,7 +75,13 @@ const CartsDarkhast = () => {
     };
 
     fetchActiveCarts();
-  }, [currentPage, itemId]);
+    if (typeof pathname === 'string') { 
+      const current = new URLSearchParams(searchParams.toString());
+      current.set("page", currentPage.toString());
+      const query = current.toString();
+      router.push(`${pathname}?${query}`, undefined, { shallow: true });
+    }
+  }, [currentPage, itemId, searchParams]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

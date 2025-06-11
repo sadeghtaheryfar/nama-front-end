@@ -253,7 +253,7 @@ const MainGardeshJari = ({data}) => {
               هزینه کلی عملیات:
             </h3>
             <span className="text-base lg:text-lg font-medium">
-              {formatPrice(data?.data?.amount)} ریال ({toPersianText(data?.data?.amount)})
+              {formatPrice(data?.data?.amount)} ({toPersianText(data?.data?.amount)})
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
@@ -302,7 +302,7 @@ const MainGardeshJari = ({data}) => {
                 هزینه پرداختی توسط آرمان:{" "}
               </span>
               <span className="text-base lg:text-2xl font-bold text-[#39A894]">
-                  {data?.data?.final_amount ? formatNumber(data?.data?.final_amount) : formatNumber(data?.data?.offer_amount)}
+                  {data?.data?.final_amount ? formatNumber(data?.data?.final_amount) : formatNumber(data?.data?.offer_amount)} ریال
               </span>
             </div>
           )}

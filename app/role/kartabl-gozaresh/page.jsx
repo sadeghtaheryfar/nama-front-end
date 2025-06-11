@@ -1,44 +1,74 @@
+// app/role/kartabl-gozaresh/page.jsx
 "use client";
 import Image from "next/image";
-import filter from "./../../..//public/assets/filter.svg";
-import sort from "./../../..//public/assets/sort.svg";
 import Link from "next/link";
-
 import HeaderProfile from "./../../../components/header-profile-admin/page";
-import mosque from "./../../../public/assets/mosque.png";
-import man from "./../../../public/assets/man.png";
 import menu from "./../../../public/assets/menu.svg";
 import notif from "./../../../public/assets/notif.svg";
-import { usePathname, useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, useCallback } from "react"; // Added useCallback
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+
+// وارد کردن Redux hooks و actions
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setReportDashboardFilters,
+  setReportDashboardCurrentPage,
+  setReportDashboardTotalPages,
+  setHeaderData,
+  setGlobalDashboardParams,
+  resetReportDashboardFilters,
+} from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
+
 
 export default function KartablGozaresh() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [item_id, setItem_id] = useState();
-  const [itemId, setitemId] = useState();
-  const [role, setRole] = useState();
-  const roleParam = searchParams.get("role");
-  const itemIdParam = searchParams.get("item_id");
-  const [header, setHeader] = useState(null);
+  const pathname = usePathname();
+
+  // استفاده از Redux hooks
+  const dispatch = useDispatch();
+  // خواندن تمام فیلترها و وضعیت صفحه از Redux برای داشبورد گزارش‌ها
+  const {
+    item_id,
+    role,
+    search,
+    sort,
+    direction,
+    status,
+    plan_id,
+    unit_id,
+    currentPage,
+    totalPages,
+  } = useSelector(state => state.dashboards.reportDashboard); // *** استفاده از reportDashboard ***
+
+  const header = useSelector(state => state.dashboards.headerData);
   const [loadingHeader, setLoadingHeader] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState("");
-  const [selectedUnit, setSelectedUnit] = useState("");
+  
+  // وضعیت‌های محلی که همچنان مورد نیاز هستند (مثل باز و بسته بودن دراپ‌دان‌ها)
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const filterRef = useRef(null);
+  const sortRef = useRef(null);
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
 
-  const LOCAL_STORAGE_KEY = "kartablGozareshFilters"; // Define local storage key
+  // --- حذف کامل useState های محلی برای item_id, role, filters, currentPage, totalPages ---
+  // --- حذف کامل LOCAL_STORAGE_KEY و تمام منطق localStorage ---
 
+  // useEffect برای خواندن URL (فقط item_id و role) و مقداردهی اولیه Redux state
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
-    setRole(roleParam);
-    setItem_id(itemIdParam);
-    setitemId(itemIdParam);
+    
+    // فقط item_id و role را به Redux ارسال می کنیم
+    dispatch(setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }));
 
-    if (!roleParam && !itemIdParam) return;
+    // اگر پارامترهای ضروری وجود ندارند، به صفحه اصلی هدایت کنید
+    if (!roleParam || !itemIdParam) {
+      router.push("/");
+      return;
+    }
 
     const validRoles = [
       "mosque_head_coach",
@@ -53,8 +83,10 @@ export default function KartablGozaresh() {
     if (!validRoles.includes(roleParam) || !validItemIds.includes(itemIdParam)) {
       router.push("/");
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, dispatch]);
 
+
+  // useEffect برای واکشی اطلاعات هدر (که اکنون در Redux ذخیره می‌شود)
   useEffect(() => {
     if (!item_id) return;
 
@@ -62,7 +94,7 @@ export default function KartablGozaresh() {
       try {
         const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
-          setHeader(response.data);
+          dispatch(setHeaderData(response.data));
         }
       } catch (error) {
         console.log("خطا در دریافت بنرها:", error);
@@ -71,13 +103,14 @@ export default function KartablGozaresh() {
       }
     };
     fetching();
-  }, [item_id]);
+  }, [item_id, dispatch]);
+
 
   const [info, setInfo] = useState(null);
   const [loadingInfo, setLoadingInfo] = useState(true);
 
   useEffect(() => {
-    if (!item_id) return;
+    if (!item_id || !role) return;
 
     const fetching = async () => {
       try {
@@ -92,41 +125,10 @@ export default function KartablGozaresh() {
       }
     };
     fetching();
-  }, [item_id,role]);
+  }, [item_id, role]);
 
-  const [filters, setFilters] = useState(() => {
-    // Initialize filters from search params or local storage
-    const storedFilters = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
-    if (storedFilters) {
-      const parsed = JSON.parse(storedFilters);
-      if (parsed.fromRequestPage) { // Check if navigation was from a request page
-        // If coming back from a request page, use stored filters
-        return {
-          search: parsed.filters.search || "",
-          sort: parsed.filters.sort || "created_at",
-          direction: parsed.filters.direction || "",
-          status: parsed.filters.status || null,
-          plan_id: parsed.filters.plan_id || null,
-          unit_id: parsed.filters.unit_id || null,
-        };
-      }
-    }
-    // Default initialization if not returning from a request page or no stored filters
-    return {
-      search: searchParams.get("search") || "",
-      sort: searchParams.get("sort") || "created_at",
-      direction: searchParams.get("direction") || "",
-      status: searchParams.get("status") || null,
-      plan_id: searchParams.get("plan_id") || null,
-      unit_id: searchParams.get("unit_id") || null,
-    };
-  });
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const filterRef = useRef(null);
-  const sortRef = useRef(null);
-
+  // منطق بستن دراپ‌دان‌ها
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -136,7 +138,7 @@ export default function KartablGozaresh() {
         setIsSortOpen(false);
       }
     };
- 
+
     document.addEventListener('click', handleClickOutside);
 
     return () => {
@@ -145,170 +147,136 @@ export default function KartablGozaresh() {
   }, []);
 
 
-  const [requests, setRequests] = useState([]);
+  const [reports, setReports] = useState([]); // تغییر نام از requests به reports
   const [loading, setLoading] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(() => {
-    const storedFilters = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
-    if (storedFilters) {
-      const parsed = JSON.parse(storedFilters);
-      if (parsed.fromRequestPage) {
-        return parseInt(parsed.page || "1");
-      }
-    }
-    return parseInt(searchParams.get("page") || "1");
-  });
-  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
-  const updateURL = (newFilters, newPage) => {
+  // تابع به روز رسانی URL: فقط item_id و role را در URL نگه می‌دارد
+  // این تابع هیچ وابستگی به فیلترها یا صفحه ندارد.
+  const updateURLParams = () => {
     const params = new URLSearchParams();
+    if (item_id) params.set("item_id", item_id);
+    if (role) params.set("role", role);
     
-    if (newFilters.search) params.set("search", newFilters.search);
-    if (newFilters.sort) params.set("sort", newFilters.sort);
-    if (newFilters.direction) params.set("direction", newFilters.direction);
-    if (newFilters.status) params.set("status", newFilters.status);
-    if (newFilters.plan_id) params.set("plan_id", newFilters.plan_id);
-    if (newFilters.unit_id) params.set("unit_id", newFilters.unit_id);
-    if (newPage > 1) params.set("page", newPage.toString());
-    params.set("role", role)
-    params.set("item_id", itemId)
-    
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false, shallow: true });
   };
+
+  // useEffect برای همگام‌سازی URL با item_id و role از Redux
+  // این useEffect فقط زمانی که item_id یا role در Redux تغییر کنند، URL را به روز می‌کند.
+  useEffect(() => {
+    updateURLParams();
+  }, [item_id, role, pathname, router]);
+
 
   const [units, setUnits] = useState([]);
   useEffect(() => {
-    if(!itemId) return;
-    const fetchFutureCarts = async () => {
+    if(!item_id) return;
+    const fetchUnits = async () => { // تغییر نام تابع
       try {
-        const carts = await axios.get(
-          `/api/unit?item_id=${itemId}&role=${role}`
+        const response = await axios.get(
+          `/api/unit?item_id=${item_id}&role=${role}`
         );
-        if (carts.data) {
-          setUnits(carts.data.data);
+        if (response.data) {
+          setUnits(response.data.data);
         }
       } catch (error) {
         console.log(error);
       }
     };
-
-    fetchFutureCarts();
-  }, [itemId]);
+    fetchUnits();
+  }, [item_id, role]);
   
   const [plans, setPlans] = useState([]);
   useEffect(() => {
-    if(!itemId) return;
-    const fetchFutureCarts = async () => {
+    if(!item_id) return;
+    const fetchPlans = async () => { // تغییر نام تابع
       try {
-        const carts = await axios.get(
-          `/api/plans?item_id=${itemId}`
+        const response = await axios.get(
+          `/api/plans?item_id=${item_id}`
         );
-        if (carts.data) {
-          setPlans(carts.data.data);
+        if (response.data) {
+          setPlans(response.data.data);
         }
       } catch (error) {
         console.log(error);
       }
     };
+    fetchPlans();
+  }, [item_id]);
 
-    fetchFutureCarts();
-  }, [itemId]);
-
-  // Update filters and URL when filters change
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    // updateURL(newFilters, 1); // Reset to page 1 when filters change
-    setCurrentPage(1);
+  // تابع برای تغییر فیلترها (ارسال به Redux)
+  const handleFilterChange = (newFilterState) => {
+    dispatch(setReportDashboardFilters(newFilterState)); // *** استفاده از setReportDashboardFilters ***
+    dispatch(setReportDashboardCurrentPage(1)); // با تغییر فیلتر، صفحه را به 1 برگردانید
   };
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      if (!itemId || !role) return;
+  // تابع برای ریست کردن فیلترها
+  const handleResetFilters = () => {
+    dispatch(resetReportDashboardFilters()); // *** استفاده از resetReportDashboardFilters ***
+    dispatch(setReportDashboardCurrentPage(1)); // صفحه را به 1 برگردانید
+    setPlanSearch(''); // ریست کردن وضعیت جستجوی محلی
+    setUnitSearch(''); // ریست کردن وضعیت جستجوی محلی
+    setIsFilterOpen(false); // بستن دراپ‌دان فیلتر
+  };
 
-      setLoading(true);
-      try {
-        const { search, sort, direction, status, plan_id, unit_id } = filters;
-        const response = await axios.get(`/api/darkhast-reports`, {
-          params: {
-            q: search,
-            sort,
-            direction,
-            status,
-            plan_id,
-            unit_id,
-            per_page: itemsPerPage,
-            page: currentPage,
-            itemId,
-            role
-          },
-        });
+  // useEffect برای واکشی گزارش‌ها
+  useEffect(() => {
+    if (!item_id || !role) return;
+
+    setLoading(true);
+    try {
+      // فیلترها را مستقیماً از Redux می‌خوانیم
+      const params = {
+        q: search,
+        sort,
+        direction,
+        status,
+        plan_id,
+        unit_id,
+        per_page: itemsPerPage,
+        page: currentPage,
+        itemId: item_id,
+        role
+      };
+      
+      const fetchReports = async () => { // تغییر نام تابع
+        const response = await axios.get(`/api/darkhast-reports`, { params }); // *** API مربوط به گزارش‌ها ***
         
-        setRequests(response.data);
+        setReports(response.data); // تغییر نام از setRequests به setReports
         if (response.data.meta && response.data.meta.total) {
-          setTotalPages(Math.ceil(response.data.meta.total / itemsPerPage));
+          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage))); // *** استفاده از setReportDashboardTotalPages ***
         } else {
-          setTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1);
+          // اگر meta.total وجود نداشت، از طول آرایه data استفاده کنید
+          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1)); // *** استفاده از setReportDashboardTotalPages ***
         }
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-  }, [currentPage, itemId, filters, role]);
-  
-  // This useEffect ensures that filters and current page are only cleared from localStorage
-  // if the page is loaded directly and not via a "back" navigation from a request detail page.
-  useEffect(() => {
-    // This useEffect ensures that filters and current page are only cleared from localStorage
-    // if the page is loaded directly and not via a "back" navigation from a request detail page.
-    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.fromRequestPage) {
-        // If coming from a request page, set the current page from storage
-        setCurrentPage(parseInt(parsed.page || "1")); // Set currentPage from stored value
-        // Also ensure filters are applied from storage if they haven't been yet by the initial useState
-        setFilters(parsed.filters); // Apply stored filters
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...parsed, fromRequestPage: false })); // Reset the flag
-      } else {
-        // If not coming from a request page, clear storage
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-      }
-    }
-  }, []); // Depend on router to detect navigation
-  
-  const pathname = usePathname();
+      };
+      fetchReports();
 
-  // Modified goBack function to handle localStorage
-  const goBack = useCallback((fromRequestPage = false) => {
-    if (fromRequestPage) {
-      // If navigating to a request page, save current filters and page
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
-      }
-      router.push(`/role/kartabl-gozaresh/darkhast?id=${searchParams.get("id")}&role=${roleParam}&item_id=${itemIdParam}`);
-    } else {
-      // If navigating back from KartablGozaresh itself (e.g., to the previous admin page)
-      // Clear local storage as we are leaving the main karta bl page flow
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-      }
-      const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
-      const queryString = searchParams.toString();
-      if (queryString) {
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, item_id, role, search, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+
+
+  const goBack = () => {
+    const params = new URLSearchParams();
+    if (item_id) params.set("item_id", item_id);
+    if (role) params.set("role", role);
+    const queryString = params.toString();
+    
+    const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
+    if (queryString) {
         router.push(`${newPath}?${queryString}`);
-      } else {
+    } else {
         router.push(newPath);
-      }
     }
-  }, [filters, currentPage, router, pathname, searchParams, roleParam, itemIdParam]);
-
+  };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    dispatch(setReportDashboardCurrentPage(page)); // *** استفاده از setReportDashboardCurrentPage ***
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -328,10 +296,10 @@ export default function KartablGozaresh() {
         قبلی
       </button>
     );
-    
+
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
-    
+
     if (startPage > 1) {
       buttons.push(
         <button
@@ -350,7 +318,7 @@ export default function KartablGozaresh() {
         );
       }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
@@ -366,7 +334,7 @@ export default function KartablGozaresh() {
         </button>
       );
     }
-    
+
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(
@@ -385,7 +353,7 @@ export default function KartablGozaresh() {
         </button>
       );
     }
-    
+
     buttons.push(
       <button
         key="next"
@@ -400,14 +368,24 @@ export default function KartablGozaresh() {
         بعدی
       </button>
     );
-    
+
     return buttons;
   };
+
+  const stepTitles = {
+    'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
+    'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
+    'approval_area_interface': 'در انتظار تایید رابط منطقه',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مساجد',
+    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+    'finish': 'به اتمام رسیده',
+  };
+
 
   return (
     <>
       <div className=" h-screen relative">
-        <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden">
+        <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854]  relative overflow-hidden">
           <div className="absolute top-[9rem] lg:top-[11rem] w-full">
             <img className="w-full opacity-20" src="/assets/Vector.png" alt="" />
           </div>
@@ -430,13 +408,14 @@ export default function KartablGozaresh() {
                   className="cursor-pointer w-[36px] md:w-[69px] md:mx-4 mx-2"
                   alt=""
                   src={menu}
-                  onClick={() => router.back()} // Changed this to go to previous page
+                  onClick={() => goBack()}
                 />
                 <Image
+
                   className="cursor-pointer w-[36px] md:w-[69px]"
                   alt=""
                   src={notif}
-                  onClick={() => goBack(true)} // This button will now save state when going to a request page
+                  onClick={() => goBack(true)}
                 />
               </div>
             </div>
@@ -449,25 +428,25 @@ export default function KartablGozaresh() {
         <div className="h-full vector-nama md:px-5">
           <div className="bg-white absolute top-[150px] md:top-[160px] inset-x-6 md:inset-x-11 rounded p-3 md:p-6 scroll-kon">
             <div className="grid grid-cols-1 md:grid-cols-4 text-[12px] md:text-[15px] gap-8 my-7">
-              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'in_progress' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#25c7aa59] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#25C7AA] rounded-full flex items-center justify-center text-white font-bold">{info?.reports?.in_progress}</div>
                 </div>
                 برای مشاهده جاری کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done_temp' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'done_temp' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#77b7dc80] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.reports?.done_temp}</div>
                 </div>
                 برای مشاهده تایید و ارسال کلیک کنید
               </div>
-              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'rejected' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#dc262680] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-red-600 rounded-full flex items-center justify-center text-white font-bold">{info?.reports?.rejected}</div>
                 </div>
                 برای مشاهده رد شده کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'action_needed' }); setIsFilterOpen(false); }}>
                 <div className="flex items-center justify-center bg-[#ffd14080] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className= "  md:h-[40px] w-[20px] md:w-[40px] bg-[#FFD140] rounded-full flex items-center justify-center text-white font-bold">{info?.reports?.action_needed}</div>
                 </div>
@@ -478,7 +457,7 @@ export default function KartablGozaresh() {
             <div className="flex flex-col gap-4 lg:gap-16 xl:gap-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center md:justify-between">
                 <h2 className="text-base font-bold text-center min-w-fit lg:text-lg xl:text-[22px]">
-                  همه درخواست ها
+                  همه گزارش ها
                 </h2>
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
                   <div className="bg-[#F6F6F6] rounded-full flex items-center gap-2 px-3 flex-auto xl:px-6 h-[60px] lg:min-w-80 xl:w-[480px] 2xl:w-[560px] xl:max-w-lg">
@@ -489,7 +468,7 @@ export default function KartablGozaresh() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} value={filters.search}/>
+                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ search: e.target.value })} value={search}/>
                   </div>
                   <div className="flex items-center gap-4">
                     <div ref={filterRef} className="relative inline-block mr-4">
@@ -513,8 +492,8 @@ export default function KartablGozaresh() {
                             <div className="px-2">
                               <select 
                                 className="w-full p-2 border rounded"
-                                value={filters.status || ''}
-                                onChange={(e) => handleFilterChange({ ...filters, status: e.target.value })}
+                                value={status || ''}
+                                onChange={(e) => handleFilterChange({ status: e.target.value })}
                               >
                                 <option value="">همه</option>
                                 <option value="rejected">رد شده</option>
@@ -539,8 +518,8 @@ export default function KartablGozaresh() {
                                 />
                                 <select
                                   className="w-full p-2 border rounded"
-                                  value={filters.plan_id || ''}
-                                  onChange={(e) => handleFilterChange({ ...filters, plan_id: e.target.value })}
+                                  value={plan_id || ''}
+                                  onChange={(e) => handleFilterChange({ plan_id: e.target.value })}
                                   size={planSearch ? Math.min(5, plans.filter(plan => 
                                     plan.title.toLowerCase().includes(planSearch.toLowerCase())
                                   ).length + 1) : 1}
@@ -572,8 +551,8 @@ export default function KartablGozaresh() {
                                 />
                                 <select
                                   className="w-full p-2 border rounded"
-                                  value={filters.unit_id || ''}
-                                  onChange={(e) => handleFilterChange({ ...filters, unit_id: e.target.value })}
+                                  value={unit_id || ''}
+                                  onChange={(e) => handleFilterChange({ unit_id: e.target.value })}
                                   size={unitSearch ? Math.min(5, units.filter(unit => 
                                     unit.title.toLowerCase().includes(unitSearch.toLowerCase())
                                   ).length + 1) : 1}
@@ -601,17 +580,7 @@ export default function KartablGozaresh() {
                             </button>
                             <button 
                               className="w-full p-2 bg-white text-red-500 border border-red-500 rounded"
-                              onClick={() => {
-                                handleFilterChange({ 
-                                  ...filters, 
-                                  status: '', 
-                                  plan_id: '', 
-                                  unit_id: '' 
-                                });
-                                setPlanSearch('');
-                                setUnitSearch('');
-                                setIsFilterOpen(false);
-                              }}
+                              onClick={handleResetFilters}
                             >
                               حذف فیلتر
                             </button>
@@ -630,9 +599,9 @@ export default function KartablGozaresh() {
                           src={"/Images/masajed/kartabl-darkhast/sort.svg"}
                         />
                         <span className="text-xs text-[#202020] min-w-fit lg:text-lg">
-                        {filters.direction 
-                              ? (filters.direction === "desc" ? "جدید ترین" 
-                                : filters.direction === "asc" ? "قدیمی ترین" 
+                        {direction 
+                              ? (direction === "desc" ? "جدید ترین" 
+                                : direction === "asc" ? "قدیمی ترین" 
                                 : "وضعیت نامشخص") 
                               : "مرتب سازی بر اساس"}
                         </span>
@@ -640,8 +609,8 @@ export default function KartablGozaresh() {
 
                       {isSortOpen && (
                         <div className="absolute mt-2 w-full bg-white border rounded shadow">
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
                         </div>
                       )}
                     </div>
@@ -656,59 +625,59 @@ export default function KartablGozaresh() {
               )}
 
               <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
-                {(requests?.data && !loading) && requests?.data?.map((request) => (
-                  <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
-                    <h2 className="text-sm text-[#202020] pb-3">{request?.request?.request_plan?.title || "بدون عنوان"}</h2>
+                {(reports?.data && !loading) && reports?.data?.map((report) => (
+                  <div key={report.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
+                    <h2 className="text-sm text-[#202020] pb-3">{report?.request?.request_plan?.title || "بدون عنوان"}</h2>
                     
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">شماره</span>
-                      <span className="text-sm text-[#202020]">{request.id}</span>
+                      <span className="text-sm text-[#202020]">{report.id}</span>
                     </div>
 
                     <div className="flex items-center justify-between pl-0.5 pr-2">
                       <span className="text-xs text-[#959595]">وضعیت</span>
                       <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
-                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                          !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
-                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                        ${report.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                          report.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                          !report.status ? "text-[#959595] bg-[#F6F6F6]" : 
+                          report.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                           "text-[#D9534F] bg-[#FDECEA]"}`}>
-                        {request.status === "rejected" ? "رد شده" : 
-                          request.status === "in_progress" ? "جاری" : 
-                          !request.status ? "هنوز ارجاع نشده" : 
-                          request.status === "action_needed" ? "نیازمند اصلاح" : 
-                          (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                        {report.status === "rejected" ? "رد شده" : 
+                          report.status === "in_progress" ? "جاری" : 
+                          !report.status ? "هنوز ارجاع نشده" : 
+                          report.status === "action_needed" ? "نیازمند اصلاح" : 
+                          (report.status === "done" && report.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                       </span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">سر مربی</span>
-                      <span className="text-sm text-[#202020]">{request?.request.user?.name}</span>
+                      <span className="text-sm text-[#202020]">{report?.request.user?.name}</span>
+                    </div>
+
+                    <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                      <span className="text-xs text-[#959595]">مرحله</span>
+                      <span className="text-sm text-[#202020]">{stepTitles[report?.step]}</span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">واحد حقوقی</span>
-                      <span className="text-sm text-[#202020]">{request?.request.unit?.title}</span>
+                      <span className="text-sm text-[#202020]">{report?.request.unit?.title}</span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">تاریخ ایجاد</span>
                       <span className="text-sm text-[#202020]">
-                        {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                        {new Date(report.created_at).toLocaleDateString("fa-IR")}
                       </span>
                     </div>
 
-                    {/* Modified Link to save state when navigating to request detail */}
-                    <Link 
-                      href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
-                        }
-                      }}
+                    {/* لینک برای مشاهده جزئیات گزارش */}
+                    <Link
+                      href={`/role/kartabl-gozaresh/darkhast?id=` + report.id + `&role=${role}&item_id=${item_id}`}
                     >
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
-                        مشاهده درخواست
+                        مشاهده گزارش
                       </button>
                     </Link>
                   </div>
@@ -720,7 +689,7 @@ export default function KartablGozaresh() {
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="border border-gray-300 px-7 py-5 text-lg text-right">
-                        نام درخواست ها
+                        نام گزارش ها
                       </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">شماره </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">
@@ -728,6 +697,7 @@ export default function KartablGozaresh() {
                       </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
+                      <th className="border border-gray-300 px-7 py-5 text-lg">مرحله</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">وضعیت</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg"></th>
                     </tr>
@@ -743,48 +713,45 @@ export default function KartablGozaresh() {
                       </tr>
                     )}
 
-                    {(requests?.data && !loading) && requests?.data?.map((request) => (
-                      <tr key={request.id} className="border">
+                    {(reports?.data && !loading) && reports?.data?.map((report) => (
+                      <tr key={report.id} className="border">
                         <td className="border border-gray-300 px-7 py-5 text-base">
-                          {request?.request?.request_plan?.title || "بدون عنوان"}
+                          {report?.request?.request_plan?.title || "بدون عنوان"}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                          {request.id}
+                          {report.id}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                          {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                          {new Date(report.created_at).toLocaleDateString("fa-IR")}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                          {request?.request?.user?.name}
+                          {report?.request?.user?.name}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                          {request?.request.unit?.title}
+                          {report?.request.unit?.title}
+                        </td>
+                        <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
+                          {stepTitles[report?.step]}
                         </td>
                         <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                             <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
-                              ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                                !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
-                                request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                                request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                              ${report.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
+                                !report.status ? "text-[#959595] bg-[#F6F6F6]" : 
+                                report.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
+                                report.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
                                 "text-[#D9534F] bg-[#FDECEA]"}`}>
-                              {request.status === "rejected" ? "رد شده" : 
-                                request.status === "in_progress" ? "جاری" : 
-                                !request.status ? "هنوز ارجاع نشده" : 
-                                request.status === "action_needed" ? "نیازمند اصلاح" : 
-                                (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
+                              {report.status === "rejected" ? "رد شده" : 
+                                report.status === "in_progress" ? "جاری" : 
+                                !report.status ? "هنوز ارجاع نشده" : 
+                                report.status === "action_needed" ? "نیازمند اصلاح" : 
+                                (report.status === "done" && report.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                             </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                          {request.status != "pending" && (
-                            // Modified Link to save state when navigating to request detail
+                          {report.status != "pending" && (
                             <Link 
-                              href={`/role/kartabl-gozaresh/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
-                              onClick={() => {
-                                if (typeof window !== 'undefined') {
-                                  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ filters, page: currentPage, fromRequestPage: true }));
-                                }
-                              }}
-                            >مشاهده درخواست</Link>
+                              href={`/role/kartabl-gozaresh/darkhast?id=` + report.id + `&role=${role}&item_id=${item_id}`}
+                            >مشاهده گزارش</Link>
                           )}
                         </td>
                       </tr>
@@ -802,8 +769,6 @@ export default function KartablGozaresh() {
           </div>
         </div>
       </div>
-
-      
     </>
   );
-  }
+}

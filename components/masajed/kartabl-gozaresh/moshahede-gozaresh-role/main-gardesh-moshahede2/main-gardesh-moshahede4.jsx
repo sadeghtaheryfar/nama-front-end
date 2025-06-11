@@ -207,6 +207,7 @@ const MainGardeshMoshahede4 = ({ id,data }) => {
               <DatePicker
                 editable={false}
                 value={time}
+                maxDate={new Date()}
                 onChange={setTime}
                 calendar={persian}
                 locale={persian_fa}

@@ -14,12 +14,16 @@ export const GET = async (req) => {
         const item_id = searchParams.get("itemId");
         const role = searchParams.get("role");
         const page = parseInt(searchParams.get("page") || "1");
-        const per_page = parseInt(searchParams.get("per_page") || "6");
+        const per_page = parseInt(searchParams.get("per_page") || "10");
+        const plan_id = parseInt(searchParams.get("plan_id") || undefined);
+        const unit_id = parseInt(searchParams.get("unit_id") || undefined);
 
         const params = { item_id, per_page, page, sort, direction, q };
         
         if (role) params.role = role;
         if (status) params.status = status;
+        if (plan_id) params.plan_id = plan_id;
+        if (unit_id) params.unit_id = unit_id;
 
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`, {
             params,

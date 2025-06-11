@@ -205,6 +205,15 @@ const DarkhasthaGozaresh = () => {
     return buttons;
   };
 
+  const stepTitles = {
+    'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
+    'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
+    'approval_area_interface': 'در انتظار تایید رابط منطقه',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مساجد',
+    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+    'finish': 'به اتمام رسیده',
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4 lg:gap-16 xl:gap-6">
@@ -295,7 +304,7 @@ const DarkhasthaGozaresh = () => {
         <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
           {(requests?.data && !loading) && requests?.data?.map((request) => (
             <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
-              <h2 className="text-sm text-[#202020] pb-3">{request?.request_plan?.title || "بدون عنوان"}</h2>
+              <h2 className="text-sm text-[#202020] pb-3">{request?.request?.request_plan?.title || "بدون عنوان"}</h2>
               
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">شماره</span>
@@ -329,6 +338,11 @@ const DarkhasthaGozaresh = () => {
               </div>
 
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                <span className="text-xs text-[#959595]">مرحله</span>
+                <span className="text-sm text-[#202020]">{stepTitles[request?.step]}</span>
+              </div>
+
+              <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">تاریخ ایجاد</span>
                 <span className="text-sm text-[#202020]">
                   {request?.date ? toPersianDate(request?.date) : '-'}
@@ -357,6 +371,7 @@ const DarkhasthaGozaresh = () => {
                 </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
+                <th className="border border-gray-300 px-7 py-5 text-lg">مرحله</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">وضعیت</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg"></th>
               </tr>
@@ -375,7 +390,7 @@ const DarkhasthaGozaresh = () => {
               {(requests?.data && !loading) && requests?.data?.map((request) => (
                 <tr key={request.id}>
                   <td className="border border-gray-300 px-7 py-5 text-base">
-                    {request?.request_plan?.title || "بدون عنوان"}
+                    {request?.request?.request_plan?.title || "بدون عنوان"}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request.id}
@@ -388,6 +403,9 @@ const DarkhasthaGozaresh = () => {
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request?.request?.unit?.title}
+                  </td>
+                  <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
+                    {stepTitles[request?.step]}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                     <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 

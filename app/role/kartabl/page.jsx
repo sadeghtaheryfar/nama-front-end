@@ -1,43 +1,73 @@
+// app/role/kartabl/page.jsx
 "use client";
 import Image from "next/image";
-import filter from "./../../..//public/assets/filter.svg";
-import sort from "./../../..//public/assets/sort.svg";
 import Link from "next/link";
-
-
 import HeaderProfile from "./../../../components/header-profile-admin/page";
-import mosque from "./../../../public/assets/mosque.png";
-import man from "./../../../public/assets/man.png";
 import menu from "./../../../public/assets/menu.svg";
 import notif from "./../../../public/assets/notif.svg";
-import { usePathname, useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation"; // استفاده از useSearchParams
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+
+// وارد کردن Redux hooks و actions
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setRequestDashboardFilters,
+  setRequestDashboardCurrentPage,
+  setRequestDashboardTotalPages,
+  setHeaderData,
+  setGlobalDashboardParams,
+  resetRequestDashboardFilters, // اضافه شده
+} from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
+
 
 export default function Kartabl() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [item_id, setItem_id] = useState();
-  const [itemId, setitemId] = useState();
-  const [role, setRole] = useState();
-  const roleParam = searchParams.get("role");
-  const itemIdParam = searchParams.get("item_id");
-  const [header, setHeader] = useState(null);
+  const pathname = usePathname();
+
+  // استفاده از Redux hooks
+  const dispatch = useDispatch();
+  const {
+    item_id,
+    role,
+    search,
+    sort,
+    direction,
+    status,
+    plan_id,
+    unit_id,
+    currentPage,
+    totalPages,
+  } = useSelector(state => state.dashboards.requestDashboard);
+
+  const header = useSelector(state => state.dashboards.headerData);
   const [loadingHeader, setLoadingHeader] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState("");
-  const [selectedUnit, setSelectedUnit] = useState("");
+  
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const filterRef = useRef(null);
+  const sortRef = useRef(null);
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
 
+  // حذف item_id و role از useState
+  // حذف مدیریت currentPage و filters از localStorage
+
+  // useEffect برای خواندن URL و مقداردهی اولیه Redux state
+  // این useEffect فقط item_id و role را از URL می خواند
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
-    setRole(roleParam);
-    setItem_id(itemIdParam);
-    setitemId(itemIdParam);
+    
+    // فقط item_id و role را به Redux ارسال می کنیم
+    dispatch(setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }));
 
-    if (!roleParam && !itemIdParam) return;
+    // اگر پارامترهای ضروری وجود ندارند، به صفحه اصلی هدایت کنید
+    if (!roleParam || !itemIdParam) {
+      router.push("/");
+      return;
+    }
 
     const validRoles = [
       "mosque_head_coach",
@@ -52,8 +82,10 @@ export default function Kartabl() {
     if (!validRoles.includes(roleParam) || !validItemIds.includes(itemIdParam)) {
       router.push("/");
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, dispatch]); // dispatch را به dependency array اضافه کنید
 
+
+  // useEffect برای واکشی اطلاعات هدر (که اکنون در Redux ذخیره می‌شود)
   useEffect(() => {
     if (!item_id) return;
 
@@ -61,7 +93,7 @@ export default function Kartabl() {
       try {
         const response = await axios.get(`/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`);
         if (response.data) {
-          setHeader(response.data);
+          dispatch(setHeaderData(response.data));
         }
       } catch (error) {
         console.log("خطا در دریافت بنرها:", error);
@@ -70,13 +102,14 @@ export default function Kartabl() {
       }
     };
     fetching();
-  }, [item_id]);
+  }, [item_id, dispatch]);
+
 
   const [info, setInfo] = useState(null);
   const [loadingInfo, setLoadingInfo] = useState(true);
 
   useEffect(() => {
-    if (!item_id) return;
+    if (!item_id || !role) return;
 
     const fetching = async () => {
       try {
@@ -91,61 +124,10 @@ export default function Kartabl() {
       }
     };
     fetching();
-  }, [item_id,role]);
-
-  const [currentPage, setCurrentPage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const cameFromDetailPage = localStorage.getItem('came_from_kartabl_detail');
-      if (cameFromDetailPage === 'true') {
-        const storedPage = localStorage.getItem('kartabl_currentPage_from_detail');
-        if (storedPage) {
-          localStorage.removeItem('kartabl_currentPage_from_detail'); // حالا بعد از استفاده حذف شود
-          return parseInt(storedPage);
-        }
-      } else {
-        // اگر از صفحه جزئیات نیامده‌اید، مطمئن شوید که صفحه ذخیره شده پاک شده است
-        localStorage.removeItem('kartabl_currentPage_from_detail'); 
-      }
-    }
-    // اگر از localStorage مقداری نبود یا پرچم true نبود، از searchParams استفاده کنید
-    return parseInt(searchParams.get("page") || "1");
-  });
-
-  // --- تغییرات برای localStorage ---
-  const [filters, setFilters] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedFilters = localStorage.getItem('kartabl_filters_from_detail');
-      const storedPage = localStorage.getItem('kartabl_currentPage_from_detail'); // Add this line
-      const cameFromDetailPage = localStorage.getItem('came_from_kartabl_detail');
-      
-      if (storedFilters && cameFromDetailPage === 'true') {
-        localStorage.removeItem('came_from_kartabl_detail');
-        // Remove currentPage from localStorage after use if you want to apply it only once
-        localStorage.removeItem('kartabl_currentPage_from_detail'); 
-        return JSON.parse(storedFilters);
-      } else {
-        localStorage.removeItem('kartabl_filters_from_detail');
-        localStorage.removeItem('came_from_kartabl_detail');
-        localStorage.removeItem('kartabl_currentPage_from_detail'); // Clear page as well
-      }
-    }
-    return {
-      search: searchParams.get("search") || "",
-      sort: searchParams.get("sort") || "created_at",
-      direction: searchParams.get("direction") || "",
-      status: searchParams.get("status") || null,
-      plan_id: searchParams.get("plan_id") || null,
-      unit_id: searchParams.get("unit_id") || null,
-    };
-  });
-  // --- پایان تغییرات برای localStorage ---
+  }, [item_id, role]);
 
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const filterRef = useRef(null);
-  const sortRef = useRef(null);
-
+  // منطق بستن دراپ‌دان‌ها
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -167,33 +149,30 @@ export default function Kartabl() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
-  const updateURL = (newFilters, newPage) => {
+  // تابع به روز رسانی URL: فقط item_id و role را در URL نگه می‌دارد
+  const updateURLParams = () => {
     const params = new URLSearchParams();
+    if (item_id) params.set("item_id", item_id);
+    if (role) params.set("role", role);
     
-    if (newFilters.search) params.set("search", newFilters.search);
-    if (newFilters.sort) params.set("sort", newFilters.sort);
-    if (newFilters.direction) params.set("direction", newFilters.direction);
-    if (newFilters.status) params.set("status", newFilters.status);
-    if (newFilters.plan_id) params.set("plan_id", newFilters.plan_id);
-    if (newFilters.unit_id) params.set("unit_id", newFilters.unit_id);
-    if (newPage > 1) params.set("page", newPage.toString());
-    params.set("role", role)
-    params.set("item_id", itemId)
-    
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false, shallow: true });
   };
 
-  
+  // useEffect برای همگام‌سازی URL با item_id و role از Redux
+  useEffect(() => {
+    updateURLParams();
+  }, [item_id, role, pathname, router]);
+
+
   const [units, setUnits] = useState([]);
   useEffect(() => {
-    if(!itemId) return;
+    if(!item_id) return;
     const fetchFutureCarts = async () => {
       try {
         const carts = await axios.get(
-          `/api/unit?item_id=${itemId}&role=${role}`
+          `/api/unit?item_id=${item_id}&role=${role}`
         );
         if (carts.data) {
           setUnits(carts.data.data);
@@ -202,17 +181,16 @@ export default function Kartabl() {
         console.log(error);
       }
     };
-
     fetchFutureCarts();
-  }, [itemId]);
+  }, [item_id, role]);
   
   const [plans, setPlans] = useState([]);
   useEffect(() => {
-    if(!itemId) return;
+    if(!item_id) return;
     const fetchFutureCarts = async () => {
       try {
         const carts = await axios.get(
-          `/api/plans?item_id=${itemId}`
+          `/api/plans?item_id=${item_id}`
         );
         if (carts.data) {
           setPlans(carts.data.data);
@@ -221,62 +199,69 @@ export default function Kartabl() {
           console.log(error);
       }
     };
-
     fetchFutureCarts();
-  }, [itemId]);
+  }, [item_id]);
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-    updateURL(newFilters, 1);
+  // تابع برای تغییر فیلترها (به جای setFilters محلی)
+  const handleFilterChange = (newFilterState) => {
+    dispatch(setRequestDashboardFilters(newFilterState)); // فیلترها را به Redux ارسال کنید
+    dispatch(setRequestDashboardCurrentPage(1)); // با تغییر فیلتر، صفحه را به 1 برگردانید
   };
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      if (!itemId || !role) return;
+  // تابع برای ریست کردن فیلترها
+  const handleResetFilters = () => {
+    dispatch(resetRequestDashboardFilters()); // ریست فیلترها به حالت اولیه (item_id و role حفظ می‌شوند)
+    dispatch(setRequestDashboardCurrentPage(1)); // صفحه را به 1 برگردانید
+    setPlanSearch(''); // ریست کردن وضعیت جستجوی محلی
+    setUnitSearch(''); // ریست کردن وضعیت جستجوی محلی
+    setIsFilterOpen(false); // بستن دراپ‌دان فیلتر
+  };
 
-      setLoading(true);
-      try {
-        const { search, sort, direction, status, plan_id, unit_id } = filters;
-        const response = await axios.get(`/api/darkhast`, {
-          params: {
-            q: search,
-            sort,
-            direction,
-            status,
-            plan_id,
-            unit_id,
-            per_page: itemsPerPage,
-            page: currentPage,
-            itemId,
-            role
-          },
-        });
+  // useEffect برای واکشی درخواست‌ها
+  useEffect(() => {
+    if (!item_id || !role) return;
+
+    setLoading(true);
+    try {
+      // فیلترها را مستقیماً از Redux می‌خوانیم
+      const params = {
+        q: search,
+        sort,
+        direction,
+        status,
+        plan_id,
+        unit_id,
+        per_page: itemsPerPage,
+        page: currentPage,
+        itemId: item_id,
+        role
+      };
+      
+      const fetchRequests = async () => {
+        const response = await axios.get(`/api/darkhast`, { params });
         
         setRequests(response.data);
         if (response.data.meta && response.data.meta.total) {
-          setTotalPages(Math.ceil(response.data.meta.total / itemsPerPage));
+          dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage)));
         } else {
-          setTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1);
+          dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1));
         }
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-  }, [currentPage, itemId, filters,role]);
-  
-  useEffect(() => {
-    updateURL(filters, currentPage);
-  }, [filters, itemId, role]);
-  
-  const pathname = usePathname();
+      };
+      fetchRequests();
+
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, item_id, role, search, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+
+
   const goBack = (e) => {
-    const query = router.query;
-    const searchParams = new URLSearchParams(window.location.search);
-    const queryString = searchParams.toString();
+    const params = new URLSearchParams();
+    if (item_id) params.set("item_id", item_id);
+    if (role) params.set("role", role);
+    const queryString = params.toString();
     
     if(e) {
       const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
@@ -290,9 +275,9 @@ export default function Kartabl() {
     }
   };
 
+  // تابع برای تغییر صفحه (به جای setCurrentPage محلی)
   const handlePageChange = (page) => {
-    setCurrentPage(page);
-    updateURL(filters, page); // URL را نیز هنگام تغییر صفحه به‌روزرسانی کنید
+    dispatch(setRequestDashboardCurrentPage(page)); // صفحه را به Redux ارسال کنید
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -312,10 +297,10 @@ export default function Kartabl() {
         قبلی
       </button>
     );
-    
+
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
-    
+
     if (startPage > 1) {
       buttons.push(
         <button
@@ -334,7 +319,7 @@ export default function Kartabl() {
         );
       }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
@@ -350,7 +335,7 @@ export default function Kartabl() {
         </button>
       );
     }
-    
+
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(
@@ -369,7 +354,7 @@ export default function Kartabl() {
         </button>
       );
     }
-    
+
     buttons.push(
       <button
         key="next"
@@ -384,10 +369,19 @@ export default function Kartabl() {
         بعدی
       </button>
     );
-    
+
     return buttons;
   };
-  
+
+  const stepTitles = {
+    'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
+    'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
+    'approval_area_interface': 'در انتظار تایید رابط منطقه',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مساجد',
+    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+    'finish': 'به اتمام رسیده',
+  };
+
 
   return (
     <>
@@ -418,7 +412,7 @@ export default function Kartabl() {
                   onClick={() => goBack()}
                 />
                 <Image
-                
+
                   className="cursor-pointer w-[36px] md:w-[69px]"
                   alt=""
                   src={notif}
@@ -435,25 +429,25 @@ export default function Kartabl() {
         <div className="h-full vector-nama md:px-5">
           <div className="bg-white absolute top-[150px] md:top-[160px] inset-x-6 md:inset-x-11 rounded p-3 md:p-6 scroll-kon">
             <div className="grid grid-cols-1 md:grid-cols-4 text-[12px] md:text-[15px] gap-8 my-7">
-              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'in_progress' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#25C7AA] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'in_progress' }); setIsFilterOpen(false); }}> {/* از آبجکت فیلتر جدید استفاده کنید */}
                 <div className="flex items-center justify-center bg-[#25c7aa59] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#25C7AA] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.in_progress}</div>
                 </div>
                 برای مشاهده جاری کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'done_temp' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#77B7DC] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'done_temp' }); setIsFilterOpen(false); }}> {/* از آبجکت فیلتر جدید استفاده کنید */}
                 <div className="flex items-center justify-center bg-[#77b7dc80] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="h-[20px] w-[20px] md:h-[40px] md:w-[40px] bg-[#77B7DC] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.done_temp}</div>
                 </div>
                 برای مشاهده تایید و ارسال کلیک کنید
               </div>
-              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'rejected' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-red-600 rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'rejected' }); setIsFilterOpen(false); }}> {/* از آبجکت فیلتر جدید استفاده کنید */}
                 <div className="flex items-center justify-center bg-[#dc262680] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="md:h-[40px] w-[20px] md:w-[40px] bg-red-600 rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.rejected}</div>
                 </div>
                 برای مشاهده رد شده کلیک کنید
               </div>
-              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ ...filters, status: 'action_needed' }); setIsFilterOpen(false); }}>
+              <div className="border-2 px-3 border-[#FFD140] rounded-full py-1 md:py-2 px-4 text-center relative cursor-pointer" onClick={() => { handleFilterChange({ status: 'action_needed' }); setIsFilterOpen(false); }}> {/* از آبجکت فیلتر جدید استفاده کنید */}
                 <div className="flex items-center justify-center bg-[#ffd14080] rounded-full h-[40px] md:h-[60px] w-[40px] md:w-[60px] absolute -right-4 md:-right-6 -top-2">
                   <div className="md:h-[40px] w-[20px] md:w-[40px] bg-[#FFD140] rounded-full flex items-center justify-center text-white font-bold">{info?.requests?.action_needed}</div>
                 </div>
@@ -475,11 +469,11 @@ export default function Kartabl() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input 
-                        placeholder="جستجو کنید ..." 
-                        className="w-full bg-transparent h-full focus:outline-none" 
-                        value={filters.search} // مقدار ورودی را به فیلترها وصل کنید
-                        onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} 
+                      <input
+                        placeholder="جستجو کنید ..."
+                        className="w-full bg-transparent h-full focus:outline-none"
+                        value={search} // مقدار ورودی را به فیلترهای Redux وصل کنید
+                        onChange={(e) => handleFilterChange({ search: e.target.value })}
                       />
                   </div>
                   <div className="flex items-center gap-4">
@@ -502,10 +496,10 @@ export default function Kartabl() {
                           <div className="p-2 border-b">
                             <div className="font-bold mb-2">وضعیت</div>
                             <div className="px-2">
-                              <select 
+                              <select
                                 className="w-full p-2 border rounded"
-                                value={filters.status || ''}
-                                onChange={(e) => handleFilterChange({ ...filters, status: e.target.value })}
+                                value={status || ''} // از وضعیت Redux استفاده کنید
+                                onChange={(e) => handleFilterChange({ status: e.target.value })}
                               >
                                 <option value="">همه</option>
                                 <option value="rejected">رد شده</option>
@@ -516,7 +510,7 @@ export default function Kartabl() {
                               </select>
                             </div>
                           </div>
-                          
+
                           <div className="p-2 border-b">
                             <div className="font-bold mb-2">اکشن پلن ها</div>
                             <div className="px-2 mb-2">
@@ -530,9 +524,9 @@ export default function Kartabl() {
                                 />
                                 <select
                                   className="w-full p-2 border rounded"
-                                  value={filters.plan_id || ''}
-                                  onChange={(e) => handleFilterChange({ ...filters, plan_id: e.target.value })}
-                                  size={planSearch ? Math.min(5, plans.filter(plan => 
+                                  value={plan_id || ''} // از وضعیت Redux استفاده کنید
+                                  onChange={(e) => handleFilterChange({ plan_id: e.target.value })}
+                                  size={planSearch ? Math.min(5, plans.filter(plan =>
                                     plan.title.toLowerCase().includes(planSearch.toLowerCase())
                                   ).length + 1) : 1}
                                 >
@@ -549,7 +543,7 @@ export default function Kartabl() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="p-2 border-b">
                             <div className="font-bold mb-2">واحد های سازمانی</div>
                             <div className="px-2 mb-2">
@@ -563,9 +557,9 @@ export default function Kartabl() {
                                 />
                                 <select
                                   className="w-full p-2 border rounded"
-                                  value={filters.unit_id || ''}
-                                  onChange={(e) => handleFilterChange({ ...filters, unit_id: e.target.value })}
-                                  size={unitSearch ? Math.min(5, units.filter(unit => 
+                                  value={unit_id || ''} // از وضعیت Redux استفاده کنید
+                                  onChange={(e) => handleFilterChange({ unit_id: e.target.value })}
+                                  size={unitSearch ? Math.min(5, units.filter(unit =>
                                     unit.title.toLowerCase().includes(unitSearch.toLowerCase())
                                   ).length + 1) : 1}
                                 >
@@ -582,29 +576,17 @@ export default function Kartabl() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="p-2 border-t flex flex-col gap-2">
-                            <button 
+                            <button
                               className="w-full p-2 bg-[#39A894] text-white rounded"
                               onClick={() => setIsFilterOpen(false)}
                             >
                               اعمال فیلتر
                             </button>
-                            <button 
+                            <button
                               className="w-full p-2 bg-white text-red-500 border border-red-500 rounded"
-                              onClick={() => {
-                                handleFilterChange({ 
-                                  search: "", // جستجو را هم پاک کنید
-                                  sort: "created_at",
-                                  direction: "",
-                                  status: null, 
-                                  plan_id: null, 
-                                  unit_id: null 
-                                });
-                                setPlanSearch('');
-                                setUnitSearch('');
-                                setIsFilterOpen(false);
-                              }}
+                              onClick={handleResetFilters} // استفاده از تابع جدید
                             >
                               حذف فیلتر
                             </button>
@@ -623,18 +605,18 @@ export default function Kartabl() {
                           src={"/Images/masajed/kartabl-darkhast/sort.svg"}
                         />
                         <span className="text-xs text-[#202020] min-w-fit lg:text-lg">
-                        {filters.direction 
-                              ? (filters.direction === "desc" ? "جدید ترین" 
-                                : filters.direction === "asc" ? "قدیمی ترین" 
-                                : "وضعیت نامشخص") 
+                        {direction
+                              ? (direction === "desc" ? "جدید ترین"
+                                : direction === "asc" ? "قدیمی ترین"
+                                : "وضعیت نامشخص")
                               : "مرتب سازی بر اساس"}
                         </span>
                       </button>
 
                       {isSortOpen && (
                         <div className="absolute mt-2 w-full bg-white border rounded shadow">
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
-                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ ...filters, direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ direction: 'desc' }); setIsSortOpen(false); }}>جدید ترین</div>
+                          <div className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => { handleFilterChange({ direction: 'asc' }); setIsSortOpen(false); }}>قدیمی ترین</div>
                         </div>
                       )}
                     </div>
@@ -652,7 +634,7 @@ export default function Kartabl() {
                 {(requests?.data && !loading) && requests?.data?.map((request) => (
                   <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
                     <h2 className="text-sm text-[#202020] pb-3">{request?.request_plan?.title || "بدون عنوان"}</h2>
-                    
+
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">شماره</span>
                       <span className="text-sm text-[#202020]">{request.id}</span>
@@ -660,16 +642,16 @@ export default function Kartabl() {
 
                     <div className="flex items-center justify-between pl-0.5 pr-2">
                       <span className="text-xs text-[#959595]">وضعیت</span>
-                      <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7 
-                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                          !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
-                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                      <span className={`flex items-center justify-center text-xs rounded-lg w-[85px] h-7
+                        ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" :
+                          request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" :
+                          !request.status ? "text-[#959595] bg-[#F6F6F6]" :
+                          request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" :
                           "text-[#D9534F] bg-[#FDECEA]"}`}>
-                        {request.status === "rejected" ? "رد شده" : 
-                          request.status === "in_progress" ? "جاری" : 
-                          !request.status ? "هنوز ارجاع نشده" : 
-                          request.status === "action_needed" ? "نیازمند اصلاح" : 
+                        {request.status === "rejected" ? "رد شده" :
+                          request.status === "in_progress" ? "جاری" :
+                          !request.status ? "هنوز ارجاع نشده" :
+                          request.status === "action_needed" ? "نیازمند اصلاح" :
                           (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                       </span>
                     </div>
@@ -677,6 +659,11 @@ export default function Kartabl() {
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">سر مربی</span>
                       <span className="text-sm text-[#202020]">{request?.user?.name}</span>
+                    </div>
+
+                    <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                      <span className="text-xs text-[#959595]">مرحله</span>
+                      <span className="text-sm text-[#202020]">{stepTitles[request?.step]}</span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
@@ -691,16 +678,7 @@ export default function Kartabl() {
                       </span>
                     </div>
 
-                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
-                      onClick={() => {
-                        // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
-                        if (typeof window !== 'undefined') {
-                            localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
-                            localStorage.setItem('kartabl_currentPage_from_detail', currentPage.toString()); // Add this line
-                            localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
-                        }
-                      }}
-                    >
+                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${role}&item_id=${item_id}`}>
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
@@ -722,6 +700,7 @@ export default function Kartabl() {
                       </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
+                      <th className="border border-gray-300 px-7 py-5 text-lg">مرحله</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">وضعیت</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg"></th>
                     </tr>
@@ -754,31 +733,26 @@ export default function Kartabl() {
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {request?.unit?.title}
                         </td>
+                        <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
+                          {stepTitles[request?.step]}
+                        </td>
                         <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
-                            <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
-                              ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
-                                !request.status ? "text-[#959595] bg-[#F6F6F6]" : 
-                                request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
-                                request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" : 
+                            <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center
+                              ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" :
+                                !request.status ? "text-[#959595] bg-[#F6F6F6]" :
+                                request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" :
+                                request.status === "action_needed" ? "text-[#D97706] bg-[#FEF3C7]" :
                                 "text-[#D9534F] bg-[#FDECEA]"}`}>
-                              {request.status === "rejected" ? "رد شده" : 
-                                request.status === "in_progress" ? "جاری" : 
-                                !request.status ? "هنوز ارجاع نشده" : 
-                                request.status === "action_needed" ? "نیازمند اصلاح" : 
+                              {request.status === "rejected" ? "رد شده" :
+                                request.status === "in_progress" ? "جاری" :
+                                !request.status ? "هنوز ارجاع نشده" :
+                                request.status === "action_needed" ? "نیازمند اصلاح" :
                                 (request.status === "done" && request.step === 'finish') ? "تایید شده" : "تایید و ارسال"}
                             </div>
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center hover:text-[#D5B260] hover:decoration-[#D5B260]">
-                          <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${roleParam}&item_id=${item_id}`}
-                            onClick={() => {
-                              // ذخیره فیلترها و URL فعلی در localStorage قبل از ناوبری
-                              if (typeof window !== 'undefined') {
-                                  localStorage.setItem('kartabl_filters_from_detail', JSON.stringify(filters));
-                                  localStorage.setItem('kartabl_currentPage_from_detail', currentPage.toString()); // Add this line
-                                  localStorage.setItem('came_from_kartabl_detail', 'true'); // پرچم برای تشخیص بازگشت
-                              }
-                            }}
-                          >مشاهده درخواست</Link>
+                          <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${role}&item_id=${item_id}`}>
+                          مشاهده درخواست</Link>
                         </td>
                       </tr>
                     ))}
@@ -796,7 +770,7 @@ export default function Kartabl() {
         </div>
       </div>
 
-      
+
     </>
   );
 }

@@ -414,6 +414,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
             <div className="relative w-full">
               <DatePicker
                 editable={false}
+                maxDate={new Date()}
                 value={time}
                 onChange={(val) => handleFieldChange("time", val)}
                 onOpen={() => setTouched(prev => ({ ...prev, time: true }))}

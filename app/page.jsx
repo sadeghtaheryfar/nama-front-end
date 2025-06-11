@@ -9,7 +9,7 @@ import axios from "axios";
 export default function Home() {
   return (
     <Suspense>
-      <div className="bg-header bg-repeat-x bg-auto px-7">
+      <div className="bg-header bg-repeat-x bg-auto px-7" style={{ background: 'url(/Images/home/HomeHeader.svg) !important' }}>
         <div className="container mx-auto">
           <Header />
           <Carts />
