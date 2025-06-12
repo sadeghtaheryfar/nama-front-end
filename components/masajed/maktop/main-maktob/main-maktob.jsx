@@ -84,7 +84,6 @@ const MainMaktob = ({ token }) => {
     if (!validateForm()) return;
 
     setLoading(true);
-    console.log('>>>>>>>>>>>', formData)
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("body", formData.body);
