@@ -53,7 +53,7 @@ const RequirementItem = ({ requirement, itemId, onClosePopup, level = 0 }) => {
       {/* خط افقی کوچک (وصل‌کننده به محتوای آیتم فعلی) */}
       {level > 0 && (
         <div
-          className="absolute h-0.5 bg-gray-300 w-4"
+          className="absolute h-0.5 bg-gray-300 w-4" 
           style={{ top: '1.25rem', right: `calc(${paddingRight} - 2rem)` }}
         ></div>
       )}
