@@ -4,15 +4,17 @@ import Form from "./../../../components/loop//form/form";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import './../../../styles/form.css';
+import { usePathname, useSearchParams } from "next/navigation";
 
 const Masajed = () => {
   const [show, setShow] = useState(false);
   const pathname = usePathname();
   const [header, setHeader] = useState(null);
+  const searchParams = useSearchParams();
+  const item_id = searchParams.get("item_id");
   const [loadingHeader, setLoadingHeader] = useState(true);
 
   useEffect(() => {
@@ -125,7 +127,7 @@ const Masajed = () => {
           </div>
         </header>
 
-        <Form itemId={itemId} />
+        <Form itemId={item_id} />
       </div>
     </>
   );

@@ -9,7 +9,7 @@ export const GET = async (req) => {
   const token = cookies().get("token")?.value;
 
   try {
-    let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/rings/export?item_id=${itemId}&role=mosque_head_coach`;
+    let apiUrl = `http://arman.armaniran.org/api/v1/rings/export?item_id=${itemId}&role=mosque_head_coach`;
 
     const response = await axios.get(apiUrl, {
       headers: {

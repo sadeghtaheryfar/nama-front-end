@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from 'react-hot-toast';
-import DatePicker, { DateObject } from "react-multi-date-picker"; // Import DateObject
+import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
-import gregorian from "react-date-object/calendars/gregorian"; // For converting from Gregorian
+import gregorian from "react-date-object/calendars/gregorian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -189,7 +189,7 @@ const FileInput = ({
     uploadProgress,
     isUploading,
     disabled = false,
-    initialImageUrl = null // New prop for initial image URL
+    initialImageUrl = null
 }) => {
     const inputId = id || `file-input-${name}`;
     const fieldError = errors[name] || name.split('.').reduce((acc, part) => {
@@ -205,7 +205,6 @@ const FileInput = ({
     }, errors);
 
     const watchedFiles = watch(name);
-    // Determine the image to display: new file or initial URL
     const displayImage = (watchedFiles && watchedFiles.length > 0)
         ? URL.createObjectURL(watchedFiles[0])
         : initialImageUrl;
@@ -335,6 +334,11 @@ const Form = ({ initialData, itemId }) => {
     const [isUploading, setIsUploading] = useState(false);
     const today = new Date();
 
+    // States for delete modal
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeletingLoop, setIsDeletingLoop] = useState(false); // Not used for member deletion
+    const [memberToDelete, setMemberToDelete] = useState(null);
+
     // Effect to pre-fill the form when initialData is provided (for update mode)
     useEffect(() => {
         if (initialData) {
@@ -361,6 +365,7 @@ const Form = ({ initialData, itemId }) => {
                 trainer_additional_info: initialData.description || '',
 
                 members: initialData.members?.map(member => ({
+                    id: member.id, // Keep the member ID for deletion purposes
                     full_name: member.name || '',
                     national_code: member.national_code || '',
                     // Convert Gregorian birthdate for members too
@@ -403,6 +408,75 @@ const Form = ({ initialData, itemId }) => {
         });
     };
 
+    const [loadingdelete, setLoadingdelete] = useState(false);
+    const confirmDelete = async () => {
+        setLoadingdelete(true);
+        try {
+            await axios.delete(`http://arman.armaniran.org/api/v1/rings/${initialData.id}/${memberToDelete.id}?item_id=${itemId}&role=mosque_head_coach`, {
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${Cookies.get("token")}`,
+                }
+            });
+            toast.success("دانش آموز با موفقیت حذف شد.");
+
+            const updatedLoopData = await axios.get(`http://arman.armaniran.org/api/v1/rings/${initialData.id}?item_id=${itemId}&role=mosque_head_coach`, {
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${Cookies.get("token")}`,
+                }
+            });
+            if (updatedLoopData.data && updatedLoopData.data.data) {
+                const newInitialData = updatedLoopData.data.data;
+                reset({
+                    loop_name: newInitialData.title || '',
+                    trainer_full_name: newInitialData.name || '',
+                    trainer_national_code: newInitialData.national_code || '',
+                    trainer_date_of_birth: newInitialData.birthdate ? new DateObject({
+                        date: newInitialData.birthdate.split(' ')[0],
+                        calendar: gregorian,
+                    }).convert(persian).format("YYYY-MM-DD") : '',
+                    trainer_postal_code: newInitialData.postal_code || '',
+                    trainer_address: newInitialData.address || '',
+                    trainer_phone_number: newInitialData.phone || '',
+                    trainer_education_level: newInitialData.level_of_education || '',
+                    trainer_field_of_study: newInitialData.field_of_study || '',
+                    trainer_job: newInitialData.job || '',
+                    trainer_sheba_number: newInitialData.sheba_number || '',
+                    trainer_skill_domain: newInitialData.skill_area || [],
+                    trainer_loop_functional_domain: newInitialData.functional_area || [],
+                    trainer_profile_picture: null,
+                    trainer_additional_info: newInitialData.description || '',
+                    members: newInitialData.members?.map(member => ({
+                        id: member.id, // Make sure to keep the member ID
+                        full_name: member.name || '',
+                        national_code: member.national_code || '',
+                        date_of_birth: member.birthdate ? new DateObject({
+                            date: member.birthdate.split(' ')[0],
+                            calendar: gregorian,
+                        }).convert(persian).format("YYYY-MM-DD") : '',
+                        postal_code: member.postal_code || '',
+                        address: member.address || '',
+                        phone_number: member.phone || '',
+                        father_name: member.father_name || '',
+                        profile_picture: null,
+                        additional_info: member.description || '',
+                    })) || []
+                });
+            }
+            setShowDeleteModal(false);
+            setMemberToDelete(null);
+        } catch (error) {
+            console.error("Error during deletion:", error);
+            toast.error("خطا در حذف. لطفا مجددا تلاش کنید.");
+            setShowDeleteModal(false);
+            setMemberToDelete(null);
+        }finally{
+            setLoadingdelete(false);
+        }
+    };
+
+
     const onSubmit = async (data) => {
         setIsUploading(true);
         setUploadProgress(0);
@@ -417,15 +491,12 @@ const Form = ({ initialData, itemId }) => {
         if (!isTrainerMyself) {
             formdata.append("name", data.trainer_full_name);
             formdata.append("national_code", data.trainer_national_code);
-            // Convert Persian date from DatePicker back to Gregorian for API
+            // Change: Send Persian date with Latin digits, format YYYY/MM/DD
             if (data.trainer_date_of_birth) {
-                const gregorianDate = new DateObject({
-                    date: data.trainer_date_of_birth,
-                    calendar: persian, // Specify that the input date is Persian
-                }).convert(gregorian).format("YYYY-MM-DD");
-                formdata.append("birthdate", gregorianDate);
+                const latinDigitsDate = convertPersianDigitsToLatin(data.trainer_date_of_birth);
+                formdata.append("birthdate", latinDigitsDate);
             } else {
-                formdata.append("birthdate", ''); // Send empty if no date
+                formdata.append("birthdate", '');
             }
 
             formdata.append("postal_code", data.trainer_postal_code);
@@ -447,17 +518,13 @@ const Form = ({ initialData, itemId }) => {
                 });
             }
 
-            // Handle trainer profile picture:
             if (data.trainer_profile_picture && data.trainer_profile_picture.length > 0) {
                 formdata.append("image", data.trainer_profile_picture[0], data.trainer_profile_picture[0].name);
             } else if (initialData?.image?.original) {
-                // If no new file selected but an old image exists, send its URL to indicate "keep current"
-                // This assumes your backend has an endpoint for this. Adjust as per your API spec.
                 formdata.append("image_url", initialData.image.original);
             } else {
                 // If no new file and no initial image, you might want to explicitly send an empty string or null
                 // to signal deletion if that's how your API works.
-                // formdata.append("image", "");
             }
 
             if (data.trainer_additional_info) {
@@ -470,13 +537,10 @@ const Form = ({ initialData, itemId }) => {
             data.members.forEach((member, index) => {
                 formdata.append(`members[${index}][name]`, member.full_name || '');
                 formdata.append(`members[${index}][national_code]`, member.national_code || '');
-                // Convert Persian date for members back to Gregorian for API
+                // Change: Send Persian date with Latin digits, format YYYY/MM/DD
                 if (member.date_of_birth) {
-                    const gregorianDate = new DateObject({
-                        date: member.date_of_birth,
-                        calendar: persian,
-                    }).convert(gregorian).format("YYYY-MM-DD");
-                    formdata.append(`members[${index}][birthdate]`, gregorianDate);
+                    const latinDigitsDate = convertPersianDigitsToLatin(member.date_of_birth);
+                    formdata.append(`members[${index}][birthdate]`, latinDigitsDate);
                 } else {
                     formdata.append(`members[${index}][birthdate]`, '');
                 }
@@ -486,18 +550,21 @@ const Form = ({ initialData, itemId }) => {
                 formdata.append(`members[${index}][phone]`, member.phone_number || '');
                 formdata.append(`members[${index}][father_name]`, member.father_name || '');
 
-                // Handle member profile picture:
                 if (member.profile_picture && member.profile_picture.length > 0) {
                     formdata.append(`members[${index}][image]`, member.profile_picture[0], member.profile_picture[0].name);
                 } else if (initialData?.members?.[index]?.image?.original) {
-                    // Similar for members, send URL if exists and no new file selected
                     formdata.append(`members[${index}][image_url]`, initialData.members[index].image.original);
                 } else {
-                    // formdata.append(`members[${index}][image]`, "");
+                    //
                 }
 
                 if (member.additional_info) {
                     formdata.append(`members[${index}][description]`, member.additional_info);
+                }
+
+                // If member has an ID (meaning it's an existing member), include it
+                if (initialData?.members?.[index]?.id) {
+                    formdata.append(`members[${index}][id]`, initialData.members[index].id);
                 }
             });
         }
@@ -516,7 +583,6 @@ const Form = ({ initialData, itemId }) => {
                 headers: {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${token}`,
-                    // "Content-Type": "multipart/form-data" is handled by axios for FormData
                 },
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round(
@@ -910,17 +976,27 @@ const Form = ({ initialData, itemId }) => {
                         <h3 className="text-[18px] font-semibold text-[#0068B2]">شماره {index + 1}: <span className="text-[14px] text-[#3B3B3B]">عضو حلقه</span> </h3>
 
                         {/* دکمه حذف عضو */}
-                        {fields.length > 1 && (
-                            <button
-                                type="button"
-                                onClick={() => remove(index)}
-                                className="absolute top-6 left-6 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 3a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        )}
+                        {/* Only show delete button if the member already has an ID (i.e., exists in initialData) */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                // اگر عضو دارای id باشد (از بک‌اند آمده باشد)، از modal حذف API استفاده می‌کنیم
+                                if (initialData?.members?.[index]?.id) {
+                                    setMemberToDelete(initialData.members[index]);
+                                    setIsDeletingLoop(false); // تأیید که حذف حلقه نیست
+                                    setShowDeleteModal(true);
+                                } else {
+                                    // اگر عضو جدید باشد (فقط در فرم اضافه شده)، آن را مستقیماً از useFieldArray حذف می‌کنیم
+                                    remove(index);
+                                }
+                            }}
+                            className="absolute top-6 left-6 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 3a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                        
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-4 mt-[1rem]">
                             <FloatingLabelInput
@@ -1128,6 +1204,34 @@ const Form = ({ initialData, itemId }) => {
                     </div>
                 </div>
             </form>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-xl text-center">
+                        <p className="text-lg font-semibold mb-4">
+                            {isDeletingLoop ? "آیا از حذف کامل حلقه اطمینان دارید؟" : "آیا از حذف این دانش آموز اطمینان دارید؟"}
+                        </p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={confirmDelete}
+                                className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                            >
+                                {loadingdelete ? 'صبر کنید ...' : 'بله، حذف کن'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowDeleteModal(false);
+                                    setMemberToDelete(null); // Clear member to delete if cancelled
+                                }}
+                                className="px-6 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors"
+                            >
+                                خیر، انصراف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
