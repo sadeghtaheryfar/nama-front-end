@@ -89,7 +89,7 @@ const FloatingLabelInput = ({
                         : 'text-base top-[1rem] right-[1rem]'
                 }`}
             >
-                {placeholder}<span style={{ fontFamily: "none" }}>{required ? ' *' : ''}</span>
+                {placeholder}<span style={{ fontFamily: "none",color: 'red' }}>{required ? ' *' : ''}</span>
             </label>
             {fieldError && (
                 <span className="text-red-500 text-xs mt-1 block">
@@ -158,7 +158,7 @@ const FloatingLabelSelect = ({
                         : 'text-base top-[1rem] right-[1rem]'
                 }`}
             >
-                {placeholder}<span style={{ fontFamily: "none" }}>{required ? ' *' : ''}</span>
+                {placeholder}<span style={{ fontFamily: "none",color: 'red' }}>{required ? ' *' : ''}</span>
             </label>
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -225,7 +225,7 @@ const FileInput = ({
                 htmlFor={inputId}
                 className={`absolute text-xs top-[0.5rem] right-[1rem] ${fieldError ? 'text-red-500' : disabled ? 'text-gray-400' : 'text-[#9796A1]'} transition-all duration-200`}
             >
-                {label}<span style={{ fontFamily: "none" }}>{required ? ' *' : ''}</span>
+                {label}<span style={{ fontFamily: "none",color: 'red' }}>{required ? ' *' : ''}</span>
             </label>
             <div
                 className={`p-[1rem] border ${fieldError ? 'border-red-500' : 'border-[#EEEEEE]'} w-full rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex items-center justify-between cursor-pointer ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -527,7 +527,7 @@ const DataLoop = ({item_id}) => {
                                                 htmlFor="trainer_date_of_birth"
                                                 className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_date_of_birth ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}
                                             >
-                                                تاریخ تولد{isTrainerMyself ? '' : ' *'}
+                                                تاریخ تولد<span style={{ fontFamily: "none",color: 'red' }}>{!isTrainerMyself ? ' *' : ''}</span>
                                             </label>
                                             <DatePicker
                                                 calendar={persian}
@@ -661,9 +661,9 @@ const DataLoop = ({item_id}) => {
                                 }}
                             />
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2">
+                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
                                 <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_skill_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه مهارتی<span style={{ fontFamily: "none" }}> *</span>
+                                    حوزه مهارتی<span style={{ fontFamily: "none",color: 'red' }}> *</span>
                                 </label>
                                 {SKILL_AREA_OPTIONS.map((option) => (
                                     <label key={option.value} className="flex items-center gap-1">
@@ -700,9 +700,9 @@ const DataLoop = ({item_id}) => {
                                 )}
                             </div>
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2">
+                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
                                 <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_loop_functional_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه عملکردی حلقه<span style={{ fontFamily: "none" }}> *</span>
+                                    حوزه عملکردی حلقه<span style={{ fontFamily: "none",color: 'red' }}> *</span>
                                 </label>
                                 {OPERATIONAL_AREA_OPTIONS.map((option) => (
                                     <label key={option.value} className="flex items-center gap-1">
@@ -856,7 +856,7 @@ const DataLoop = ({item_id}) => {
                                                 htmlFor={`members_${index}_date_of_birth`}
                                                 className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.members?.[index]?.date_of_birth ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}
                                             >
-                                                تاریخ تولد *
+                                                تاریخ تولد <span style={{ fontFamily: "none",color: 'red' }}>{!isTrainerMyself ? ' *' : ''}</span>
                                             </label>
                                             <DatePicker
                                                 editable={false}

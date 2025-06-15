@@ -127,7 +127,7 @@ const Masajed = () => {
           </div>
         </header>
 
-        <Form itemId={item_id} />
+        <Form item_id={item_id} />
       </div>
     </>
   );

@@ -166,7 +166,7 @@ const Masajed = () => {
   const [loadingExport, setLoadingExport] = useState();
     const exportfile = () => {
         setLoadingExport(true);
-        const url = `https://arman.armaniran.org/api/v1/rings/export?item_id=${itemId}&role=mosque_head_coach`;
+        const url = `https://arman.armaniran.org/api/v1/rings/export?item_id=${item_id}&role=mosque_head_coach`;
 
         fetch(url, {
             method: 'GET',
