@@ -1,18 +1,39 @@
 "use client";
-import HeaderMasjed from "./../../components/header-profile-loop/page";
-import DataLoop from "./../../components/loop/data-loop";
+import HeaderMasjed from "./../../../components/header-profile-loop/page";
+import Update from "./../../../components/loop/form/update";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import './../../../styles/form.css';
 
 const Masajed = () => {
   const [show, setShow] = useState(false);
   const pathname = usePathname();
   const [header, setHeader] = useState(null);
   const [loadingHeader, setLoadingHeader] = useState(true);
+  
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const item_id = searchParams.get("item_id");
+
+  const [data, setDate] = useState();
+  useEffect(() => {
+    const fetchDataRing = async () => {
+        try {
+            const data = await axios.get(`/api/loop/show?item_id=${item_id}&id=${id}`);
+            if (data.data) {
+              setDate(data?.data?.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    fetchDataRing();
+  }, [id, item_id]);
 
   useEffect(() => {
     fetch("/Images/masajed/header-desktop-msj.svg")
@@ -95,6 +116,7 @@ const Masajed = () => {
               />
               <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
                 افزودن حلقه
+                <span className="text-xs md:text-sm lg:text-base xl:text-xl 2xl:text-2xl"> / ساخت حلقه   </span>
               </span>
             </div>
             <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
@@ -118,19 +140,12 @@ const Masajed = () => {
               />
             </div>
             <div style={{backgroundColor : lighterColor}} className="flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
-              <HeaderMasjed bgRole={solighterColor} />
+              <HeaderMasjed bgRole={solighterColor}  />
             </div>
           </div>
         </header>
 
-        <div className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
-          <div className="w-full bg-[#F9F5E9] p-[1rem] rounded-[1rem]">
-            <h3 className="text-[20px] font-semibold">توضیحات این بخش</h3>
-            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است. لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است. </p>
-          </div>
-
-          <DataLoop />
-        </div>
+        <Update initialData={data} itemId={item_id} />
       </div>
     </>
   );

@@ -5,7 +5,7 @@ import { usePathname,useRouter  } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
-const Header = ({bgBox,bgRole}) => {
+const  Header = ({bgBox,bgRole}) => {
     const [profile, setProfile] = useState(null);
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [placeText, setPlaceText] = useState("");
@@ -31,7 +31,7 @@ const Header = ({bgBox,bgRole}) => {
 
         const fetching = async () => {
             try {
-                const response = await axios.get(`/api/profile?item_id=${itemId}`);
+                const response = await axios.get(`/api/profile`);
                 if (response.data) {
                     setProfile(response.data);
                 }
@@ -40,11 +40,11 @@ const Header = ({bgBox,bgRole}) => {
                     role => role.role_en === "mosque_head_coach"
                 );
 
-                // if (!hasHeadCoachRole) {
-                //     if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
-                //         router.push("/" + itemId);
-                //     }
-                // }
+                if (!hasHeadCoachRole) {
+                    if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
+                        router.push("/" + itemId);
+                    }
+                }
             } catch (error) {
                 console.log("خطا در دریافت بنرها:", error);
             } finally {
@@ -125,37 +125,23 @@ const Header = ({bgBox,bgRole}) => {
                 </div>
 
                 {pathname != '/' && (
-                    <div style={{ backgroundColor: bgRole }} className='relative z-[12] px-2 py-1 rounded-xl cursor-pointer' onClick={() => setShowRoleMenu(!showRoleMenu)}>
-                        <div className='flex justify-between items-center gap-6 sm:gap-8 lg:gap-16 cursor-pointer'>
-                            <span className='text-xs lg:text-base font-medium'>نقش</span>
-                            <img className='w-5' alt='#' width={0} height={0} src={'/Images/home/edit-2.svg'} />
-                        </div>
-                        <span className='text-[10px] lg:text-sm'>
-                            {translateNama(
-                                profile?.data?.roles?.find(role => role.role_en === 'mosque_head_coach')?.role_en
-                            )}
-                        </span>
-                        {(showRoleMenu && itemId) && (
-                            <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
-                                {profile?.data?.roles?.map((role) => (
-                                    <a
-                                        href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
-                                        key={role.role_en}
-                                        className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex text-[14px]'
-                                    >
-                                        {role.role} {placeText}
-                                    </a>
-                                ))}
+                    <div className='relative z-[12] px-2 py-1 border-x border-[#43637E] px-[1rem]' onClick={() => setShowRoleMenu(!showRoleMenu)}>
+                        <div>
+                            <div className='flex justify-between items-center gap-6 sm:gap-8 lg:gap-16'>
+                                <span className='text-xs lg:text-base font-medium'>نقش</span>
                             </div>
-                        )}
+                            <span className='text-[10px] lg:text-sm'>
+                                {translateNama(
+                                    profile?.data?.roles?.find(role => role.role_en === 'mosque_head_coach')?.role_en
+                                )}
+                            </span>
+                        </div>
                     </div>
                 )}
 
                 <div className="flex flex-col leading-7">
                 <span className="text-xs lg:text-base font-medium">سطح دسترسی</span>
-                <span className="text-[10px] lg:text-sm flex">{translateRole(profile?.data?.arman_role)} | <span onClick={logout} className='cursor-pointer mr-[0.2rem] flex justify-center items-center'>
-                    خروج            
-                </span></span>
+                <span className="text-[10px] lg:text-sm flex">{translateRole(profile?.data?.arman_role)}</span>
             </div>
         </>
     );

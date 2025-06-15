@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import './../../../styles/form.css';
 
 const Masajed = () => {
   const [show, setShow] = useState(false);
@@ -15,49 +16,31 @@ const Masajed = () => {
   const [loadingHeader, setLoadingHeader] = useState(true);
 
   useEffect(() => {
-    if (!pathname) return;
-    const pathSegments = pathname.split("/");
-    const itemId = 2;
-
-    const fetching = async () => {
-      try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
-        if (response.data) {
-          setHeader(response.data);
-
-          fetch("/Images/masajed/header-desktop-msj.svg")
-            .then(response => response.text())
-            .then(svgText => {
-              const parser = new DOMParser();
-              const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-              
-              const rectElements = svgDoc.querySelectorAll("rect");
-              rectElements.forEach(rect => {
-                rect.setAttribute("fill", response?.data?.data?.color);
-              })
-              
-              const serializer = new XMLSerializer();
-              const modifiedSvgText = serializer.serializeToString(svgDoc);
-              
-              const svgBlob = new Blob([modifiedSvgText], { type: "image/svg+xml" });
-              const svgUrl = URL.createObjectURL(svgBlob);
-              
-              const headerElement = document.querySelector(".lg\\:bg-header-masjed-desktop");
-              if (headerElement) {
-                headerElement.style.backgroundImage = `url(${svgUrl})`;
-              }
-            })
-            .catch(error => {
-              console.error("خطا در بارگذاری یا پردازش SVG:", error);
-            });
+    fetch("/Images/masajed/header-desktop-msj.svg")
+      .then(response => response.text())
+      .then(svgText => {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+        
+        const rectElements = svgDoc.querySelectorAll("rect");
+        rectElements.forEach(rect => {
+          rect.setAttribute("fill", '#012B4F');
+        })
+        
+        const serializer = new XMLSerializer();
+        const modifiedSvgText = serializer.serializeToString(svgDoc);
+        
+        const svgBlob = new Blob([modifiedSvgText], { type: "image/svg+xml" });
+        const svgUrl = URL.createObjectURL(svgBlob);
+        
+        const headerElement = document.querySelector(".lg\\:bg-header-masjed-desktop");
+        if (headerElement) {
+          headerElement.style.backgroundImage = `url(${svgUrl})`;
         }
-      } catch (error) {
-        console.log("خطا در دریافت بنرها:", error);
-      } finally {
-        setLoadingHeader(false);
-      }
-    };
-    fetching();
+      })
+      .catch(error => {
+        console.error("خطا در بارگذاری یا پردازش SVG:", error);
+      });
   }, []);
 
   const lightenColor = (color, percent) => {
@@ -80,10 +63,9 @@ const Masajed = () => {
   const [solighterColor, setSoLighterColor] = useState();
 
   useEffect(() => {
-    if(!header?.data?.color) return
-    setLighterColor(lightenColor(header?.data?.color, 15));
-    setSoLighterColor(lightenColor(header?.data?.color, 30));
-  }, [header?.data?.color]);
+    setLighterColor(lightenColor('#012B4F', 15));
+    setSoLighterColor(lightenColor('#012B4F', 30));
+  }, []);
   
 
   const router = useRouter();
@@ -125,6 +107,7 @@ const Masajed = () => {
                 width={0}
                 height={0}
                 src={"/Images/home/header/notification.svg"}
+                style={{backgroundColor : lighterColor}}
               />
               <img
                 onClick={() => goBack(true)}
@@ -133,15 +116,16 @@ const Masajed = () => {
                 width={0}
                 height={0}
                 src={"/Images/home/header/menu.svg"}
+                style={{backgroundColor : lighterColor}}
               />
             </div>
-            <div className="flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
-              <HeaderMasjed  />
+            <div style={{backgroundColor : lighterColor}} className="flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]">
+              <HeaderMasjed bgRole={solighterColor}  />
             </div>
           </div>
         </header>
 
-        <Form />
+        <Form itemId={itemId} />
       </div>
     </>
   );

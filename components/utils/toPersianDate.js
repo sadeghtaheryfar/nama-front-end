@@ -4,4 +4,4 @@ export const toPersianDate = (date) => {
       month: "2-digit",
       day: "2-digit",
     });
-  };
+};

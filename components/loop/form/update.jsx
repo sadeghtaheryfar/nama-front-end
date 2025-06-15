@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from 'react-hot-toast';
-import DatePicker from "react-multi-date-picker";
+import DatePicker, { DateObject } from "react-multi-date-picker"; // Import DateObject
 import persian from "react-date-object/calendars/persian";
+import gregorian from "react-date-object/calendars/gregorian"; // For converting from Gregorian
 import persian_fa from "react-date-object/locales/persian_fa";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Cookies from "js-cookie";
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 const OPERATIONAL_AREA_OPTIONS = [
@@ -31,7 +32,8 @@ const SKILL_AREA_OPTIONS = [
 ];
 
 const convertPersianDigitsToLatin = (s) => {
-    return s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۴۵۶۷۸۹'.indexOf(d));
+    if (!s) return '';
+    return s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 };
 
 const FloatingLabelInput = ({
@@ -44,11 +46,13 @@ const FloatingLabelInput = ({
     errors,
     validationRules = {},
     isMultiLine = false,
-    disabled = false
+    disabled = false,
+    watch
 }) => {
     const [isFocused, setIsFocused] = useState(false);
-    const [inputValue, setInputValue] = useState(register(name)?.value || '');
-    const isActive = isFocused || inputValue !== '';
+    const watchedValue = watch(name);
+    const hasValue = watchedValue !== null && watchedValue !== undefined && watchedValue !== '';
+    const isActive = isFocused || hasValue;
     const inputId = id || `input-${placeholder.replace(/\s+/g, '-').toLowerCase()}`;
 
     const InputComponent = isMultiLine ? 'textarea' : 'input';
@@ -72,10 +76,6 @@ const FloatingLabelInput = ({
                 id={inputId}
                 type={type}
                 {...register(name, validationRules)}
-                onChange={(e) => {
-                    setInputValue(e.target.value);
-                    register(name).onChange(e);
-                }}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 className={`p-[1rem] border ${fieldError ? 'border-red-500' : 'border-[#EEEEEE]'} w-full rounded-[1rem] ${isMultiLine ? 'pt-[1.5rem] pb-[0.5rem] h-24' : 'pt-[1.5rem] pb-[0.5rem]'} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -109,11 +109,13 @@ const FloatingLabelSelect = ({
     errors,
     validationRules = {},
     options = [],
-    disabled = false
+    disabled = false,
+    watch
 }) => {
     const [isFocused, setIsFocused] = useState(false);
-    const [selectValue, setSelectValue] = useState(register(name)?.value || '');
-    const isActive = isFocused || selectValue !== '';
+    const watchedValue = watch(name);
+    const hasValue = watchedValue !== null && watchedValue !== undefined && watchedValue !== '';
+    const isActive = isFocused || hasValue;
     const selectId = id || `select-${placeholder.replace(/\s+/g, '-').toLowerCase()}`;
 
     const fieldError = errors[name] || name.split('.').reduce((acc, part) => {
@@ -134,10 +136,6 @@ const FloatingLabelSelect = ({
             <select
                 id={selectId}
                 {...register(name, validationRules)}
-                onChange={(e) => {
-                    setSelectValue(e.target.value);
-                    register(name).onChange(e);
-                }}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 className={`p-[1rem] border ${fieldError ? 'border-red-500' : 'border-[#EEEEEE]'} w-full rounded-[1rem] pt-[1.5rem] pb-[0.5rem] appearance-none ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -190,7 +188,8 @@ const FileInput = ({
     accept = '',
     uploadProgress,
     isUploading,
-    disabled = false
+    disabled = false,
+    initialImageUrl = null // New prop for initial image URL
 }) => {
     const inputId = id || `file-input-${name}`;
     const fieldError = errors[name] || name.split('.').reduce((acc, part) => {
@@ -205,10 +204,11 @@ const FileInput = ({
         return undefined;
     }, errors);
 
-    const filePreviews = watch(name) ? Array.from(watch(name)).map(file => ({
-        url: URL.createObjectURL(file),
-        name: file.name
-    })) : [];
+    const watchedFiles = watch(name);
+    // Determine the image to display: new file or initial URL
+    const displayImage = (watchedFiles && watchedFiles.length > 0)
+        ? URL.createObjectURL(watchedFiles[0])
+        : initialImageUrl;
 
     return (
         <div className="relative w-full">
@@ -234,7 +234,9 @@ const FileInput = ({
                 <span className="text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap ml-2">
                     {selectedFileNames.length > 0
                         ? selectedFileNames.join(', ')
-                        : `انتخاب ${label.includes('عکس') ? 'عکس' : label.includes('فیلم') ? 'فیلم' : 'فایل'}`
+                        : (initialImageUrl && !watchedFiles?.length)
+                            ? 'عکس موجود است'
+                            : `انتخاب ${label.includes('عکس') ? 'عکس' : label.includes('فیلم') ? 'فیلم' : 'فایل'}`
                     }
                 </span>
                 <button
@@ -246,7 +248,7 @@ const FileInput = ({
                     }}
                     disabled={disabled}
                 >
-                    {selectedFileNames.length > 0 ? 'انتخاب مجدد' : 'انتخاب'}
+                    {selectedFileNames.length > 0 || initialImageUrl ? 'انتخاب مجدد' : 'انتخاب'}
                 </button>
             </div>
             {fieldError && (
@@ -275,30 +277,41 @@ const FileInput = ({
                     </div>
                 </div>
             )}
+             {isImagePreview && displayImage && (
+                <div className="relative w-full p-[1rem] rounded-[1rem] pt-[1.5rem] pb-[0.5rem]">
+                    <label className={`absolute text-xs top-[0.5rem] right-[1rem] text-[#9796A1] transition-all duration-200`}>
+                        پیش نمایش عکس پرسنلی
+                    </label>
+                    <img
+                        src={displayImage}
+                        alt="پیش نمایش عکس پرسنلی"
+                        className="mt-2 w-24 h-24 object-cover rounded-[0.5rem]"
+                    />
+                </div>
+            )}
         </div>
     );
 };
 
-
-const DataLoop = ({item_id}) => {
+const Form = ({ initialData, itemId }) => {
     const router = useRouter();
-    const { register, handleSubmit, control, formState: { errors }, watch, setValue } = useForm({
+    const { register, handleSubmit, control, formState: { errors }, watch, setValue, reset } = useForm({
         defaultValues: {
-        loop_name: '', // اطمینان حاصل کنید این هم مقدار پیش فرض دارد
-        trainer_full_name: '', // و اینها
-        trainer_national_code: '',
-        trainer_date_of_birth: '',
-        trainer_postal_code: '',
-        trainer_address: '',
-        trainer_phone_number: '',
-        trainer_education_level: '',
-        trainer_field_of_study: '',
-        trainer_job: '',
-        trainer_sheba_number: '',
-        trainer_skill_domain: [],
-        trainer_loop_functional_domain: [],
-        trainer_profile_picture: null,
-        trainer_additional_info: '',
+            loop_name: '',
+            trainer_full_name: '',
+            trainer_national_code: '',
+            trainer_date_of_birth: '',
+            trainer_postal_code: '',
+            trainer_address: '',
+            trainer_phone_number: '',
+            trainer_education_level: '',
+            trainer_field_of_study: '',
+            trainer_job: '',
+            trainer_sheba_number: '',
+            trainer_skill_domain: [],
+            trainer_loop_functional_domain: [],
+            trainer_profile_picture: null,
+            trainer_additional_info: '',
             members: [{
                 full_name: '',
                 national_code: '',
@@ -312,16 +325,69 @@ const DataLoop = ({item_id}) => {
             }]
         }
     });
+
     const { fields, append, remove } = useFieldArray({
         control,
         name: "members",
     });
     const [isTrainerMyself, setIsTrainerMyself] = useState(false);
-    const [memberCount, setMemberCount] = useState(1);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
     const today = new Date();
 
+    // Effect to pre-fill the form when initialData is provided (for update mode)
+    useEffect(() => {
+        if (initialData) {
+            reset({
+                loop_name: initialData.title || '',
+                trainer_full_name: initialData.name || '',
+                trainer_national_code: initialData.national_code || '',
+                // Convert Gregorian birthdate from initialData to Persian for DatePicker
+                trainer_date_of_birth: initialData.birthdate ? new DateObject({
+                    date: initialData.birthdate.split(' ')[0],
+                    calendar: gregorian, // Specify that the input date is Gregorian
+                }).convert(persian).format("YYYY-MM-DD") : '', // Format to YYYY-MM-DD in Persian
+
+                trainer_postal_code: initialData.postal_code || '',
+                trainer_address: initialData.address || '',
+                trainer_phone_number: initialData.phone || '',
+                trainer_education_level: initialData.level_of_education || '',
+                trainer_field_of_study: initialData.field_of_study || '',
+                trainer_job: initialData.job || '',
+                trainer_sheba_number: initialData.sheba_number || '',
+                trainer_skill_domain: initialData.skill_area || [],
+                trainer_loop_functional_domain: initialData.functional_area || [],
+                trainer_profile_picture: null,
+                trainer_additional_info: initialData.description || '',
+
+                members: initialData.members?.map(member => ({
+                    full_name: member.name || '',
+                    national_code: member.national_code || '',
+                    // Convert Gregorian birthdate for members too
+                    date_of_birth: member.birthdate ? new DateObject({
+                        date: member.birthdate.split(' ')[0],
+                        calendar: gregorian,
+                    }).convert(persian).format("YYYY-MM-DD") : '',
+                    postal_code: member.postal_code || '',
+                    address: member.address || '',
+                    phone_number: member.phone || '',
+                    father_name: member.father_name || '',
+                    profile_picture: null,
+                    additional_info: member.description || '',
+                })) || [{
+                    full_name: '',
+                    national_code: '',
+                    date_of_birth: '',
+                    postal_code: '',
+                    address: '',
+                    phone_number: '',
+                    father_name: '',
+                    profile_picture: null,
+                    additional_info: ''
+                }]
+            });
+        }
+    }, [initialData, reset]);
 
     const handleAddMember = () => {
         append({
@@ -336,17 +402,32 @@ const DataLoop = ({item_id}) => {
             additional_info: ''
         });
     };
+
     const onSubmit = async (data) => {
-        console.log("Form Data:", data);
         setIsUploading(true);
         setUploadProgress(0);
 
         const formdata = new FormData();
         formdata.append("title", data.loop_name);
+
+        if (itemId) {
+            formdata.append("item_id", itemId);
+        }
+
         if (!isTrainerMyself) {
             formdata.append("name", data.trainer_full_name);
             formdata.append("national_code", data.trainer_national_code);
-            formdata.append("birthdate", data.trainer_date_of_birth);
+            // Convert Persian date from DatePicker back to Gregorian for API
+            if (data.trainer_date_of_birth) {
+                const gregorianDate = new DateObject({
+                    date: data.trainer_date_of_birth,
+                    calendar: persian, // Specify that the input date is Persian
+                }).convert(gregorian).format("YYYY-MM-DD");
+                formdata.append("birthdate", gregorianDate);
+            } else {
+                formdata.append("birthdate", ''); // Send empty if no date
+            }
+
             formdata.append("postal_code", data.trainer_postal_code);
             formdata.append("address", data.trainer_address);
             formdata.append("phone", data.trainer_phone_number);
@@ -356,21 +437,29 @@ const DataLoop = ({item_id}) => {
             formdata.append("sheba_number", data.trainer_sheba_number);
 
             if (data.trainer_skill_domain && Array.isArray(data.trainer_skill_domain)) {
-                data.trainer_skill_domain.forEach((skill, index) => {
-                    formdata.append(`skill_area[${index}]`, skill);
+                data.trainer_skill_domain.forEach((skill) => {
+                    formdata.append(`skill_area[]`, skill);
                 });
             }
-
-            // برای حوزه عملکردی حلقه
             if (data.trainer_loop_functional_domain && Array.isArray(data.trainer_loop_functional_domain)) {
-                data.trainer_loop_functional_domain.forEach((area, index) => {
-                    formdata.append(`functional_area[${index}]`, area);
+                data.trainer_loop_functional_domain.forEach((area) => {
+                    formdata.append(`functional_area[]`, area);
                 });
             }
 
+            // Handle trainer profile picture:
             if (data.trainer_profile_picture && data.trainer_profile_picture.length > 0) {
                 formdata.append("image", data.trainer_profile_picture[0], data.trainer_profile_picture[0].name);
+            } else if (initialData?.image?.original) {
+                // If no new file selected but an old image exists, send its URL to indicate "keep current"
+                // This assumes your backend has an endpoint for this. Adjust as per your API spec.
+                formdata.append("image_url", initialData.image.original);
+            } else {
+                // If no new file and no initial image, you might want to explicitly send an empty string or null
+                // to signal deletion if that's how your API works.
+                // formdata.append("image", "");
             }
+
             if (data.trainer_additional_info) {
                 formdata.append("description", data.trainer_additional_info);
             }
@@ -381,14 +470,32 @@ const DataLoop = ({item_id}) => {
             data.members.forEach((member, index) => {
                 formdata.append(`members[${index}][name]`, member.full_name || '');
                 formdata.append(`members[${index}][national_code]`, member.national_code || '');
-                formdata.append(`members[${index}][birthdate]`, member.date_of_birth || '');
+                // Convert Persian date for members back to Gregorian for API
+                if (member.date_of_birth) {
+                    const gregorianDate = new DateObject({
+                        date: member.date_of_birth,
+                        calendar: persian,
+                    }).convert(gregorian).format("YYYY-MM-DD");
+                    formdata.append(`members[${index}][birthdate]`, gregorianDate);
+                } else {
+                    formdata.append(`members[${index}][birthdate]`, '');
+                }
+                
                 formdata.append(`members[${index}][postal_code]`, member.postal_code || '');
                 formdata.append(`members[${index}][address]`, member.address || '');
                 formdata.append(`members[${index}][phone]`, member.phone_number || '');
                 formdata.append(`members[${index}][father_name]`, member.father_name || '');
+
+                // Handle member profile picture:
                 if (member.profile_picture && member.profile_picture.length > 0) {
                     formdata.append(`members[${index}][image]`, member.profile_picture[0], member.profile_picture[0].name);
+                } else if (initialData?.members?.[index]?.image?.original) {
+                    // Similar for members, send URL if exists and no new file selected
+                    formdata.append(`members[${index}][image_url]`, initialData.members[index].image.original);
+                } else {
+                    // formdata.append(`members[${index}][image]`, "");
                 }
+
                 if (member.additional_info) {
                     formdata.append(`members[${index}][description]`, member.additional_info);
                 }
@@ -396,28 +503,33 @@ const DataLoop = ({item_id}) => {
         }
 
         try {
-            const token = Cookies.get("token"); // Get token from cookies
-            const response = await axios.post(
-                `http://arman.armaniran.org/api/v1/rings?item_id=${item_id}&role=mosque_head_coach`,
-                formdata,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "Authorization": `Bearer ${token}` // Use Bearer token
-                    },
-                    onUploadProgress: (progressEvent) => {
-                        const percentCompleted = Math.round(
-                            (progressEvent.loaded * 100) / progressEvent.total
-                        );
-                        setUploadProgress(percentCompleted);
-                    },
-                }
-            );
+            const token = Cookies.get("token");
+            let response;
+            const url = `http://arman.armaniran.org/api/v1/rings/${initialData?.id}?item_id=${itemId}&role=mosque_head_coach`;
+
+            formdata.append('_method', 'PATCH');
+
+            response = await axios({
+                method: 'POST', // Use POST with _method=PATCH
+                url: url,
+                data: formdata,
+                headers: {
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                    // "Content-Type": "multipart/form-data" is handled by axios for FormData
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                    setUploadProgress(percentCompleted);
+                },
+            });
 
             setIsUploading(false);
-            if (response.status === 201) {
-                toast.success("فرم با موفقیت ثبت شد! به زودی به صفحه اصلی منتقل میشوید");
-                
+            if (response.status === 200 || response.status === 201) {
+                toast.success(`فرم با موفقیت ${itemId ? 'ویرایش' : 'ثبت'} شد! به زودی به صفحه اصلی منتقل میشوید`);
+
                 setTimeout(() => {
                     router.push(`/loop`);
                 }, 3000);
@@ -428,7 +540,7 @@ const DataLoop = ({item_id}) => {
             console.error("Submission Error:", error);
             if (axios.isAxiosError(error) && error.response) {
                 const errorResponse = error.response.data;
-                toast.error(`خطا در ثبت فرم: ${errorResponse.message || "خطای ناشناخته"}`);
+                toast.error(`خطا در ${itemId ? 'ویرایش' : 'ثبت'} فرم: ${errorResponse.message || "خطای ناشناخته"}`);
                 if (errorResponse.errors) {
                     Object.keys(errorResponse.errors).forEach(key => {
                         const errorMessage = errorResponse.errors[key][0];
@@ -453,6 +565,7 @@ const DataLoop = ({item_id}) => {
                             required={true}
                             register={register}
                             errors={errors}
+                            watch={watch}
                             validationRules={{
                                 required: "نام حلقه الزامی است"
                             }}
@@ -462,6 +575,7 @@ const DataLoop = ({item_id}) => {
                     <div className="mt-[1rem]">
                         <h3 className="text-[18px] font-semibold">مشخصات مربی حلقه</h3>
 
+                        {/* You can re-enable this if you want the "Moby myself" checkbox */}
                         {/* <div className="flex justify-start items-center">
                             <input
                                 type="checkbox"
@@ -481,6 +595,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "نام و نام خانوادگی مربی الزامی است"
@@ -495,6 +610,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "کد ملی مربی الزامی است",
@@ -513,8 +629,13 @@ const DataLoop = ({item_id}) => {
                                         required: isTrainerMyself ? false : "تاریخ تولد مربی الزامی است",
                                         validate: value => {
                                             if (value) {
-                                                const selectedDate = new Date(value.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1-$2-$3'));
-                                                if (selectedDate > today) {
+                                                // Convert the displayed Persian date back to Gregorian for validation against 'today'
+                                                const gregorianDateFromPicker = new DateObject({
+                                                    date: value,
+                                                    calendar: persian,
+                                                }).convert(gregorian).toDate(); // Convert to standard JS Date object
+
+                                                if (gregorianDateFromPicker > today) {
                                                     return "تاریخ تولد نمی‌تواند از تاریخ امروز بیشتر باشد";
                                                 }
                                             }
@@ -535,13 +656,14 @@ const DataLoop = ({item_id}) => {
                                                 locale={persian_fa}
                                                 value={field.value}
                                                 onChange={(date) => {
-                                                    const formattedDate = date ? date.format("YYYY-MM-DD") : "";
+                                                    const formattedDate = date ? date.format("YYYY-MM-DD") : ""; // This will be Persian YYYY-MM-DD
                                                     const latinFormattedDate = convertPersianDigitsToLatin(formattedDate);
                                                     field.onChange(latinFormattedDate);
                                                 }}
                                                 inputClass={`p-[1rem] border ${errors.trainer_date_of_birth ? 'border-red-500' : 'border-[#EEEEEE]'} rounded-[1rem] pt-[1.5rem] pb-[0.5rem] w-full ${isTrainerMyself ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                                                 calendarPosition="bottom-right"
                                                 disabled={isTrainerMyself}
+                                                // maxDate is a Gregorian Date object
                                                 maxDate={today}
                                             />
                                         </div>
@@ -562,6 +684,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "کد پستی مربی الزامی است",
@@ -580,6 +703,7 @@ const DataLoop = ({item_id}) => {
                                     required={true}
                                     register={register}
                                     errors={errors}
+                                    watch={watch}
                                     isMultiLine={false}
                                     disabled={isTrainerMyself}
                                     validationRules={{
@@ -596,6 +720,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "شماره تماس مربی الزامی است",
@@ -613,6 +738,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "میزان تحصیلات مربی الزامی است"
                                 }}
@@ -625,6 +751,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "رشته تحصیلی مربی الزامی است"
                                 }}
@@ -637,6 +764,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "شغل مربی الزامی است"
@@ -651,6 +779,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 disabled={isTrainerMyself}
                                 validationRules={{
                                     required: isTrainerMyself ? false : "شماره شبا مربی الزامی است",
@@ -745,31 +874,19 @@ const DataLoop = ({item_id}) => {
                                 label="برای آپلود عکس پرسنلی کلیک کنید"
                                 register={register}
                                 errors={errors}
-                                required={!isTrainerMyself}
+                                required={!isTrainerMyself && !(initialData?.image?.original || watch('trainer_profile_picture')?.length > 0)}
                                 disabled={isTrainerMyself}
                                 selectedFileNames={watch('trainer_profile_picture') && watch('trainer_profile_picture').length > 0 ? [watch('trainer_profile_picture')[0].name] : []}
                                 setValue={setValue}
                                 watch={watch}
                                 validationRules={{
-                                    required: isTrainerMyself ? false : "عکس پرسنلی مربی الزامی است"
+                                    required: isTrainerMyself ? false : (initialData?.image?.original ? false : "عکس پرسنلی مربی الزامی است")
                                 }}
                                 uploadProgress={uploadProgress}
                                 isUploading={isUploading}
                                 isImagePreview={true}
+                                initialImageUrl={initialData?.image?.original}
                             />
-
-                            <div className="relative w-full p-[1rem] rounded-[1rem] pt-[1.5rem] pb-[0.5rem]">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] text-[#9796A1] transition-all duration-200`}>
-                                    پیش نمایش عکس پرسنلی
-                                </label>
-                                {watch('trainer_profile_picture') && watch('trainer_profile_picture')[0] && (
-                                    <img
-                                        src={URL.createObjectURL(watch('trainer_profile_picture')[0])}
-                                        alt="پیش نمایش عکس پرسنلی"
-                                        className="mt-2 w-24 h-24 object-cover rounded-[0.5rem]"
-                                    />
-                                )}
-                            </div>
 
                             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
                                 <FloatingLabelInput
@@ -779,6 +896,7 @@ const DataLoop = ({item_id}) => {
                                     isMultiLine={true}
                                     register={register}
                                     errors={errors}
+                                    watch={watch}
                                     disabled={isTrainerMyself}
                                 />
                             </div>
@@ -788,11 +906,11 @@ const DataLoop = ({item_id}) => {
 
                 {/* باکس عضو حلقه */}
                 {fields.map((field, index) => (
-                    <div key={index} className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-8 lg:mt-2 container mx-auto md:p-9 xl:px-12">
+                    <div key={field.id} className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-8 lg:mt-2 container mx-auto md:p-9 xl:px-12">
                         <h3 className="text-[18px] font-semibold text-[#0068B2]">شماره {index + 1}: <span className="text-[14px] text-[#3B3B3B]">عضو حلقه</span> </h3>
 
                         {/* دکمه حذف عضو */}
-                        {fields.length > 1 && ( // Only show remove button if there's more than one member
+                        {fields.length > 1 && (
                             <button
                                 type="button"
                                 onClick={() => remove(index)}
@@ -812,6 +930,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: "نام و نام خانوادگی عضو الزامی است"
                                 }}
@@ -825,6 +944,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: "کد ملی عضو الزامی است",
                                     pattern: {
@@ -842,8 +962,13 @@ const DataLoop = ({item_id}) => {
                                         required: "تاریخ تولد عضو الزامی است",
                                         validate: value => {
                                             if (value) {
-                                                const selectedDate = new Date(value.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1-$2-$3'));
-                                                if (selectedDate > today) {
+                                                // Convert the displayed Persian date back to Gregorian for validation
+                                                const gregorianDateFromPicker = new DateObject({
+                                                    date: value,
+                                                    calendar: persian,
+                                                }).convert(gregorian).toDate();
+
+                                                if (gregorianDateFromPicker > today) {
                                                     return "تاریخ تولد نمی‌تواند از تاریخ امروز بیشتر باشد";
                                                 }
                                             }
@@ -890,6 +1015,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: "کد پستی عضو الزامی است",
                                     pattern: {
@@ -907,6 +1033,7 @@ const DataLoop = ({item_id}) => {
                                     required={true}
                                     register={register}
                                     errors={errors}
+                                    watch={watch}
                                     isMultiLine={false}
                                     validationRules={{
                                         required: "آدرس عضو الزامی است"
@@ -922,6 +1049,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: "شماره تماس عضو الزامی است",
                                     pattern: {
@@ -938,6 +1066,7 @@ const DataLoop = ({item_id}) => {
                                 required={true}
                                 register={register}
                                 errors={errors}
+                                watch={watch}
                                 validationRules={{
                                     required: "نام پدر عضو الزامی است"
                                 }}
@@ -949,30 +1078,18 @@ const DataLoop = ({item_id}) => {
                                 label="برای آپلود عکس پرسنلی کلیک کنید"
                                 register={register}
                                 errors={errors}
-                                required={true}
+                                required={!(initialData?.members?.[index]?.image?.original || watch(`members[${index}].profile_picture`)?.length > 0)}
                                 selectedFileNames={watch(`members[${index}].profile_picture`) && watch(`members[${index}].profile_picture`).length > 0 ? [watch(`members[${index}].profile_picture`)[0].name] : []}
                                 setValue={setValue}
                                 watch={watch}
                                 validationRules={{
-                                    required: "عکس پرسنلی عضو الزامی است"
+                                    required: initialData?.members?.[index]?.image?.original ? false : "عکس پرسنلی عضو الزامی است"
                                 }}
                                 uploadProgress={uploadProgress}
                                 isUploading={isUploading}
                                 isImagePreview={true}
+                                initialImageUrl={initialData?.members?.[index]?.image?.original}
                             />
-
-                            <div className="relative w-full p-[1rem] rounded-[1rem] pt-[1.5rem] pb-[0.5rem]">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] text-[#9796A1] transition-all duration-200`}>
-                                    پیش نمایش عکس پرسنلی
-                                </label>
-                                {watch(`members[${index}].profile_picture`) && watch(`members[${index}].profile_picture`)[0] && (
-                                    <img
-                                        src={URL.createObjectURL(watch(`members[${index}].profile_picture`)[0])}
-                                        alt="پیش نمایش عکس پرسنلی"
-                                        className="mt-2 w-24 h-24 object-cover rounded-[0.5rem]"
-                                    />
-                                )}
-                            </div>
 
                             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
                                 <FloatingLabelInput
@@ -982,6 +1099,7 @@ const DataLoop = ({item_id}) => {
                                     isMultiLine={true}
                                     register={register}
                                     errors={errors}
+                                    watch={watch}
                                 />
                             </div>
                         </div>
@@ -1005,7 +1123,7 @@ const DataLoop = ({item_id}) => {
 
                     <div className="flex justify-center items-center">
                         <button type="submit" className="px-[2rem] py-[0.5rem] rounded-[0.5rem]  text-white bg-[#0068B2]" disabled={isUploading}>
-                            {isUploading ? 'در حال ارسال...' : 'تایید و ثبت حلقه'}
+                            {isUploading ? 'در حال ارسال...' : itemId ? 'تایید و ویرایش حلقه' : 'تایید و ثبت حلقه'}
                         </button>
                     </div>
                 </div>
@@ -1014,4 +1132,4 @@ const DataLoop = ({item_id}) => {
     );
 };
 
-export default DataLoop;
+export default Form;
