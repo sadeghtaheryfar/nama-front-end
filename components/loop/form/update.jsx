@@ -412,7 +412,7 @@ const Form = ({ initialData, itemId }) => {
     const confirmDelete = async () => {
         setLoadingdelete(true);
         try {
-            await axios.delete(`http://arman.armaniran.org/api/v1/rings/${initialData.id}/${memberToDelete.id}?item_id=${itemId}&role=mosque_head_coach`, {
+            await axios.delete(`https://arman.armaniran.org/api/v1/rings/${initialData.id}/${memberToDelete.id}?item_id=${itemId}&role=mosque_head_coach`, {
                 headers: {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`,
@@ -420,7 +420,7 @@ const Form = ({ initialData, itemId }) => {
             });
             toast.success("دانش آموز با موفقیت حذف شد.");
 
-            const updatedLoopData = await axios.get(`http://arman.armaniran.org/api/v1/rings/${initialData.id}?item_id=${itemId}&role=mosque_head_coach`, {
+            const updatedLoopData = await axios.get(`https://arman.armaniran.org/api/v1/rings/${initialData.id}?item_id=${itemId}&role=mosque_head_coach`, {
                 headers: {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`,
@@ -572,7 +572,7 @@ const Form = ({ initialData, itemId }) => {
         try {
             const token = Cookies.get("token");
             let response;
-            const url = `http://arman.armaniran.org/api/v1/rings/${initialData?.id}?item_id=${itemId}&role=mosque_head_coach`;
+            const url = `https://arman.armaniran.org/api/v1/rings/${initialData?.id}?item_id=${itemId}&role=mosque_head_coach`;
 
             formdata.append('_method', 'PATCH');
 

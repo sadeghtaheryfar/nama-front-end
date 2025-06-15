@@ -398,7 +398,7 @@ const DataLoop = ({item_id}) => {
         try {
             const token = Cookies.get("token"); // Get token from cookies
             const response = await axios.post(
-                `http://arman.armaniran.org/api/v1/rings?item_id=${item_id}&role=mosque_head_coach`,
+                `https://arman.armaniran.org/api/v1/rings?item_id=${item_id}&role=mosque_head_coach`,
                 formdata,
                 {
                     headers: {
