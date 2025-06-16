@@ -12,6 +12,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import Cookies from "js-cookie";
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import FloatingLabelMultiSelect from './FloatingLabelMultiSelect';
 
 const OPERATIONAL_AREA_OPTIONS = [
     { value: "آموزشی", label: "آموزشی" },
@@ -354,11 +355,11 @@ const Form = ({ initialData, itemId }) => {
 
                 trainer_postal_code: initialData.postal_code || '',
                 trainer_address: initialData.address || '',
+                trainer_sheba_number: initialData.sheba_number || '',
                 trainer_phone_number: initialData.phone || '',
                 trainer_education_level: initialData.level_of_education || '',
                 trainer_field_of_study: initialData.field_of_study || '',
                 trainer_job: initialData.job || '',
-                trainer_sheba_number: initialData.sheba_number || '',
                 trainer_skill_domain: initialData.skill_area || [],
                 trainer_loop_functional_domain: initialData.functional_area || [],
                 trainer_profile_picture: null,
@@ -856,83 +857,56 @@ const Form = ({ initialData, itemId }) => {
                                 }}
                             />
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_skill_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه مهارتی<span style={{ fontFamily: "none",color: 'red' }}> *</span>
-                                </label>
-                                {SKILL_AREA_OPTIONS.map((option) => (
-                                    <label key={option.value} className="flex items-center gap-1">
-                                        <input
-                                            type="checkbox"
-                                            value={option.value}
-                                            {...register("trainer_skill_domain", {
-                                                validate: (value) => {
-                                                    if (!isTrainerMyself && watch("trainer_skill_domain")?.length === 0) {
-                                                        return "حوزه مهارتی مربی الزامی است";
-                                                    }
-                                                    return true;
-                                                }
-                                            })}
-                                            disabled={isTrainerMyself}
-                                            checked={watch("trainer_skill_domain")?.includes(option.value) || false}
-                                            onChange={(e) => {
-                                                const currentValues = watch("trainer_skill_domain") || [];
-                                                if (e.target.checked) {
-                                                    setValue("trainer_skill_domain", [...currentValues, option.value]);
-                                                } else {
-                                                    setValue("trainer_skill_domain", currentValues.filter(val => val !== option.value));
-                                                }
-                                            }}
-                                            className="ml-1"
-                                        />
-                                        {option.label}
-                                    </label>
-                                ))}
-                                {errors.trainer_skill_domain && (
-                                    <span className="text-red-500 text-xs mt-1 block w-full">
-                                        {errors.trainer_skill_domain.message}
-                                    </span>
+                            {/* FloatingLabelMultiSelect for Skill Area */}
+                            <Controller
+                                name="trainer_skill_domain"
+                                control={control}
+                                rules={{
+                                    validate: (value) => {
+                                        if (!isTrainerMyself && (!Array.isArray(value) || value.length === 0)) {
+                                            return "حوزه مهارتی مربی الزامی است";
+                                        }
+                                        return true;
+                                    }
+                                }}
+                                render={({ field }) => (
+                                    <FloatingLabelMultiSelect
+                                        placeholder="حوزه مهارتی"
+                                        required={!isTrainerMyself}
+                                        id="trainer_skill_domain"
+                                        field={field} // Pass the 'field' object directly
+                                        errors={errors}
+                                        options={SKILL_AREA_OPTIONS}
+                                        disabled={isTrainerMyself}
+                                    />
                                 )}
-                            </div>
+                            />
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_loop_functional_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه عملکردی حلقه<span style={{ fontFamily: "none",color: 'red' }}> *</span>
-                                </label>
-                                {OPERATIONAL_AREA_OPTIONS.map((option) => (
-                                    <label key={option.value} className="flex items-center gap-1">
-                                        <input
-                                            type="checkbox"
-                                            value={option.value}
-                                            {...register("trainer_loop_functional_domain", {
-                                                validate: (value) => {
-                                                    if (!isTrainerMyself && watch("trainer_loop_functional_domain")?.length === 0) {
-                                                        return "حوزه عملکردی حلقه الزامی است";
-                                                    }
-                                                    return true;
-                                                }
-                                            })}
-                                            disabled={isTrainerMyself}
-                                            checked={watch("trainer_loop_functional_domain")?.includes(option.value) || false}
-                                            onChange={(e) => {
-                                                const currentValues = watch("trainer_loop_functional_domain") || [];
-                                                if (e.target.checked) {
-                                                    setValue("trainer_loop_functional_domain", [...currentValues, option.value]);
-                                                } else {
-                                                    setValue("trainer_loop_functional_domain", currentValues.filter(val => val !== option.value));
-                                                }
-                                            }}
-                                            className="ml-1"
-                                        />
-                                        {option.label}
-                                    </label>
-                                ))}
-                                {errors.trainer_loop_functional_domain && (
-                                    <span className="text-red-500 text-xs mt-1 block w-full">
-                                        {errors.trainer_loop_functional_domain.message}
-                                    </span>
+                            {/* FloatingLabelMultiSelect for Operational Area */}
+                            <Controller
+                                name="trainer_loop_functional_domain"
+                                control={control}
+                                rules={{
+                                    validate: (value) => {
+                                        if (!isTrainerMyself && (!Array.isArray(value) || value.length === 0)) {
+                                            return "حوزه عملکردی حلقه الزامی است";
+                                        }
+                                        return true;
+                                    }
+                                }}
+                                render={({ field }) => (
+                                    <FloatingLabelMultiSelect
+                                        placeholder="حوزه عملکردی حلقه"
+                                        required={!isTrainerMyself}
+                                        id="trainer_loop_functional_domain"
+                                        field={field} // Pass the 'field' object directly
+                                        errors={errors}
+                                        options={OPERATIONAL_AREA_OPTIONS}
+                                        disabled={isTrainerMyself}
+                                    />
                                 )}
-                            </div>
+                            />
+
 
                             <FileInput
                                 id="trainer_profile_picture"

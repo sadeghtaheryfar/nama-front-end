@@ -166,7 +166,7 @@ const schools = () => {
             const blobUrl = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = blobUrl;
-            link.download = 'exported_data.xlsx';
+            link.download = `exported_data_${new Date().toISOString().slice(0, 10)}.xlsx`;
             
             document.body.appendChild(link);
             link.click();

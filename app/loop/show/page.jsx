@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 const toPersianDate = (date) => {
     return new Date(date).toLocaleDateString("fa-IR", {
@@ -113,16 +114,15 @@ const Masajed = () => {
     fetchDataRing();
   }, [id, item_id]);
 
-  // New useEffect for managing body overflow
   useEffect(() => {
     if (showDeleteModal) {
       document.body.style.overflow = 'hidden';
-      setTimeout(() => setModalOpen(true), 10); // Trigger animation after slight delay
+      setTimeout(() => setModalOpen(true), 10);
     } else {
       setModalOpen(false);
       const timer = setTimeout(() => {
         document.body.style.overflow = 'unset';
-      }, 300); // Allow animation to finish before removing overflow
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [showDeleteModal]);
@@ -139,11 +139,17 @@ const Masajed = () => {
     setShowDeleteModal(true);
   };
 
+  
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const confirmDelete = async () => {
+    setLoadingDelete(true);
     try {
       if (isDeletingLoop) {
         await axios.delete(`/api/loop/delete?id=${id}&item_id=${item_id}`);
-        router.push('/loop'); 
+        toast.success('حذف با موفقیت انجام شد به زودی به صفحه اصلی منتقل می شود .')
+        setTimeout(() => {
+          router.push('/loop'); 
+        }, 3000);
       } else if (memberToDelete) {
         await axios.delete(`/api/loop/delete-member?id=${id}&item_id=${item_id}&member=${memberToDelete.id}`);
         const updatedData = await axios.get(`/api/loop/show?item_id=${item_id}&id=${id}`);
@@ -151,9 +157,11 @@ const Masajed = () => {
           setDate(updatedData?.data?.data);
         }
       }
-      setShowDeleteModal(false);
     } catch (error) {
       console.error("Error during deletion:", error);
+    }finally{
+      setLoadingDelete(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -192,7 +200,7 @@ const Masajed = () => {
             const blobUrl = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = blobUrl;
-            link.download = 'exported_data.xlsx';
+            link.download = `exported_data_${new Date().toISOString().slice(0, 10)}.xlsx`;
             
             document.body.appendChild(link);
             link.click();
@@ -488,7 +496,7 @@ const Masajed = () => {
                 onClick={confirmDelete}
                 className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
               >
-                بله
+                {loadingDelete ? 'صبر کنید ...' : 'بله'}
               </button>
               <button
                 onClick={cancelDelete}

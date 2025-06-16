@@ -9,8 +9,11 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Cookies from "js-cookie";
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useClickAway } from 'react-use'; // Import useClickAway if not already
+// import Select2Input from './Select2Input'; // Remove this import
+import FloatingLabelMultiSelect from './FloatingLabelMultiSelect'; // Import the new component
 
 const OPERATIONAL_AREA_OPTIONS = [
     { value: "آموزشی", label: "آموزشی" },
@@ -29,6 +32,9 @@ const SKILL_AREA_OPTIONS = [
     { value: "فرهنگی", label: "فرهنگی" },
     { value: "رسانه ای", label: "رسانه ای" },
 ];
+// ... (rest of your existing imports and helper functions like convertPersianDigitsToLatin, FloatingLabelInput, FloatingLabelSelect, FileInput)
+
+// ... (Your existing convertPersianDigitsToLatin, FloatingLabelInput, FloatingLabelSelect, FileInput components)
 
 const convertPersianDigitsToLatin = (s) => {
     return s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۴۵۶۷۸۹'.indexOf(d));
@@ -284,8 +290,8 @@ const DataLoop = ({item_id}) => {
     const router = useRouter();
     const { register, handleSubmit, control, formState: { errors }, watch, setValue } = useForm({
         defaultValues: {
-        loop_name: '', // اطمینان حاصل کنید این هم مقدار پیش فرض دارد
-        trainer_full_name: '', // و اینها
+        loop_name: '',
+        trainer_full_name: '',
         trainer_national_code: '',
         trainer_date_of_birth: '',
         trainer_postal_code: '',
@@ -295,8 +301,8 @@ const DataLoop = ({item_id}) => {
         trainer_field_of_study: '',
         trainer_job: '',
         trainer_sheba_number: '',
-        trainer_skill_domain: [],
-        trainer_loop_functional_domain: [],
+        trainer_skill_domain: [], // Keep as array for multi-select
+        trainer_loop_functional_domain: [], // Keep as array for multi-select
         trainer_profile_picture: null,
         trainer_additional_info: '',
             members: [{
@@ -355,13 +361,13 @@ const DataLoop = ({item_id}) => {
             formdata.append("job", data.trainer_job);
             formdata.append("sheba_number", data.trainer_sheba_number);
 
+            // trainer_skill_domain and trainer_loop_functional_domain are arrays
             if (data.trainer_skill_domain && Array.isArray(data.trainer_skill_domain)) {
                 data.trainer_skill_domain.forEach((skill, index) => {
                     formdata.append(`skill_area[${index}]`, skill);
                 });
             }
 
-            // برای حوزه عملکردی حلقه
             if (data.trainer_loop_functional_domain && Array.isArray(data.trainer_loop_functional_domain)) {
                 data.trainer_loop_functional_domain.forEach((area, index) => {
                     formdata.append(`functional_area[${index}]`, area);
@@ -417,7 +423,7 @@ const DataLoop = ({item_id}) => {
             setIsUploading(false);
             if (response.status === 201) {
                 toast.success("فرم با موفقیت ثبت شد! به زودی به صفحه اصلی منتقل میشوید");
-                
+
                 setTimeout(() => {
                     router.push(`/loop`);
                 }, 3000);
@@ -567,7 +573,7 @@ const DataLoop = ({item_id}) => {
                                     required: isTrainerMyself ? false : "کد پستی مربی الزامی است",
                                     pattern: {
                                         value: /^\d{10}$/,
-                                        message: "کد پستی نامعتبر است (10 رقم)"
+                                        message: "کد ملی نامعتبر است (10 رقم)"
                                     }
                                 }}
                             />
@@ -661,83 +667,59 @@ const DataLoop = ({item_id}) => {
                                 }}
                             />
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_skill_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه مهارتی<span style={{ fontFamily: "none",color: 'red' }}> *</span>
-                                </label>
-                                {SKILL_AREA_OPTIONS.map((option) => (
-                                    <label key={option.value} className="flex items-center gap-1">
-                                        <input
-                                            type="checkbox"
-                                            value={option.value}
-                                            {...register("trainer_skill_domain", {
-                                                validate: (value) => {
-                                                    if (!isTrainerMyself && watch("trainer_skill_domain")?.length === 0) {
-                                                        return "حوزه مهارتی مربی الزامی است";
-                                                    }
-                                                    return true;
-                                                }
-                                            })}
-                                            disabled={isTrainerMyself}
-                                            checked={watch("trainer_skill_domain")?.includes(option.value) || false}
-                                            onChange={(e) => {
-                                                const currentValues = watch("trainer_skill_domain") || [];
-                                                if (e.target.checked) {
-                                                    setValue("trainer_skill_domain", [...currentValues, option.value]);
-                                                } else {
-                                                    setValue("trainer_skill_domain", currentValues.filter(val => val !== option.value));
-                                                }
-                                            }}
-                                            className="ml-1"
-                                        />
-                                        {option.label}
-                                    </label>
-                                ))}
-                                {errors.trainer_skill_domain && (
-                                    <span className="text-red-500 text-xs mt-1 block w-full">
-                                        {errors.trainer_skill_domain.message}
-                                    </span>
+                            {/* Use FloatingLabelMultiSelect for Skill Area */}
+                            <Controller
+                                name="trainer_skill_domain"
+                                control={control}
+                                rules={{
+                                    validate: (value) => {
+                                        if (!isTrainerMyself && (!value || value.length === 0)) {
+                                            return "حوزه مهارتی مربی الزامی است";
+                                        }
+                                        return true;
+                                    }
+                                }}
+                                render={({ field }) => (
+                                    <FloatingLabelMultiSelect
+                                        placeholder="حوزه مهارتی"
+                                        required={!isTrainerMyself}
+                                        id="trainer_skill_domain"
+                                        control={control}
+                                        field={field}
+                                        name={field.name}
+                                        errors={errors}
+                                        options={SKILL_AREA_OPTIONS}
+                                        disabled={isTrainerMyself}
+                                    />
                                 )}
-                            </div>
+                            />
 
-                            <div className="relative w-full p-[1rem] border rounded-[1rem] pt-[1.5rem] pb-[0.5rem] flex flex-wrap gap-2 h-max">
-                                <label className={`absolute text-xs top-[0.5rem] right-[1rem] ${errors.trainer_loop_functional_domain ? 'text-red-500' : 'text-[#9796A1]'} transition-all duration-200`}>
-                                    حوزه عملکردی حلقه<span style={{ fontFamily: "none",color: 'red' }}> *</span>
-                                </label>
-                                {OPERATIONAL_AREA_OPTIONS.map((option) => (
-                                    <label key={option.value} className="flex items-center gap-1">
-                                        <input
-                                            type="checkbox"
-                                            value={option.value}
-                                            {...register("trainer_loop_functional_domain", {
-                                                validate: (value) => {
-                                                    if (!isTrainerMyself && watch("trainer_loop_functional_domain")?.length === 0) {
-                                                        return "حوزه عملکردی حلقه الزامی است";
-                                                    }
-                                                    return true;
-                                                }
-                                            })}
-                                            disabled={isTrainerMyself}
-                                            checked={watch("trainer_loop_functional_domain")?.includes(option.value) || false}
-                                            onChange={(e) => {
-                                                const currentValues = watch("trainer_loop_functional_domain") || [];
-                                                if (e.target.checked) {
-                                                    setValue("trainer_loop_functional_domain", [...currentValues, option.value]);
-                                                } else {
-                                                    setValue("trainer_loop_functional_domain", currentValues.filter(val => val !== option.value));
-                                                }
-                                            }}
-                                            className="ml-1"
-                                        />
-                                        {option.label}
-                                    </label>
-                                ))}
-                                {errors.trainer_loop_functional_domain && (
-                                    <span className="text-red-500 text-xs mt-1 block w-full">
-                                        {errors.trainer_loop_functional_domain.message}
-                                    </span>
+                            {/* Use FloatingLabelMultiSelect for Operational Area */}
+                            <Controller
+                                name="trainer_loop_functional_domain"
+                                control={control}
+                                rules={{
+                                    validate: (value) => {
+                                        if (!isTrainerMyself && (!value || value.length === 0)) {
+                                            return "حوزه عملکردی حلقه الزامی است";
+                                        }
+                                        return true;
+                                    }
+                                }}
+                                render={({ field }) => (
+                                    <FloatingLabelMultiSelect
+                                        placeholder="حوزه عملکردی حلقه"
+                                        required={!isTrainerMyself}
+                                        id="trainer_loop_functional_domain"
+                                        control={control}
+                                        name={field.name}
+                                        field={field}
+                                        errors={errors}
+                                        options={OPERATIONAL_AREA_OPTIONS}
+                                        disabled={isTrainerMyself}
+                                    />
                                 )}
-                            </div>
+                            />
 
                             <FileInput
                                 id="trainer_profile_picture"
@@ -799,7 +781,7 @@ const DataLoop = ({item_id}) => {
                                 className="absolute top-6 left-6 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 3a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd" />
+                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 1 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 3a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd" />
                                 </svg>
                             </button>
                         )}
@@ -894,7 +876,7 @@ const DataLoop = ({item_id}) => {
                                     required: "کد پستی عضو الزامی است",
                                     pattern: {
                                         value: /^\d{10}$/,
-                                        message: "کد پستی نامعتبر است (10 رقم)"
+                                        message: "کد ملی نامعتبر است (10 رقم)"
                                     }
                                 }}
                             />
