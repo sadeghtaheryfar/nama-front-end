@@ -9,6 +9,7 @@ const Alert = () => {
     const [hasMosqueAccess, setHasMosqueAccess] = useState(false);
     const [hasSchoolAccess, setHasSchoolAccess] = useState(false);
     const [hasWomensCenterAccess, setHasWomensCenterAccess] = useState(false);
+    const [hasUniversityAccess, setHasUniversityAccess] = useState(false);
     const [limitedAccessMessage, setLimitedAccessMessage] = useState("");
 
     useEffect(() => {
@@ -21,6 +22,7 @@ const Alert = () => {
                     let canAccessMosque = false;
                     let canAccessSchool = false;
                     let canAccessWomensCenter = false;
+                    let canUniversity = false;
 
                     response.data.data.roles.forEach(role => {
                         if (role.role_en === "mosque_head_coach" && role.ring === true && role.item_id) {
@@ -30,6 +32,8 @@ const Alert = () => {
                                 canAccessSchool = true;
                             } else if (role.item_id.id === 4) {
                                 canAccessWomensCenter = true;
+                            } else if (role.item_id.id === 8) {
+                                canUniversity = true;
                             }
                         }
                     });
@@ -37,6 +41,7 @@ const Alert = () => {
                     setHasMosqueAccess(canAccessMosque);
                     setHasSchoolAccess(canAccessSchool);
                     setHasWomensCenterAccess(canAccessWomensCenter);
+                    setHasUniversityAccess(canUniversity);
 
                     let accessibleParts = [];
                     if (canAccessMosque) {
@@ -48,6 +53,9 @@ const Alert = () => {
                     if (canAccessWomensCenter) {
                         accessibleParts.push("مرکز تعالی بانوان");
                     }
+                    if (canUniversity) {
+                        accessibleParts.push("دانشگاه");
+                    }
 
                     let inaccessibleParts = [];
                     if (!canAccessMosque) {
@@ -58,6 +66,9 @@ const Alert = () => {
                     }
                     if (!canAccessWomensCenter) {
                         inaccessibleParts.push("مرکز تعالی بانوان");
+                    }
+                    if (!canUniversity) {
+                        inaccessibleParts.push("دانشگاه");
                     }
 
                     if (inaccessibleParts.length > 0) {
@@ -83,7 +94,7 @@ const Alert = () => {
         fetching();
     }, []);
 
-    if (hasMosqueAccess && hasSchoolAccess && hasWomensCenterAccess) {
+    if (hasMosqueAccess && hasSchoolAccess && hasWomensCenterAccess && hasUniversityAccess) {
         return null; // Don't show the alert if the user has access to all sections
     }
 

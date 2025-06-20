@@ -121,7 +121,7 @@ const Carts = () => {
         }
       })}
 
-      {profile?.data?.roles?.some(role => role.ring == true) && (
+      {profile?.data?.roles?.some(role => role.ring == true) ? (
         <>
           <Link href={'/loop'}>
             <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80 hover:scale-[1.05] active:scale-[1] transition-[0.9s]">
@@ -138,10 +138,23 @@ const Carts = () => {
               </div>
             </div>
           </Link>
-
-          <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
-          <div><div className="relative w-72 flex-auto max-w-96 md:max-w-80"></div></div>
         </>
+      ) : (
+        <div>
+          <div className="relative w-72 flex-auto max-w-96 md:max-w-80 h-72 max-h-96 md:max-h-80">
+            <img
+              className="w-full h-full rounded-md object-cover grayscale"
+              alt={'افزودن حلقه ها'}
+              width={0}
+              height={0}
+                src="https://arman.armaniran.org/storage/base/photo_2025-04-04_20-12-46.jpg"
+            />
+            <div className="backdrop-blur bg-black bg-opacity-30 space-y-3 absolute bottom-5 right-5 left-5 rounded-xl p-3">
+              <h2 className="text-lg font-bold leading-6 lg:text-xl">افزودن حلقه ها</h2>
+              <p className="text-xs lg:text-sm font-medium leading-6">شما دسترسی به این بخش را ندارید</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

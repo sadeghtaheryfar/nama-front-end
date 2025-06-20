@@ -11,14 +11,14 @@ export const GET = async (req) => {
   const token = cookies().get("token")?.value;
 
   var type;
-  if(itemId == 2)
-  {
-    type = 'mosque';
-  }else if(itemId == 3)
-  {
-    type = 'school';
-  }else{
-    type = 'center';
+  if (itemId == 2) {
+    type = "mosque";
+  } else if (itemId == 3) {
+    type = "school";
+  } else if (itemId == 8) {
+    type = "university";
+  } else {
+    type = "center";
   }
 
   try {
@@ -34,6 +34,9 @@ export const GET = async (req) => {
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     console.error("Error fetching banners:", error);
-    return NextResponse.json({ error: "Failed to fetch banners" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch banners" },
+      { status: 500 }
+    );
   }
 };
