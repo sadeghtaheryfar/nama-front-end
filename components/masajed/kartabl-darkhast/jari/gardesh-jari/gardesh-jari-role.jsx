@@ -361,7 +361,7 @@ const GardeshJariRole = ({data}) => {
     <div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
               <h2 className="text-base font-bold text-center lg:text-lg md:text-right xl:text-xl 2xl:text-[22px]">
-                گردش کار درخواست شماره {data?.data?.id}
+                گردش کار گزارش شماره {data?.data?.id}
               </h2>
       </div>
 
@@ -396,7 +396,7 @@ const GardeshJariRole = ({data}) => {
       <div className="hidden lg:flex items-end justify-between">
         {stepsConfig.map((stepItem, index, array) => (
           <div key={stepItem.name} className={`w-full flex flex-col items-start relative`}>
-            <div className={`flex items-center w-full ${index < array.length - 1 ? 'mr-10 2xl:mr-12' : ''}`}>
+            <div className={`flex items-center w-full`}>
               <div className="flex items-center justify-center cursor-pointer" onClick={() => handleStepClick(stepItem.name, stepItem.title)}>
                 <Image
                   width={0}
@@ -420,7 +420,7 @@ const GardeshJariRole = ({data}) => {
       {/* Desktop Messages - Retained original structure */}
       <div className="hidden lg:flex items-end justify-between">
         {stepsConfig.map((stepItem, index) => (
-          <div key={stepItem.name} className={`w-full flex flex-col items-start ${index < 4 ? 'mr-10 2xl:mr-12' : ''}`}>
+          <div key={stepItem.name} className={`w-full flex flex-col items-start`}>
             <p>{getStepMessageContent(stepItem.name)}</p>
           </div>
         ))}

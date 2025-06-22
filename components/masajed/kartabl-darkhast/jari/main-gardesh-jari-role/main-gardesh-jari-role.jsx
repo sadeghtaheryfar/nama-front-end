@@ -260,6 +260,11 @@ const MainGardeshJariRole = ({data,back_steps}) => {
     return `${formattedNumber} ریال`;
   }
 
+  const copyText = (e) => {
+    navigator.clipboard.writeText(e);
+    toast.success('قیمت با موفقیت کپی شد .')
+  }
+
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
       <div className="flex justify-between items-center pb-[2rem]">
@@ -294,7 +299,12 @@ const MainGardeshJariRole = ({data,back_steps}) => {
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
         <p>شناسه یکتا واحد : {data?.data?.item?.id}</p>
         <p>{data?.data?.item?.title}</p>
-        <p>واحد حقوقی : {data?.data?.unit?.title}</p>
+        <p>
+          <p>واحد حقوقی : {data?.data?.unit?.title}</p>
+          {data?.data?.unit?.parent?.title && (
+            <small>واحد محوری : {data?.data?.unit?.parent?.title}</small>
+          )}
+        </p>
         <p>سرمربی : {data?.data?.user?.name}</p>
         <p>منطقه : {data?.data?.unit?.region?.title}</p>
         <p>محله : {data?.data?.unit?.neighborhood?.title}</p>
@@ -313,7 +323,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه کلی عملیات:
             </h3>
-            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => navigator.clipboard.writeText(data?.data?.amount)}>
+            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => copyText(data?.data?.amount)}>
               {formatPrice(data?.data?.amount)}
             </span>
           </div>
@@ -321,14 +331,14 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            <span onClick={(e) => navigator.clipboard.writeText((data?.data?.final_amount ? data?.data?.final_amount : data?.data?.total_amount))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
+            <span onClick={(e) => copyText((data?.data?.final_amount ? data?.data?.final_amount : data?.data?.total_amount))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
           </div>
           {(data?.data?.offer_amount) && (
             <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
               <h3 className="text-base lg:text-lg text-[#3B3B3B]">
                 هزینه پیشنهادی معاونت مساجد:
               </h3>
-              <span onClick={(e) => navigator.clipboard.writeText(data?.data?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
+              <span onClick={(e) => copyText(data?.data?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.offer_amount) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}</span>
             </div>
           )}
         </div>

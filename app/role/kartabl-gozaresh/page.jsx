@@ -20,6 +20,8 @@ import {
   resetReportDashboardFilters,
 } from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
 
+import useDebounce from './../../../components/utils/useDebounce';
+
 
 export default function KartablGozaresh() {
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function KartablGozaresh() {
   const {
     item_id,
     role,
-    search,
+    search: reduxSearch,
     sort,
     direction,
     status,
@@ -45,7 +47,6 @@ export default function KartablGozaresh() {
   const header = useSelector(state => state.dashboards.headerData);
   const [loadingHeader, setLoadingHeader] = useState(true);
   
-  // وضعیت‌های محلی که همچنان مورد نیاز هستند (مثل باز و بسته بودن دراپ‌دان‌ها)
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const filterRef = useRef(null);
@@ -53,10 +54,20 @@ export default function KartablGozaresh() {
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
 
-  // --- حذف کامل useState های محلی برای item_id, role, filters, currentPage, totalPages ---
-  // --- حذف کامل LOCAL_STORAGE_KEY و تمام منطق localStorage ---
+  const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
+  const debouncedSearchTerm = useDebounce(localSearchInput, 500);
 
-  // useEffect برای خواندن URL (فقط item_id و role) و مقداردهی اولیه Redux state
+  useEffect(() => {
+    setLocalSearchInput(reduxSearch);
+  }, [reduxSearch]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== reduxSearch) {
+        dispatch(setReportDashboardFilters({ search: debouncedSearchTerm }));
+        dispatch(setReportDashboardCurrentPage(1));
+    }
+  }, [debouncedSearchTerm, dispatch, reduxSearch]);
+
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
@@ -213,11 +224,12 @@ export default function KartablGozaresh() {
 
   // تابع برای ریست کردن فیلترها
   const handleResetFilters = () => {
-    dispatch(resetReportDashboardFilters()); // *** استفاده از resetReportDashboardFilters ***
-    dispatch(setReportDashboardCurrentPage(1)); // صفحه را به 1 برگردانید
-    setPlanSearch(''); // ریست کردن وضعیت جستجوی محلی
-    setUnitSearch(''); // ریست کردن وضعیت جستجوی محلی
-    setIsFilterOpen(false); // بستن دراپ‌دان فیلتر
+    dispatch(resetReportDashboardFilters());
+    dispatch(setReportDashboardCurrentPage(1));
+    setLocalSearchInput('');
+    setPlanSearch('');
+    setUnitSearch('');
+    setIsFilterOpen(false);
   };
 
   // useEffect برای واکشی گزارش‌ها
@@ -228,7 +240,7 @@ export default function KartablGozaresh() {
     try {
       // فیلترها را مستقیماً از Redux می‌خوانیم
       const params = {
-        q: search,
+        q: reduxSearch,
         sort,
         direction,
         status,
@@ -258,7 +270,7 @@ export default function KartablGozaresh() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, item_id, role, search, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
 
 
   const goBack = () => {
@@ -468,7 +480,12 @@ export default function KartablGozaresh() {
                       alt="#"
                       src={"/Images/masajed/kartabl-darkhast/Search.svg"}
                     />
-                      <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ search: e.target.value })} value={search}/>
+                      <input
+                        placeholder="جستجو کنید ..."
+                        className="w-full bg-transparent h-full focus:outline-none"
+                        onChange={(e) => setLocalSearchInput(e.target.value)}
+                        value={localSearchInput}
+                      />
                   </div>
                   <div className="flex items-center gap-4">
                     <div ref={filterRef} className="relative inline-block mr-4">

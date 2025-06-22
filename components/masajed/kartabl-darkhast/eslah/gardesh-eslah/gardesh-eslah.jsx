@@ -128,7 +128,7 @@ const GardeshEslah = () => {
       </div>
       <div className="hidden lg:flex items-end justify-between">
         <div className="w-full flex flex-col items-start">
-          <div className="flex items-center w-full mr-10 2xl:mr-12">
+          <div className="flex items-center w-full">
             <div className="flex items-center justify-center ">
               <Image
                 width={0}

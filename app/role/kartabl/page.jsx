@@ -20,6 +20,7 @@ import {
   resetRequestDashboardFilters, // اضافه شده
 } from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
 
+import useDebounce from './../../../components/utils/useDebounce';
 
 export default function Kartabl() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function Kartabl() {
   const {
     item_id,
     role,
-    search,
+    search: reduxSearch,
     sort,
     direction,
     status,
@@ -51,11 +52,20 @@ export default function Kartabl() {
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
 
-  // حذف item_id و role از useState
-  // حذف مدیریت currentPage و filters از localStorage
+  const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
+  const debouncedSearchTerm = useDebounce(localSearchInput, 500);
 
-  // useEffect برای خواندن URL و مقداردهی اولیه Redux state
-  // این useEffect فقط item_id و role را از URL می خواند
+  useEffect(() => {
+    setLocalSearchInput(reduxSearch);
+  }, [reduxSearch]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== reduxSearch) {
+        dispatch(setRequestDashboardFilters({ search: debouncedSearchTerm }));
+        dispatch(setRequestDashboardCurrentPage(1));
+    }
+  }, [debouncedSearchTerm, dispatch, reduxSearch]);
+
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
@@ -210,11 +220,12 @@ export default function Kartabl() {
 
   // تابع برای ریست کردن فیلترها
   const handleResetFilters = () => {
-    dispatch(resetRequestDashboardFilters()); // ریست فیلترها به حالت اولیه (item_id و role حفظ می‌شوند)
-    dispatch(setRequestDashboardCurrentPage(1)); // صفحه را به 1 برگردانید
-    setPlanSearch(''); // ریست کردن وضعیت جستجوی محلی
-    setUnitSearch(''); // ریست کردن وضعیت جستجوی محلی
-    setIsFilterOpen(false); // بستن دراپ‌دان فیلتر
+    dispatch(resetReportDashboardFilters());
+    dispatch(setReportDashboardCurrentPage(1));
+    setLocalSearchInput('');
+    setPlanSearch('');
+    setUnitSearch('');
+    setIsFilterOpen(false);
   };
 
   // useEffect برای واکشی درخواست‌ها
@@ -225,7 +236,7 @@ export default function Kartabl() {
     try {
       // فیلترها را مستقیماً از Redux می‌خوانیم
       const params = {
-        q: search,
+        q: reduxSearch,
         sort,
         direction,
         status,
@@ -254,7 +265,7 @@ export default function Kartabl() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, item_id, role, search, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
 
 
   const goBack = (e) => {
@@ -472,8 +483,8 @@ export default function Kartabl() {
                       <input
                         placeholder="جستجو کنید ..."
                         className="w-full bg-transparent h-full focus:outline-none"
-                        value={search} // مقدار ورودی را به فیلترهای Redux وصل کنید
-                        onChange={(e) => handleFilterChange({ search: e.target.value })}
+                        onChange={(e) => setLocalSearchInput(e.target.value)}
+                        value={localSearchInput}
                       />
                   </div>
                   <div className="flex items-center gap-4">

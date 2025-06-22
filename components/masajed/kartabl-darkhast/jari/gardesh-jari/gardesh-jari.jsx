@@ -522,7 +522,7 @@ const GardeshJari = ({data}) => {
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -538,7 +538,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : data?.data?.status == 'rejected' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -554,7 +554,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -572,7 +572,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-10 2xl:mr-12">
+            <div className="flex items-center w-full">
               <div className="flex items-center justify-center ">
                 <Image
                   width={0}
@@ -593,7 +593,7 @@ const GardeshJari = ({data}) => {
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -609,7 +609,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : data?.data?.status == 'rejected' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -625,7 +625,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -681,7 +681,7 @@ const GardeshJari = ({data}) => {
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -697,7 +697,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : data?.data?.status == 'rejected' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -713,7 +713,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -770,7 +770,7 @@ const GardeshJari = ({data}) => {
           <div className="w-full flex flex-col items-start">
           {data?.data?.status == 'in_progress' ? (
             <>
-              <div className="flex items-center w-full mr-10 2xl:mr-12">
+              <div className="flex items-center w-full">
                 <div className="flex items-center justify-center ">
                   <Image
                     width={0}
@@ -786,7 +786,7 @@ const GardeshJari = ({data}) => {
             </>
           ) : data?.data?.status == 'rejected' ? (
             <>
-              <div className="flex items-center w-full mr-10 2xl:mr-12">
+              <div className="flex items-center w-full">
                 <div className="flex items-center justify-center ">
                   <Image
                     width={0}
@@ -802,7 +802,7 @@ const GardeshJari = ({data}) => {
             </>
           ) : (
             <>
-              <div className="flex items-center w-full mr-10 2xl:mr-12">
+              <div className="flex items-center w-full">
                 <div className="flex items-center justify-center ">
                   <Image
                     width={0}
@@ -857,7 +857,7 @@ const GardeshJari = ({data}) => {
           <div className="w-full flex flex-col items-start">
             {data?.data?.status == 'in_progress' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -872,7 +872,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : data?.data?.status == 'rejected' ? (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -888,7 +888,7 @@ const GardeshJari = ({data}) => {
               </>
             ) : (
               <>
-                <div className="flex items-center w-full mr-10 2xl:mr-12">
+                <div className="flex items-center w-full">
                   <div className="flex items-center justify-center ">
                     <Image
                       width={0}
@@ -938,19 +938,19 @@ const GardeshJari = ({data}) => {
           <p>{data?.data?.data?.body}</p>
         </div>
 
-        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+        <div className="w-full flex flex-col items-start">
           <p>{data?.data?.data?.messages?.mosque_cultural_officer}</p>
         </div>
 
-        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+        <div className="w-full flex flex-col items-start">
           <p>{data?.data?.data?.messages?.area_interface}</p>
         </div>
 
-        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+        <div className="w-full flex flex-col items-start">
           <p>{data?.data?.data?.messages?.executive_vice_president_mosques}</p>
         </div>
 
-        <div className="w-full flex flex-col items-start mr-10 2xl:mr-12">
+        <div className="w-full flex flex-col items-start">
           <p>{data?.data?.data?.messages?.deputy_for_planning_and_programming}</p>
         </div>
       </div>

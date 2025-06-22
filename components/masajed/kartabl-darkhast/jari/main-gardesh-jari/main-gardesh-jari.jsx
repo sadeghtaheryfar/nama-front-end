@@ -230,7 +230,12 @@ const MainGardeshJari = ({data}) => {
 
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
         <p>سرمربی {data?.data?.item?.title}</p>
-        <p>وابسته به واحد حقوقی  : {data?.data?.unit?.title}</p>
+        <p>
+          <p>وابسته به واحد حقوقی  : {data?.data?.unit?.title}</p>
+          {data?.data?.unit?.parent?.title && (
+            <small>واحد محوری : {data?.data?.unit?.parent?.title}</small>
+          )}
+        </p>
         <p>سرمربی : {data?.data?.user?.name}</p>
         <p>کد ملی سرمربی : {data?.data?.user?.national_id}</p>
         <p>شهر : {data?.data?.unit?.city?.title ? data?.data?.unit?.city?.title : '------'}</p>

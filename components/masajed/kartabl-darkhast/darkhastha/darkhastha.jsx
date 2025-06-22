@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useDebounce from './../../../utils/useDebounce';
 
 const options = {
   year: 'numeric',
@@ -15,6 +16,9 @@ const Darkhastha = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [localSearchInput, setLocalSearchInput] = useState(searchParams.get("search") || "");
+  const debouncedSearchTerm = useDebounce(localSearchInput, 500);
   
   // Initialize filters from URL query parameters
   const [filters, setFilters] = useState({
@@ -28,6 +32,13 @@ const Darkhastha = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const filterRef = useRef(null);
   const sortRef = useRef(null);
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== filters.search) {
+      setFilters(prevFilters => ({ ...prevFilters, search: debouncedSearchTerm }));
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,8 +83,7 @@ const Darkhastha = () => {
 
   // Update filters and URL when filters change
   const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    // updateURL(newFilters, 1); // Reset to page 1 when filters change
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
     setCurrentPage(1);
   };
 
@@ -237,11 +247,11 @@ const Darkhastha = () => {
                 alt="#"
                 src={"/Images/masajed/kartabl-darkhast/Search.svg"}
               />
-                <input 
-                  placeholder="جستجو کنید ..." 
-                  className="w-full bg-transparent h-full focus:outline-none" 
-                  value={filters.search}
-                  onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} 
+                <input
+                  placeholder="جستجو کنید ..."
+                  className="w-full bg-transparent h-full focus:outline-none"
+                  value={localSearchInput}
+                  onChange={(e) => setLocalSearchInput(e.target.value)} 
                 />
             </div>
             <div className="flex items-center gap-4">

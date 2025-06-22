@@ -7,11 +7,15 @@ import CartsGozaresh from "../carts-gozaresh/carts-gozaresh";
 import TableGozaresh from "../table-gozaresh/table-gozaresh";
 import { toPersianDate  } from "../../../../components/utils/toPersianDate";
 import { usePathname, useSearchParams,useRouter } from "next/navigation";
+import useDebounce from './../../../utils/useDebounce';
 
 const DarkhasthaGozaresh = () => {
   const router = useRouter();
   const pathname = usePathname();
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
+
+  const [localSearchInput, setLocalSearchInput] = useState(searchParams.get("search") || "");
+  const debouncedSearchTerm = useDebounce(localSearchInput, 500); 
 
   // Initialize filters from URL query parameters
   const [filters, setFilters] = useState({
@@ -25,6 +29,13 @@ const DarkhasthaGozaresh = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const filterRef = useRef(null);
   const sortRef = useRef(null);
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== filters.search) {
+      setFilters(prevFilters => ({ ...prevFilters, search: debouncedSearchTerm }));
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,8 +78,7 @@ const DarkhasthaGozaresh = () => {
   };
 
   const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    // updateURL(newFilters, 1); // Reset to page 1 when filters change
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
     setCurrentPage(1);
   };
 
@@ -230,7 +240,12 @@ const DarkhasthaGozaresh = () => {
                 alt="#"
                 src={"/Images/masajed/kartabl-darkhast/Search.svg"}
               />
-                <input placeholder="جستجو کنید ..." className="w-full bg-transparent h-full focus:outline-none" onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })} />
+                <input
+                  placeholder="جستجو کنید ..."
+                  className="w-full bg-transparent h-full focus:outline-none"
+                  value={localSearchInput}
+                  onChange={(e) => setLocalSearchInput(e.target.value)}
+                />
             </div>
             <div className="flex items-center gap-4">
               <div ref={filterRef} className="relative inline-block mr-4">
@@ -388,7 +403,7 @@ const DarkhasthaGozaresh = () => {
               )}
 
               {(requests?.data && !loading) && requests?.data?.map((request) => (
-                <tr key={request.id}>
+                <tr key={request.id} className="border border-gray-300">
                   <td className="border border-gray-300 px-7 py-5 text-base">
                     {request?.request?.request_plan?.title || "بدون عنوان"}
                   </td>
@@ -407,7 +422,7 @@ const DarkhasthaGozaresh = () => {
                   <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
                     {stepTitles[request?.step]}
                   </td>
-                  <td className="border border-gray-300 px-7 py-5 text-center flex justify-center items-center">
+                  <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
                     <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                       ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                         request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
