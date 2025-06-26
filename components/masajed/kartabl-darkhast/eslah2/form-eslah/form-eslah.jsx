@@ -452,7 +452,7 @@ const FormEslah = ({ data }) => {
               locale={persian_fa}
               calendarPosition="bottom-right"
               value={time}
-              maxDate={new Date()}
+              minDate={new Date()}
               onChange={handleDateChange}
               inputClass={`block w-full p-4 border rounded-lg text-gray-700 ${
                 timeError ? 'border-red-500' : time ? 'border-green-500' : 'border-[#DFDFDF]'
