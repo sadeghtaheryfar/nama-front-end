@@ -431,14 +431,34 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             </div>
           </div>
 
-          {(data?.data?.video?.original) && (
+          {(data?.data?.video?.original || (data?.data?.otherVideos && data.data.otherVideos.length > 0)) && (
             <div className="flex flex-col gap-4 2xl:gap-6">
               <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
                 فایل پیوست ویدئو:
               </h3>
               
               <div className="flex flex-wrap w-full gap-[1rem]">
-                <video controls src={data?.data?.video?.original}></video>
+                {/* Display primary video */}
+                {data?.data?.video?.original && (
+                  <div key={data.data.video.id || "main-video"} className="relative w-full md:w-64 aspect-video border border-gray-300 rounded-lg overflow-hidden">
+                    <video controls className="w-full h-full object-cover">
+                      <source src={data.data.video.original} type={data.data.video.mime_type || 'video/mp4'} />
+                      مرورگر شما از تگ ویدئو پشتیبانی نمی‌کند.
+                    </video>
+                  </div>
+                )}
+
+                {/* Display other videos */}
+                {data?.data?.other_videos && data.data.other_videos.length > 0 && (
+                  data.data.other_videos.map((videoItem, index) => (
+                    <div key={videoItem.id || `other-video-${index}`} className="relative w-full md:w-64 aspect-video border border-gray-300 rounded-lg overflow-hidden">
+                      <video controls className="w-full h-full object-cover">
+                        <source src={videoItem.original} type={videoItem.mime_type || 'video/mp4'} />
+                        مرورگر شما از تگ ویدئو پشتیبانی نمی‌کند.
+                      </video>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

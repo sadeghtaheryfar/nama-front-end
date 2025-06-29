@@ -350,30 +350,47 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             {data?.data?.body}
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-          {data?.data?.imam_letter?.original && (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                فایل پیوست نامه امام جماعت:
-              </h3>
-              <a href={data?.data?.imam_letter?.original}>
-                <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                  برای مشاهده فایل کلیک کنید
-                </button>
-              </a>
-            </div>
+        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr] 2xl:gap-x-12">
+          {/* Display Imam Letter and other_imam_letter */}
+          {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                      فایل پیوست نامه امام جماعت:
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                      {data.data.imam_letter?.original && (
+                          <a href={data.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={data.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
+                          </a>
+                      )}
+                      {data.data.other_imam_letter?.map((file, index) => (
+                          <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                          </a>
+                      ))}
+                  </div>
+              </div>
           )}
-          {data?.data?.area_interface_letter?.original && (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                فایل نامه رابط منطقه:
-              </h3>
-              <a href={data?.data?.area_interface_letter?.original}>
-                <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                  برای مشاهده فایل کلیک کنید
-                </button>
-              </a>
-            </div>
+
+          {/* Display Area Interface Letter and other_area_interface_letter */}
+          {(data?.data?.area_interface_letter?.original || (data?.data?.other_area_interface_letter && data.data.other_area_interface_letter.length > 0)) && (
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                      فایل نامه رابط منطقه:
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                      {data.data.area_interface_letter?.original && (
+                          <a href={data.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={data.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
+                          </a>
+                      )}
+                      {data.data.other_area_interface_letter?.map((file, index) => (
+                          <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
+                          </a>
+                      ))}
+                  </div>
+              </div>
           )}
         </div>
       </div>

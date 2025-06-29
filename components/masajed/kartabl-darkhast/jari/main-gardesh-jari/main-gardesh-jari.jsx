@@ -276,41 +276,61 @@ const MainGardeshJari = ({data}) => {
             {data?.data?.body}
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-          {data?.data?.imam_letter?.original && (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                فایل پیوست نامه {typeField}:
-              </h3>
-              <a href={data?.data?.imam_letter?.original}>
-                <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                  برای مشاهده فایل کلیک کنید
-                </button>
-              </a>
-            </div>
-          )}
-          {data?.data?.area_interface_letter?.original && (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
-              <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                فایل نامه رابط منطقه:
-              </h3>
-              <a href={data?.data?.area_interface_letter?.original}>
-                <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                  برای مشاهده فایل کلیک کنید
-                </button>
-              </a>
-            </div>
-          )}
-          {(data?.data?.final_amount || data?.data?.offer_amount) && (
-            <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
-              <span className="text-base lg:text-lg">
-                هزینه پرداختی توسط آرمان:{" "}
-              </span>
-              <span className="text-base lg:text-2xl font-bold text-[#39A894]">
-                  {data?.data?.final_amount ? formatNumber(data?.data?.final_amount) : formatNumber(data?.data?.offer_amount)} ریال
-              </span>
-            </div>
-          )}
+
+        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr] 2xl:gap-x-12">
+            {/* Display Imam Letter and other_imam_letter from 'data' prop/context */}
+            {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                    <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                        فایل پیوست نامه {typeField}:
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {data.data.imam_letter?.original && (
+                            <a href={data.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src={data.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
+                            </a>
+                        )}
+                        {data.data.other_imam_letter?.map((file, index) => (
+                            <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Display Area Interface Letter and other_area_interface_letter from 'data' prop/context */}
+            {(data?.data?.area_interface_letter?.original || (data?.data?.other_area_interface_letter && data.data.other_area_interface_letter.length > 0)) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
+                    <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                        فایل نامه رابط منطقه:
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                        {data.data.area_interface_letter?.original && (
+                            <a href={data.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src={data.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
+                            </a>
+                        )}
+                        {data.data.other_area_interface_letter?.map((file, index) => (
+                            <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
+            
+            {/* This section for final/offer amount remains as is if 'data.data' directly has these fields */}
+            {(data?.data?.total_amount) && ( // Changed condition to use total_amount from the provided data structure
+                <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">
+                    <span className="text-base lg:text-lg">
+                        هزینه پرداختی توسط آرمان:{" "}
+                    </span>
+                    <span className="text-base lg:text-2xl font-bold text-[#39A894]">
+                        {formatPrice(data.data.total_amount)} {/* Using formatPrice for total_amount */}
+                    </span>
+                </div>
+            )}
         </div>
       </div>
     </div>

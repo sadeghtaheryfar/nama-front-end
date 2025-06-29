@@ -265,29 +265,45 @@ const MainSabt2 = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
-              {(formData?.data?.imam_letter?.original) && (
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6">
+              {/* Display Imam Letter and other_imam_letter */}
+              {(formData?.data?.imam_letter || (formData?.data?.other_imam_letter && formData.data.other_imam_letter.length > 0)) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
                   <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
                     فایل پیوست نامه {typeField}:
                   </h3>
-                  <a href={formData?.data?.imam_letter?.original}>
-                    <button className="w-full h-12 px-4 min-w-fit md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                      برای مشاهده فایل کلیک کنید
-                    </button>
-                  </a>
+                  <div className="flex flex-wrap gap-2">
+                    {formData?.data?.imam_letter?.original && (
+                      <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src={formData.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
+                      </a>
+                    )}
+                    {formData?.data?.other_imam_letter?.map((file, index) => (
+                      <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
               
-              {(formData?.data?.area_interface_letter?.original) && (
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
+              {/* Display Area Interface Letter and other_area_interface_letter */}
+              {(formData?.data?.area_interface_letter || (formData?.data?.other_area_interface_letter && formData.data.other_area_interface_letter.length > 0)) && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
                   <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
                     فایل نامه رابط منطقه:
                   </h3>
-                  <a href={formData?.data?.area_interface_letter?.original}>
-                    <button className="w-full h-12 px-4 md:w-60 text-base font-medium text-[#39A894] border border-[#39A894] rounded-[10px] hover:text-white hover:bg-[#39A894]">
-                      برای مشاهده فایل کلیک کنید
-                    </button>
-                  </a>
+                  <div className="flex flex-wrap gap-2">
+                    {formData?.data?.area_interface_letter?.original && (
+                      <a href={formData.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src={formData.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
+                      </a>
+                    )}
+                    {formData?.data?.other_area_interface_letter?.map((file, index) => (
+                      <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
               <div className="flex items-center w-full justify-between h-[73px] border rounded-[10px] pl-5 pr-6 md:gap-5 xl:px-7 lg:h-[86px] xl:gap-8 xl:max-w-md 2xl:gap-10">

@@ -138,13 +138,15 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
+        <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:gap-x-6 2xl:gap-x-8">
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">تصاویر</h3>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {data?.data?.report?.images?.map((image, index) => (
                 <div key={index} className="relative w-24 h-24">
-                  <img src={image?.original} alt="" className="w-full h-full object-cover rounded-lg" />
+                  <a href={image?.original} target="_blank" rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
+                    <img src={image?.original} alt={`تصویر ${index + 1}`} className="w-full h-full object-cover rounded-lg" /> {/* MODIFIED: Added alt text */}
+                  </a>
                 </div>
               ))}
             </div>
@@ -152,11 +154,27 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
 
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری)</h3>
-            {data?.data?.report?.video && (
-              <div className="mt-2 w-full">
-                <video controls className="w-full rounded-lg">
-                  <source src={data?.data?.report?.video?.original} type={data?.data?.report?.video?.mime_type} />
-                </video>
+            {/* Display other existing videos from data prop */}
+            {data?.data?.report?.other_videos && data?.data?.report?.other_videos?.length > 0 && (
+              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"> {/* Added grid for multiple videos */}
+                {/* Display existing primary video from data prop */}
+                {data?.data?.report?.video?.original && (
+                  <div className="w-full">
+                    <video controls className="w-full rounded-lg">
+                      <source src={data.data.report.video.original} type={data.data.report.video.mime_type || 'video/mp4'} />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )}
+
+                {data?.data?.report?.other_videos.map((videoItem, index) => (
+                  <div key={videoItem.id || index} className="relative w-full aspect-video">
+                    <video controls className="w-full h-full object-cover rounded-lg">
+                      <source src={videoItem.original} type={videoItem.mime_type || 'video/mp4'} />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                ))}
               </div>
             )}
           </div>
