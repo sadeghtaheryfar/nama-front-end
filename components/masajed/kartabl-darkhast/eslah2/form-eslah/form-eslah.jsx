@@ -31,7 +31,7 @@ const convertToPersianWords = (num) => {
 
   if (num === 0) return persianWords[0];
 
-  const numStr = Math.floor(Math.abs(num)).toString();
+  let numStr = Math.floor(Math.abs(num)).toString();
   let result = "";
   let counter = 0;
 
@@ -68,12 +68,12 @@ const convertToPersianWords = (num) => {
     }
     counter++;
   }
-  return result || persianWords[0];
+  return result.trim() + " ریال"; // Added ريال to the end
 };
 
 const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initialRequestData for clarity
   const router = useRouter();
-  
+
   // Form fields states, initialized from initialRequestData prop
   const [student, setStudent] = useState(initialRequestData?.students || "");
   const [id, setID] = useState(initialRequestData?.id || ""); // Request ID
@@ -85,6 +85,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
   // File states: array of objects { id, file, preview, isExisting }
   const [imamLetters, setImamLetters] = useState([]);
   const [connectionLetters, setConnectionLetters] = useState([]);
+  const [additionalAttachments, setAdditionalAttachments] = useState([]); // Added state for additional attachments
 
   // UI states
   const [statusSend, setStatusSend] = useState("");
@@ -110,6 +111,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     time: "",
     imamLetter: "",
     connectionLetter: "",
+    additionalAttachments: "", // Added for validation of new field
   });
 
   // Touched states for input validation UI
@@ -119,6 +121,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     time: false,
     imamLetter: false,
     connectionLetter: false,
+    additionalAttachments: false, // Added for validation of new field
   });
 
   // --- Effects ---
@@ -186,6 +189,20 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
       }
       setConnectionLetters(existingConnectionLetters);
 
+      // Populate additionalAttachments with existing files (assuming they are in initialRequestData.images)
+      const existingAdditionalAttachments = [];
+      if (initialRequestData.images && initialRequestData.images.length > 0) {
+        initialRequestData.images.forEach(file => {
+          existingAdditionalAttachments.push({
+            id: file.id, // Use original file ID
+            file: null,
+            preview: file.original,
+            isExisting: true,
+          });
+        });
+      }
+      setAdditionalAttachments(existingAdditionalAttachments);
+
       // Initialize checkbox state
       setCheckBox(initialRequestData.confirm || false);
     }
@@ -237,8 +254,9 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     return () => {
       imamLetters.forEach(file => !file.isExisting && URL.revokeObjectURL(file.preview));
       connectionLetters.forEach(file => !file.isExisting && URL.revokeObjectURL(file.preview));
+      additionalAttachments.forEach(file => !file.isExisting && URL.revokeObjectURL(file.preview)); // Clean up additional attachments
     };
-  }, [imamLetters, connectionLetters]); // Added dependencies to ensure proper cleanup
+  }, [imamLetters, connectionLetters, additionalAttachments]); // Added dependencies to ensure proper cleanup
 
   // --- Validation Functions ---
   const validateStudent = (value) => {
@@ -268,6 +286,12 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     if (isAreaLetterRequired && files.length === 0) {
       return "فایل نامه رابط منطقه الزامی است";
     }
+    return "";
+  };
+
+  // No specific validation for additionalAttachments, but will apply file type and count
+  const validateAdditionalAttachments = (files) => {
+    // If you want to enforce a minimum number or specific conditions for additional attachments, add them here.
     return "";
   };
 
@@ -345,6 +369,16 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
         setErrors(prev => ({ ...prev, connectionLetter: "" }));
     }
 
+    // Validate additional attachments
+    const additionalAttachmentsValidation = validateAdditionalAttachments(additionalAttachments);
+    if (additionalAttachmentsValidation) {
+      setErrors(prev => ({ ...prev, additionalAttachments: additionalAttachmentsValidation }));
+      isValid = false;
+    } else {
+      setErrors(prev => ({ ...prev, additionalAttachments: "" }));
+    }
+
+
     if (!checkbox) {
       setStatusCheckBox("این گزینه الزامی است.");
       isValid = false;
@@ -357,7 +391,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
 
   // --- File Handling Functions ---
 
-  // Handles adding new files to state (for both imam and connection letters)
+  // Handles adding new files to state (for imam, connection letters, and additional attachments)
   const handleFileChange = (event, setFiles, fieldName) => {
     setStatusSend(""); // Clear general form submission status
 
@@ -377,22 +411,22 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     setFiles((prevFiles) => {
       const combinedFiles = [...prevFiles, ...newValidFiles];
       if (combinedFiles.length > 10) {
-        toast.error("حداکثر 10 فایل مجاز است"); 
+        toast.error("حداکثر 10 فایل مجاز است");
         // Do not update state with excess files, just revoke their URLs
-        newValidFiles.forEach(file => URL.revokeObjectURL(file.preview)); 
+        newValidFiles.forEach(file => URL.revokeObjectURL(file.preview));
         // Set error for the field, but return previous state
         setErrors(prevErrors => ({ ...prevErrors, [fieldName]: "حداکثر 10 فایل مجاز است" }));
         return prevFiles;
       }
-      
+
       // Update validation error based on new combined list length
       setErrors(prevErrors => ({ ...prevErrors, [fieldName]: hasInvalidType ? "فقط فایل‌های عکس مجاز هستند" : "" }));
       setTouched(prevTouched => ({ ...prevTouched, [fieldName]: true }));
-      
+
       if (hasInvalidType) {
-        toast.error("فقط فایل‌های عکس (JPEG, PNG, GIF, JPG) مجاز هستند."); 
+        toast.error("فقط فایل‌های عکس (JPEG, PNG, GIF, JPG) مجاز هستند.");
       } else {
-        toast.success("فایل ها با موفقیت انتخاب شد اند."); 
+        toast.success("فایل ها با موفقیت انتخاب شد اند.");
       }
       return combinedFiles;
     });
@@ -418,10 +452,12 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
           setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateImamLetter(updatedFiles) }));
         } else if (fieldName === "connectionLetter") {
           setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateConnectionLetter(updatedFiles) }));
+        } else if (fieldName === "additionalAttachments") {
+          setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateAdditionalAttachments(updatedFiles) }));
         }
         return updatedFiles;
       });
-      toast.success("فایل با موفقیت حذف شد."); 
+      toast.success("فایل با موفقیت حذف شد.");
     }
   };
 
@@ -444,7 +480,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
       const result = await response.json();
 
       if (response.ok) { // Check response.ok for 2xx status codes
-        toast.success("فایل قدیمی با موفقیت حذف شد."); 
+        toast.success("فایل قدیمی با موفقیت حذف شد.");
         setFiles((prevFiles) => {
           const updatedFiles = prevFiles.filter((file) => file.id !== fileId);
           // Re-validate after removal
@@ -452,15 +488,17 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
             setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateImamLetter(updatedFiles) }));
           } else if (fieldName === "connectionLetter") {
             setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateConnectionLetter(updatedFiles) }));
+          } else if (fieldName === "additionalAttachments") {
+            setErrors(prevErrors => ({ ...prevErrors, [fieldName]: validateAdditionalAttachments(updatedFiles) }));
           }
           return updatedFiles;
         });
       } else {
-        toast.error(result.message || "خطا در حذف فایل قدیمی."); 
+        toast.error(result.message || "خطا در حذف فایل قدیمی.");
       }
     } catch (error) {
       console.error("خطا در حذف فایل قدیمی:", error);
-      toast.error("خطا در حذف فایل قدیمی. لطفا دوباره تلاش کنید."); 
+      toast.error("خطا در حذف فایل قدیمی. لطفا دوباره تلاش کنید.");
     } finally {
       setLoading(false); // Reset general loading state
     }
@@ -475,6 +513,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
       time: true,
       imamLetter: true,
       connectionLetter: true,
+      additionalAttachments: true, // Mark additional attachments as touched
     });
 
     // Run validation before submission
@@ -514,6 +553,15 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
         formDataToUpdate.append(`other_area_interface_letter[${i - 1}]`, newConnectionFiles[i].file);
       }
     }
+
+    // Append additional attachments (newly selected files only)
+    const newAdditionalAttachments = additionalAttachments.filter(f => !f.isExisting);
+    if (newAdditionalAttachments.length > 0) {
+      newAdditionalAttachments.forEach((fileObj, index) => {
+        formDataToUpdate.append(`images[${index}]`, fileObj.file);
+      });
+    }
+
 
     setLoading(true); // Start loading animation for submission
     setIsUploading(true); // Indicate file upload is in progress (if any new files)
@@ -570,6 +618,9 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
         if (error.response?.data?.errors?.area_interface_letter || error.response?.data?.errors?.other_area_interface_letter) {
             setErrors(prev => ({ ...prev, connectionLetter: (error.response.data.errors.area_interface_letter || error.response.data.errors.other_area_interface_letter).join(', ') }));
         }
+        if (error.response?.data?.errors?.images) {
+            setErrors(prev => ({ ...prev, additionalAttachments: error.response.data.errors.images.join(', ') }));
+        }
       } else {
         setStatusSend("خطا در ارسال اطلاعات");
         toast.error("خطا در ارسال اطلاعات");
@@ -610,7 +661,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
   return (
     <div className="w-full bg-white rounded-lg">
       <Toaster /> {/* React Hot Toast Toaster component */}
-      
+
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
         <div className="mb-4">
           <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
@@ -861,6 +912,76 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
             </div>
           )}
         </div>
+
+        {/* New Field: Upload Additional Attachments */}
+        <div className="mb-4">
+          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+            آپلود پیوست‌های بیشتر
+          </h3>
+          <label
+            htmlFor="file-upload_additional"
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
+              "additionalAttachments"
+            )}`}
+          >
+            <div className="flex items-center justify-between pt-5 pb-6">
+              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                برای آپلود فایل کلیک کنید
+              </span>
+            </div>
+            {additionalAttachments.length > 0 ? (
+              <Image
+                className="w-7"
+                alt="تأیید آپلود"
+                width={0}
+                height={0}
+                src={"/Images/masajed/upload.svg"}
+              />
+            ) : (
+              <Image
+                className="w-7"
+                alt="آپلود فایل"
+                width={0}
+                height={0}
+                src={"/Images/masajed/darkhast/sabt/Group.svg"}
+              />
+            )}
+            <input
+              id="file-upload_additional"
+              name="additionalAttachments"
+              type="file"
+              multiple // Allow multiple file selection
+              className="hidden"
+              onChange={(event) => handleFileChange(event, setAdditionalAttachments, "additionalAttachments")}
+              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+            />
+          </label>
+          {touched.additionalAttachments && errors.additionalAttachments && (
+            <div className="text-red-500 text-sm mt-1">{errors.additionalAttachments}</div>
+          )}
+          {additionalAttachments.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {additionalAttachments.map((file) => (
+                <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
+                  <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                    <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(setAdditionalAttachments, file.id, "additionalAttachments", file.isExisting)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
+                    title="حذف فایل"
+                    disabled={loading}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex items-start mb-7 mt-7">
@@ -893,7 +1014,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
 
       {isUploading && uploadProgress > 0 && (
         <div className="flex justify-center w-full items-center">
-          <div className="mt-4 w-24 h-24"> 
+          <div className="mt-4 w-24 h-24">
             <CircularProgressbar
               value={uploadProgress}
               text={`${uploadProgress}%`}

@@ -158,12 +158,12 @@ const MainMasajed = () => {
                     </div>
                   </div>
                 </div>
-                <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های فعال</h2>
+                <h2 className="text-base font-bold group-hover:text-[#39A894] mt-auto">درخواست های فعال</h2>
                 <p className="text-xs font-medium text-slate-400 leading-6">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/darkhast`} className="mt-auto">
+                <Link href={`/${itemId}/darkhast`}>
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -202,12 +202,12 @@ const MainMasajed = () => {
                     </div>
                   </div>
                 </div>
-                <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل درخواست ها</h2>
+                <h2 className="text-base font-bold group-hover:text-[#39A894] mt-auto">کارتابل درخواست ها</h2>
                 <p className="text-xs font-medium text-slate-400 leading-6">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/kartabl-darkhast`} className="mt-auto">
+                <Link href={`/${itemId}/kartabl-darkhast`}>
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -253,12 +253,12 @@ const MainMasajed = () => {
                     </div>
                   </div>
                 </div>
-                <h2 className="text-base font-bold group-hover:text-[#39A894]">کارتابل گزارش ها</h2>
+                <h2 className="text-base font-bold group-hover:text-[#39A894] mt-auto">کارتابل گزارش ها</h2>
                 <p className="text-xs font-medium text-slate-400 leading-6">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/kartabl-gozaresh`} className="mt-auto">
+                <Link href={`/${itemId}/kartabl-gozaresh`}>
                   <ButtonMoshahede />
                 </Link>
               </div>
@@ -272,12 +272,12 @@ const MainMasajed = () => {
                   height={0}
                   src={"/Images/masajed/cart/Sign.svg"}
                 />
-                <h2 className="text-base font-bold group-hover:text-[#39A894]">درخواست های مکتوب</h2>
+                <h2 className="text-base font-bold group-hover:text-[#39A894] mt-auto">درخواست های مکتوب</h2>
                 <p className="text-xs font-medium text-slate-400 leading-6">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
                   گرافیک است.
                 </p>
-                <Link href={`/${itemId}/maktob`} className="mt-auto">
+                <Link href={`/${itemId}/maktob`}>
                   <ButtonMoshahede />
                 </Link>
               </div>

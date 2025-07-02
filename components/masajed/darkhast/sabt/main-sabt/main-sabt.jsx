@@ -6,12 +6,51 @@ import axios from "axios";
 
 function numberToPersianWords(num) {
   const ones = [
-    "", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه",
-    "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده",
-    "هفده", "هجده", "نوزده"
+    "",
+    "یک",
+    "دو",
+    "سه",
+    "چهار",
+    "پنج",
+    "شش",
+    "هفت",
+    "هشت",
+    "نه",
+    "ده",
+    "یازده",
+    "دوازده",
+    "سیزده",
+    "چهارده",
+    "پانزده",
+    "شانزده",
+    "هفده",
+    "هجده",
+    "نوزده",
   ];
-  const tens = ["", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
-  const hundreds = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
+  const tens = [
+    "",
+    "",
+    "بیست",
+    "سی",
+    "چهل",
+    "پنجاه",
+    "شصت",
+    "هفتاد",
+    "هشتاد",
+    "نود",
+  ];
+  const hundreds = [
+    "",
+    "صد",
+    "دویست",
+    "سیصد",
+    "چهارصد",
+    "پانصد",
+    "ششصد",
+    "هفتصد",
+    "هشتصد",
+    "نهصد",
+  ];
   const units = ["", "هزار", "میلیون", "میلیارد"];
 
   if (num === 0) return "صفر";
@@ -53,7 +92,7 @@ function numberToPersianWords(num) {
 const MainSabt = () => {
   const [requestData, setRequsestData] = useState("");
   const params = useSearchParams();
-  
+
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
@@ -70,7 +109,10 @@ const MainSabt = () => {
     const fetching = async () => {
       try {
         const id = params.get("id");
-        const request = await axios.post(`/api/request/level_1?item_id=${itemId}&role=mosque_head_coach`, { id });
+        const request = await axios.post(
+          `/api/request/level_1?item_id=${itemId}&role=mosque_head_coach`,
+          { id }
+        );
         if (request.data) {
           setRequsestData(request.data.data);
         }
@@ -103,11 +145,14 @@ const MainSabt = () => {
           <ul className="flex flex-col gap-0.5 pt-3 lg:pt-0">
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              سقف تعداد نفرات مورد حمایت: {requestData.max_number_people_supported || 0}
+              سقف تعداد نفرات مورد حمایت:{" "}
+              {requestData.max_number_people_supported || 0}
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-               سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(requestData.support_for_each_person_amount)} ریال می باشد
+              سرانه حمایتی هر نفر به مبلغ حداکثر{" "}
+              {numberToPersianWords(requestData.support_for_each_person_amount)}{" "}
+              ریال می باشد
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
@@ -119,25 +164,38 @@ const MainSabt = () => {
           <ul className="flex flex-col gap-0.5">
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              تعداد دفعات مجاز شما برای این درخواست {requestData.max_allocated_request || 0} عدد
-              میباشد و پس از ثبت {requestData.max_allocated_request || 0} درخواست، دسترسی به این بخش برای شما مقدور نیست.{" "}
+              تعداد دفعات مجاز شما برای این درخواست{" "}
+              {requestData.max_allocated_request || 0} عدد میباشد و پس از ثبت{" "}
+              {numberToPersianWords(requestData.max_allocated_request || 0)}{" "}
+              درخواست، دسترسی به این بخش برای شما مقدور نیست.{" "}
             </li>
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-              {requestData.previous_requests > requestData.max_allocated_request && (
+              {requestData.previous_requests >
+                requestData.max_allocated_request && (
                 <span className="font-bold">در خواستی باقی نمانده.</span>
               )}
-              {requestData.previous_requests <= requestData.max_allocated_request && (
+              {requestData.previous_requests <=
+                requestData.max_allocated_request && (
                 <span>
                   درخواست
                   <span className="text-[#D5B260] font-bold">
-                    {Number(requestData.previous_requests) + 1} از {requestData.max_allocated_request}
+                    {Number(requestData.previous_requests) + 1} از{" "}
+                    {requestData.max_allocated_request}
                   </span>
-                  (تنها {requestData.max_allocated_request - requestData.previous_requests} درخواست
-                  باقی مانده است)
+                  (تنها{" "}
+                  {requestData.max_allocated_request -
+                    requestData.previous_requests}{" "}
+                  درخواست باقی مانده است)
                 </span>
               )}
             </li>
+            {requestData?.single_step && (
+              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+                این درخواست یک مرحله ای می باشد و کل بودجه یکجا آزاد می شود
+              </li>
+            )}
           </ul>
         </div>
       </div>

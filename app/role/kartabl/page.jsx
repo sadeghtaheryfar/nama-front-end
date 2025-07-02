@@ -40,6 +40,8 @@ export default function Kartabl() {
     unit_id,
     currentPage,
     totalPages,
+    school_coach_type,
+    sub_type,  
   } = useSelector(state => state.dashboards.requestDashboard);
 
   const header = useSelector(state => state.dashboards.headerData);
@@ -54,6 +56,8 @@ export default function Kartabl() {
 
   const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
   const debouncedSearchTerm = useDebounce(localSearchInput, 500);
+  const [schoolCoachTypes, setSchoolCoachTypes] = useState({});
+  const [subTypesData, setSubTypesData] = useState({});
 
   useEffect(() => {
     setLocalSearchInput(reduxSearch);
@@ -220,8 +224,8 @@ export default function Kartabl() {
 
   // تابع برای ریست کردن فیلترها
   const handleResetFilters = () => {
-    dispatch(resetReportDashboardFilters());
-    dispatch(setReportDashboardCurrentPage(1));
+    dispatch(resetRequestDashboardFilters());
+    dispatch(setRequestDashboardCurrentPage(1));
     setLocalSearchInput('');
     setPlanSearch('');
     setUnitSearch('');
@@ -245,13 +249,21 @@ export default function Kartabl() {
         per_page: itemsPerPage,
         page: currentPage,
         itemId: item_id,
-        role
+        role,
+        school_coach_type,
+        sub_type,  
       };
       
       const fetchRequests = async () => {
         const response = await axios.get(`/api/darkhast`, { params });
         
         setRequests(response.data);
+        if (response.data.school_coach_type) {
+          setSchoolCoachTypes(response.data.school_coach_type);
+        }
+        if (response.data.sub_types) {
+          setSubTypesData(response.data.sub_types);
+        }
         if (response.data.meta && response.data.meta.total) {
           dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage)));
         } else {
@@ -265,7 +277,7 @@ export default function Kartabl() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch, school_coach_type, sub_type]);
 
 
   const goBack = (e) => {
@@ -521,6 +533,62 @@ export default function Kartabl() {
                               </select>
                             </div>
                           </div>
+
+                          {item_id && (
+                            <div className="p-2 border-b">
+                              <div className="font-bold mb-2">نوع مربی</div> {/* Title for sub_type filter */}
+                                <div className="px-2">
+                                    <select
+                                        className="w-full p-2 border rounded"
+                                        value={sub_type || ''}
+                                        onChange={(e) => handleFilterChange({ sub_type: e.target.value })}
+                                    >
+                                        <option value="">همه</option>
+                                        {item_id === '2' && subTypesData.mosque && Object.entries(subTypesData.mosque).map(([key, value]) => (
+                                            <option key={key} value={key}>
+                                                {value}
+                                            </option>
+                                        ))}
+                                        {item_id === '3' && subTypesData.school && Object.entries(subTypesData.school).map(([key, value]) => (
+                                            <option key={key} value={key}>
+                                                {value}
+                                            </option>
+                                        ))}
+                                        {item_id === '4' && subTypesData.center && subTypesData.center.map((value, index) => (
+                                            <option key={index} value={value}>
+                                                {value}
+                                            </option>
+                                        ))}
+                                        {item_id === '8' && subTypesData.university && subTypesData.university.map((value, index) => (
+                                            <option key={index} value={value}>
+                                                {value}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                          </div>
+                        )}
+
+                        {/* Conditional rendering for sub_types based on item_id */}
+                        {item_id && (item_id === '3') && (
+                            <div className="p-2 border-b">
+                                <div className="font-bold mb-2"> نوع مربی در مدارس</div> {/* Title for school_coach_type filter */}
+                                  <div className="px-2">
+                                      <select
+                                          className="w-full p-2 border rounded"
+                                          value={school_coach_type || ''}
+                                          onChange={(e) => handleFilterChange({ school_coach_type: e.target.value })}
+                                      >
+                                          <option value="">همه</option>
+                                          {Object.entries(schoolCoachTypes).map(([key, value]) => (
+                                              <option key={key} value={key}>
+                                                  {value}
+                                              </option>
+                                          ))}
+                                      </select>
+                                  </div>
+                            </div>
+                        )}
 
                           <div className="p-2 border-b">
                             <div className="font-bold mb-2">اکشن پلن ها</div>

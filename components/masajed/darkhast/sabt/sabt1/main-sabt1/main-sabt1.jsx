@@ -97,6 +97,12 @@ const MainSabt1 = () => {
                 میباشد و پس از ثبت {requestData.max_allocated_request} درخواست، دسترسی به این بخش
                 برای شما مقدور نیست.{" "}
               </li>
+              {requestData?.single_step && (
+                <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+                  <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+                  این درخواست یک مرحله ای می باشد و کل بودجه یکجا آزاد می شود
+                </li>
+              )}
               {/* <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
               {requestData.previous_requests > requestData.max_allocated_request && (

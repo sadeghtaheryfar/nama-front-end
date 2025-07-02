@@ -392,6 +392,21 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                   </div>
               </div>
           )}
+
+          {(data?.data?.images?.original || (data?.data?.images && data.data.images.length > 0)) && (
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                    پیوست های بیشتر :
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                      {data.data.images?.map((file, index) => (
+                          <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                          </a>
+                      ))}
+                  </div>
+              </div>
+          )}
         </div>
       </div>
 
@@ -544,6 +559,12 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               >
                 {loading ? 'صبر کنید ...' : 'رد کلی'}
               </button>
+            </div>
+
+            <div className="text-center mt-[0.5rem] text-red-600 flex justify-center items-center gap[0.5rem]">
+              <p className="font-semibold"> مهم : </p>
+
+              <small>در صورت رد کلی یکی از فرصت های اکشن پلین کاربر می سوزد .</small>
             </div>
             
             {message.text && (

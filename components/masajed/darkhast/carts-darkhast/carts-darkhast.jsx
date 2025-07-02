@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CartsDarkhastActive from "./carts-darkhast-active";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import useDebounce from "../../../utils/useDebounce"; // مسیر را بر اساس مکان فایل useDebounce.js تنظیم کنید
 
 const CartsDarkhast = () => {
   const [futureCarts, setFutureCarts] = useState([]);
@@ -17,21 +18,33 @@ const CartsDarkhast = () => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
   const itemId = pathSegments[1];
-  
+
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+
+  // State برای عبارت جستجو و مقدار دی‌بونس شده آن
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms دیلی برای دی‌بونس
+
+  // State برای شماره صفحه جاری
+  const [currentPage, setCurrentPage] = useState(1); // مقدار اولیه 1
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
+  // useEffect برای همگام‌سازی searchTerm و currentPage با URL هنگام بارگذاری یا تغییر URL
+  // این useEffect باید قبل از هر useEffect دیگری که به searchParams وابسته است اجرا شود
+  // تا stateهای داخلی با URL همگام باشند.
   useEffect(() => {
-    const pageFromUrl = searchParams.get("page");
-    if (pageFromUrl) {
-      setCurrentPage(Number(pageFromUrl));
-    }
-  }, [searchParams]);
+    const qFromUrl = searchParams.get("q");
+    // اگر qFromUrl برابر null یا undefined باشد، آن را به یک رشته خالی تبدیل کنید
+    // وگرنه، مقدار آن را به searchTerm تنظیم کنید.
+    setSearchTerm(qFromUrl || "");
 
+    const pageFromUrl = Number(searchParams.get("page")) || 1;
+    setCurrentPage(pageFromUrl);
+  }, [searchParams]); // این useEffect فقط به searchParams وابسته است.
 
+  // useEffect برای واکشی futureCarts (بدون تغییر)
   useEffect(() => {
     const fetchFutureCarts = async () => {
       setFutureCartsLoading(true);
@@ -52,19 +65,32 @@ const CartsDarkhast = () => {
     fetchFutureCarts();
   }, [itemId]);
 
+  // Main useEffect برای واکشی activeCarts و به‌روزرسانی URL
+  // این useEffect باید به تغییرات currentPage و debouncedSearchTerm واکنش نشان دهد.
+  // همچنین باید مقادیر صحیح page و q را از searchParams برای URL بسازد و router.push کند.
   useEffect(() => {
     const fetchActiveCarts = async () => {
       setActiveCartsLoading(true);
       try {
-        const active = await axios.get(
-          `/api/active?item_id=${itemId}&role=mosque_head_coach&page=${currentPage}&per_page=${itemsPerPage}`
-        );
+        const queryParams = new URLSearchParams();
+        queryParams.append("item_id", itemId);
+        queryParams.append("role", "mosque_head_coach");
+
+        // از currentPage برای API call استفاده کنید
+        queryParams.append("page", currentPage.toString());
+        queryParams.append("per_page", itemsPerPage.toString());
+
+        if (debouncedSearchTerm) {
+          queryParams.append("q", debouncedSearchTerm);
+        }
+
+        const active = await axios.get(`/api/active?${queryParams.toString()}`);
         if (active.data) {
           setActiveCarts(active.data.data);
           if (active.data.meta && active.data.meta.total) {
             setTotalPages(Math.ceil(active.data.meta.total / itemsPerPage));
           } else {
-            setTotalPages(Math.ceil(active.data.data.length / itemsPerPage) || 1);
+            setTotalPages(active.data.data.length > 0 ? Math.ceil(active.data.data.length / itemsPerPage) : 1);
           }
         }
       } catch (error) {
@@ -75,16 +101,40 @@ const CartsDarkhast = () => {
     };
 
     fetchActiveCarts();
-    if (typeof pathname === 'string') { 
-      const current = new URLSearchParams(searchParams.toString());
-      current.set("page", currentPage.toString());
-      const query = current.toString();
-      router.push(`${pathname}?${query}`, undefined, { shallow: true });
-    }
-  }, [currentPage, itemId, searchParams]);
 
+    // به‌روزرسانی URL
+    // این بخش تضمین می‌کند که URL همواره با currentPage و debouncedSearchTerm فعلی همگام باشد.
+    const current = new URLSearchParams();
+    current.set("page", currentPage.toString());
+    if (debouncedSearchTerm) {
+      current.set("q", debouncedSearchTerm);
+    } else {
+      current.delete("q"); // اگر عبارت جستجو خالی است، q را از URL حذف کنید
+    }
+
+    const newQueryString = current.toString();
+    const currentQueryString = searchParams.toString();
+
+    // فقط در صورتی که query string واقعاً تغییر کرده باشد router.push را فراخوانی کنید.
+    // این از حلقه بی‌نهایت و افزودن ورودی‌های غیرضروری به تاریخچه مرورگر جلوگیری می‌کند.
+    if (newQueryString !== currentQueryString) {
+      router.push(`${pathname}?${newQueryString}`, undefined, { shallow: true });
+    }
+
+  }, [currentPage, itemId, debouncedSearchTerm, searchParams, pathname, router]); // وابستگی‌ها
+
+  // مدیریت تغییر عبارت جستجو
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // وقتی کاربر چیزی را جستجو می‌کند، صفحه را به 1 بازنشانی کنید.
+    // این باعث می‌شود useEffect اصلی مجدداً اجرا شود با currentPage=1 و عبارت جستجوی جدید.
+    setCurrentPage(1);
+  };
+
+  // مدیریت تغییر صفحه
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    // useEffect اصلی مسئول به‌روزرسانی URL بر اساس currentPage جدید خواهد بود.
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -104,10 +154,10 @@ const CartsDarkhast = () => {
         قبلی
       </button>
     );
-    
+
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
-    
+
     if (startPage > 1) {
       buttons.push(
         <button
@@ -126,7 +176,7 @@ const CartsDarkhast = () => {
         );
       }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
@@ -142,7 +192,7 @@ const CartsDarkhast = () => {
         </button>
       );
     }
-    
+
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(
@@ -161,7 +211,7 @@ const CartsDarkhast = () => {
         </button>
       );
     }
-    
+
     buttons.push(
       <button
         key="next"
@@ -176,29 +226,53 @@ const CartsDarkhast = () => {
         بعدی
       </button>
     );
-    
+
     return buttons;
   };
 
   return (
     <>
-      <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-x-10">
-        {activeCartsLoading && (
-          <section className='flex justify-center items-center flex-col w-full h-[20rem]'>
-            <div className='w-full relative h-full rounded-[0.5rem] bg-[#e0e0e0] overflow-hidden'>
-                <div className='absolute top-0 left-0 h-full w-full animate-slide'></div>
-                <div className='absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent to-[#b0b0b0] opacity-50 animate-shimmer'></div>
-            </div>
-          </section>
-        )}
+      <div className="mt-7">
+        {/* فیلد جستجو */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="جستجو در درخواست‌ها..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-full max-w-md p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#39A894] focus:border-transparent transition-all duration-200"
+          />
+        </div>
 
-        {activeCarts &&
-          !activeCartsLoading &&
-          activeCarts.length >= 1 &&
-          activeCarts.map((item, index) => {
-            return <CartsDarkhastActive key={index} item={item} />;
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 md:mt-9 lg:mt-11 xl:mt-12 gap-6 md:gap-7 lg:gap-9 2xl:gap-x-10">
+          {activeCartsLoading && (
+            <section className='flex justify-center items-center flex-col w-full h-[20rem]'>
+              <div className='w-full relative h-full rounded-[0.5rem] bg-[#e0e0e0] overflow-hidden'>
+                  <div className='absolute top-0 left-0 h-full w-full animate-slide'></div>
+                  <div className='absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent to-[#b0b0b0] opacity-50 animate-shimmer'></div>
+              </div>
+            </section>
+          )}
+
+          {activeCarts &&
+            !activeCartsLoading &&
+            activeCarts.length >= 1 &&
+            activeCarts.map((item, index) => {
+              return <CartsDarkhastActive key={index} item={item} />;
+            })}
+
+          {!activeCartsLoading && activeCarts.length === 0 && (debouncedSearchTerm ?
+            <div className="col-span-full text-center py-8 text-gray-500">
+              نتیجه‌ای برای جستجوی شما یافت نشد.
+            </div>
+            :
+            <div className="col-span-full text-center py-8 text-gray-500">
+              درخواستی برای نمایش وجود ندارد
+            </div>
+          )}
+        </div>
       </div>
+
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -232,7 +306,7 @@ const CartsDarkhast = () => {
                 />
               );
             })}
-            
+
           {!futureCartsLoading && futureCarts.length === 0 && (
             <div className="col-span-full text-center py-8 text-gray-500">
               درخواستی برای نمایش وجود ندارد

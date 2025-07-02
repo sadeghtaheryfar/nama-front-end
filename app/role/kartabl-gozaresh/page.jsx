@@ -18,10 +18,12 @@ import {
   setHeaderData,
   setGlobalDashboardParams,
   resetReportDashboardFilters,
+  // فرض می‌کنیم این اکشن‌ها در dashboardSlice وجود دارند یا به setReportDashboardFilters اضافه می‌شوند
+  // setReportDashboardSubType,
+  // setReportDashboardSchoolCoachType,
 } from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
 
 import useDebounce from './../../../components/utils/useDebounce';
-
 
 export default function KartablGozaresh() {
   const router = useRouter();
@@ -42,11 +44,13 @@ export default function KartablGozaresh() {
     unit_id,
     currentPage,
     totalPages,
+    sub_type, // Added for 'نوع مربی'
+    school_coach_type, // Added for 'نوع مربی در مدارس'
   } = useSelector(state => state.dashboards.reportDashboard); // *** استفاده از reportDashboard ***
 
   const header = useSelector(state => state.dashboards.headerData);
   const [loadingHeader, setLoadingHeader] = useState(true);
-  
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const filterRef = useRef(null);
@@ -56,6 +60,10 @@ export default function KartablGozaresh() {
 
   const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
   const debouncedSearchTerm = useDebounce(localSearchInput, 500);
+
+  // Added states for select options
+  const [subTypesData, setSubTypesData] = useState({});
+  const [schoolCoachTypes, setSchoolCoachTypes] = useState({});
 
   useEffect(() => {
     setLocalSearchInput(reduxSearch);
@@ -71,7 +79,7 @@ export default function KartablGozaresh() {
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
-    
+
     // فقط item_id و role را به Redux ارسال می کنیم
     dispatch(setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }));
 
@@ -169,7 +177,7 @@ export default function KartablGozaresh() {
     const params = new URLSearchParams();
     if (item_id) params.set("item_id", item_id);
     if (role) params.set("role", role);
-    
+
     router.push(`${pathname}?${params.toString()}`, { scroll: false, shallow: true });
   };
 
@@ -197,7 +205,7 @@ export default function KartablGozaresh() {
     };
     fetchUnits();
   }, [item_id, role]);
-  
+
   const [plans, setPlans] = useState([]);
   useEffect(() => {
     if(!item_id) return;
@@ -215,6 +223,32 @@ export default function KartablGozaresh() {
     };
     fetchPlans();
   }, [item_id]);
+
+
+  // Options for sub_type based on item_id
+  const getSubTypeOptions = () => {
+    if (!item_id || !subTypesData) return [];
+
+    let options = [];
+    if (item_id === '2' && subTypesData.mosque) {
+      options = Object.entries(subTypesData.mosque).map(([value, text]) => ({ value, label: text }));
+    } else if (item_id === '3' && subTypesData.school) {
+      options = Object.entries(subTypesData.school).map(([value, text]) => ({ value, label: text }));
+    } else if (item_id === '4' && subTypesData.center) {
+      options = subTypesData.center.map(type => ({ value: type, label: type }));
+    } else if (item_id === '8' && subTypesData.university) {
+      options = subTypesData.university.map(type => ({ value: type, label: type }));
+    }
+    return [{ value: "", label: "همه" }, ...options];
+  };
+
+  // Options for school_coach_type
+  const getSchoolCoachTypeOptions = () => {
+    if (!schoolCoachTypes) return [];
+    const options = Object.entries(schoolCoachTypes).map(([value, text]) => ({ value, label: text }));
+    return [{ value: "", label: "همه" }, ...options];
+  };
+
 
   // تابع برای تغییر فیلترها (ارسال به Redux)
   const handleFilterChange = (newFilterState) => {
@@ -249,12 +283,16 @@ export default function KartablGozaresh() {
         per_page: itemsPerPage,
         page: currentPage,
         itemId: item_id,
-        role
+        role,
+        sub_type, // Added to API params
+        school_coach_type, // Added to API params
       };
-      
+
       const fetchReports = async () => { // تغییر نام تابع
         const response = await axios.get(`/api/darkhast-reports`, { params }); // *** API مربوط به گزارش‌ها ***
-        
+
+        setSubTypesData(response?.data?.sub_types || {});
+        setSchoolCoachTypes(response?.data?.school_coach_type || {});
         setReports(response.data); // تغییر نام از setRequests به setReports
         if (response.data.meta && response.data.meta.total) {
           dispatch(setReportDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage))); // *** استفاده از setReportDashboardTotalPages ***
@@ -270,7 +308,7 @@ export default function KartablGozaresh() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, itemsPerPage, dispatch]);
+  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, sub_type, school_coach_type, itemsPerPage, dispatch]); // Added sub_type, school_coach_type to dependencies
 
 
   const goBack = () => {
@@ -278,7 +316,7 @@ export default function KartablGozaresh() {
     if (item_id) params.set("item_id", item_id);
     if (role) params.set("role", role);
     const queryString = params.toString();
-    
+
     const newPath = pathname.split('/').slice(0, -1).join('/') || '/';
     if (queryString) {
         router.push(`${newPath}?${queryString}`);
@@ -522,6 +560,57 @@ export default function KartablGozaresh() {
                             </div>
                           </div>
                           
+                          {/* New Filter: نوع مربی (sub_type) */}
+                          {item_id && (
+                            <div className="p-2 border-b">
+                              <div className="font-bold mb-2">نوع مربی</div>
+                              <div className="px-2">
+                                <select
+                                  id="sub_type"
+                                  name="sub_type"
+                                  className="w-full p-2 border rounded"
+                                  value={sub_type || ''}
+                                  onChange={(e) => handleFilterChange({ sub_type: e.target.value })}
+                                >
+                                  <option value="">همه</option>
+                                  {item_id === '2' && subTypesData.mosque && Object.entries(subTypesData.mosque).map(([value, text]) => (
+                                    <option key={value} value={value}>{text}</option>
+                                  ))}
+                                  {item_id === '3' && subTypesData.school && Object.entries(subTypesData.school).map(([value, text]) => (
+                                    <option key={value} value={value}>{text}</option>
+                                  ))}
+                                  {item_id === '4' && subTypesData.center && subTypesData.center.map(type => (
+                                    <option key={type} value={type}>{type}</option>
+                                  ))}
+                                  {item_id === '8' && subTypesData.university && subTypesData.university.map(type => (
+                                    <option key={type} value={type}>{type}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* New Filter: نوع مربی در مدارس (school_coach_type) - Conditional */}
+                          {item_id === '3' && (
+                            <div className="p-2 border-b">
+                              <div className="font-bold mb-2">نوع مربی در مدارس</div>
+                              <div className="px-2">
+                                <select
+                                  id="school_coach_type"
+                                  name="school_coach_type"
+                                  className="w-full p-2 border rounded"
+                                  value={school_coach_type || ''}
+                                  onChange={(e) => handleFilterChange({ school_coach_type: e.target.value })}
+                                >
+                                  <option value="">همه</option>
+                                  {schoolCoachTypes && Object.entries(schoolCoachTypes).map(([value, text]) => (
+                                    <option key={value} value={value}>{text}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          )}
+
                           <div className="p-2 border-b">
                             <div className="font-bold mb-2">اکشن پلن ها</div>
                             <div className="px-2 mb-2">

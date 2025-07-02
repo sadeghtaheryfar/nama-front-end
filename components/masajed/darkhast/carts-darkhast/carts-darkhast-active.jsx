@@ -126,6 +126,12 @@ const CartsDarkhastActive = ({ item }) => {
               </span>
             )}
           </li>
+          {item?.single_step && (
+            <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+              <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+              این درخواست یک مرحله ای می باشد و کل بودجه یکجا آزاد می شود
+            </li>
+          )}
         </ul>
       </div>
         {/* Conditional rendering for the action button */}

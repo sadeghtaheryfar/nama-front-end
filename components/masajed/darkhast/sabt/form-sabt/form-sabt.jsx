@@ -27,6 +27,7 @@ const FormSabt = ({ id, data }) => {
   // Storing objects with file and its preview URL
   const [imamLetters, setImamLetters] = useState([]);
   const [connectionLetters, setConnectionLetters] = useState([]);
+  const [additionalAttachments, setAdditionalAttachments] = useState([]); // Added state for additional attachments
   const [statusFile1, setStatusFile1] = useState("مقدار فایل وجود ندارد");
   const [statusFile2, setStatusFile2] = useState("مقدار فایل وجود ندارد");
   const [statusSend, setStatusSend] = useState("");
@@ -77,6 +78,7 @@ const FormSabt = ({ id, data }) => {
     return () => {
       imamLetters.forEach(file => URL.revokeObjectURL(file.preview));
       connectionLetters.forEach(file => URL.revokeObjectURL(file.preview));
+      additionalAttachments.forEach(file => URL.revokeObjectURL(file.preview)); // Clean up additional attachments
     };
   }, []); // Empty dependency array means it runs only on mount and unmount
 
@@ -88,6 +90,7 @@ const FormSabt = ({ id, data }) => {
     time: "",
     imamLetter: "",
     connectionLetter: "",
+    additionalAttachments: "", // Added for validation
   });
 
   const [touched, setTouched] = useState({
@@ -96,6 +99,7 @@ const FormSabt = ({ id, data }) => {
     time: false,
     imamLetter: false,
     connectionLetter: false,
+    additionalAttachments: false, // Added for validation
   });
 
   // Function to convert numbers to Persian words
@@ -175,13 +179,13 @@ const FormSabt = ({ id, data }) => {
     setFiles((prevFiles) => {
       const combinedFiles = [...prevFiles, ...newFiles];
       if (combinedFiles.length > 10) {
-        setStatus("حداکثر 10 فایل مجاز است");
+        if (setStatus) setStatus("حداکثر 10 فایل مجاز است"); // Only set status if it's provided
         setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: "حداکثر 10 فایل مجاز است" }));
         // Revoke URLs of files that exceed the limit immediately
         newFiles.forEach(file => URL.revokeObjectURL(file.preview));
         return prevFiles; // Do not update state if more than 10 files
       }
-      setStatus(newFiles.length > 0 ? "فایل(های) مورد نظر انتخاب شد" : "مقدار فایل وجود ندارد");
+      if (setStatus) setStatus(newFiles.length > 0 ? "فایل(های) مورد نظر انتخاب شد" : "مقدار فایل وجود ندارد");
       setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: hasInvalidType ? "فقط فایل‌های عکس مجاز هستند" : "" }));
       setTouched((prevTouched) => ({ ...prevTouched, [fieldName]: true }));
       return combinedFiles;
@@ -268,8 +272,17 @@ const FormSabt = ({ id, data }) => {
     return "";
   };
 
+  // No specific validation for additionalAttachments, but you can add it if needed
+  const validateAdditionalAttachments = (files) => {
+    // Example: If you want to limit the number of additional files
+    // if (files.length > 5) {
+    //   return "حداکثر 5 فایل پیوست اضافی مجاز است.";
+    // }
+    return "";
+  };
+
   const convertPersianToEnglish = (str) => {
-    const persianNumbers = "۰۱۲۳۴۴۵۶۷۸۹"; // Corrected a typo here: ۰۱۲۳۴۵۶۷۸۹
+    const persianNumbers = "۰۱۲۳۴۵۶۷۸۹";
     const englishNumbers = "0123456789";
 
     return str.replace(/[\u06F0-\u06F9]/g, (char) =>
@@ -285,6 +298,7 @@ const FormSabt = ({ id, data }) => {
       time: true,
       imamLetter: true,
       connectionLetter: true,
+      additionalAttachments: true, // Mark additional attachments as touched
     });
 
     // Validate all fields
@@ -293,6 +307,7 @@ const FormSabt = ({ id, data }) => {
       time: validateTime(time),
       imamLetter: validateImamLetter(imamLetters),
       connectionLetter: validateAreaLetter(connectionLetters),
+      additionalAttachments: validateAdditionalAttachments(additionalAttachments), // Validate additional attachments
     };
 
     setErrors(newErrors);
@@ -335,6 +350,13 @@ const FormSabt = ({ id, data }) => {
       for (let i = 1; i < connectionLetters.length; i++) {
         formDataToSend.append(`other_area_interface_letter[${i - 1}]`, connectionLetters[i].file); // Other files for other_area_interface_letter
       }
+    }
+
+    // Append additional attachments
+    if (additionalAttachments.length > 0) {
+      additionalAttachments.forEach((fileObj, index) => {
+        formDataToSend.append(`images[${index}]`, fileObj.file);
+      });
     }
 
     setLoading(true);
@@ -654,6 +676,75 @@ const FormSabt = ({ id, data }) => {
                   <button
                     type="button"
                     onClick={() => removeFile(setConnectionLetters, file.id, "connectionLetter")}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
+                    title="حذف فایل"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Upload Additional Attachments */}
+        <div className="mb-4">
+          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+            آپلود پیوست‌های بیشتر
+          </h3>
+          <label
+            htmlFor="file-upload_additional"
+            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
+              "additionalAttachments"
+            )}`}
+          >
+            <div className="flex items-center justify-between pt-5 pb-6">
+              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                برای آپلود فایل کلیک کنید
+              </span>
+            </div>
+            {additionalAttachments.length > 0 ? (
+              <Image
+                className="w-7"
+                alt="تأیید آپلود"
+                width={0}
+                height={0}
+                src={"/Images/masajed/upload.svg"}
+              />
+            ) : (
+              <Image
+                className="w-7"
+                alt="آپلود فایل"
+                width={0}
+                height={0}
+                src={"/Images/masajed/darkhast/sabt/Group.svg"}
+              />
+            )}
+            <input
+              id="file-upload_additional"
+              name="additionalAttachments"
+              type="file"
+              multiple // Allow multiple file selection
+              className="hidden"
+              onChange={(event) => handleFileChange(event, setAdditionalAttachments, null, "additionalAttachments")}
+              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+            />
+          </label>
+          {touched.additionalAttachments && errors.additionalAttachments && (
+            <div className="text-red-500 text-sm mt-1">
+              {errors.additionalAttachments}
+            </div>
+          )}
+          {additionalAttachments.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {additionalAttachments.map((file) => (
+                <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
+                  <img src={file.preview} alt={`پیش نمایش ${file.file.name}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeFile(setAdditionalAttachments, file.id, "additionalAttachments")}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
                     title="حذف فایل"
                   >

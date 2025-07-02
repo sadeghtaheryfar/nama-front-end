@@ -643,7 +643,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center ">
                 <Image
                   width={0}
@@ -659,7 +659,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center ">
                 <Image
                   width={0}
@@ -731,7 +731,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center ">
                 <Image
                   width={0}
@@ -748,7 +748,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center ">
                 <Image
                   width={0}
@@ -820,7 +820,7 @@ const GardeshJari = ({data}) => {
         </div>
         ) : data?.data?.step == 'approval_area_interface' || data?.data?.step == 'approval_mosque_cultural_officer' || data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center">
                 <Image
                   width={0}
@@ -836,7 +836,7 @@ const GardeshJari = ({data}) => {
           </div>
         ) : (
           <div className="w-full flex flex-col items-start">
-            <div className="flex items-center w-full mr-7 2xl:mr-9">
+            <div className="flex items-center w-full ">
               <div className="flex items-center justify-center">
                 <Image
                   width={0}
@@ -905,7 +905,7 @@ const GardeshJari = ({data}) => {
             )}
           </div>
         ) : data?.data?.step != 'finish' ? (
-          <div className="w-full flex flex-col max-w-fit">
+          <div className=" w-full flex flex-col max-w-fit items-start">
             <div className="flex items-center justify-center ml-14 2xl:ml-16">
                 <Image
                   width={0}
@@ -918,7 +918,7 @@ const GardeshJari = ({data}) => {
             <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px]">تایید معاونت طرحی و برنامه</span>
           </div>
         ) : (
-          <div className="w-full flex flex-col max-w-fit">
+          <div className=" w-full flex flex-col max-w-fit items-start">
             <div className="flex items-center justify-center ml-14 2xl:ml-16">
                 <Image
                   width={0}

@@ -462,6 +462,23 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               </div>
             </div>
           )}
+
+          {(data?.data?.images2?.original || (data?.data?.images2 && data.data.images2.length > 0)) && (
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                    پیوست های بیشتر :
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                      {data?.data?.images2?.map((item) => (
+                        <a href={item?.original} key={item?.id}>
+                          <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
+                            برای مشاهده فایل کلیک کنید
+                          </button>
+                        </a>
+                      ))}
+                  </div>
+              </div>
+          )}
         </div>
       </div>
 
@@ -589,6 +606,12 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               >
                 {loading ? 'صبر کنید ...' : 'رد کلی'}
               </button>
+            </div>
+
+            <div className="text-center mt-[0.5rem] text-red-600 flex justify-center items-center gap[0.5rem]">
+              <p className="font-semibold"> مهم : </p>
+
+              <small>در صورت رد کلی یکی از فرصت های اکشن پلین کاربر می سوزد .</small>
             </div>
             
             {message.text && (

@@ -56,8 +56,19 @@ const Header = ({ bgBox, bgRole }) => {
     const handleRoleChange = (newRole) => {
         setCurrentRole(newRole);
         setShowRoleMenu(false);
-        if (newRole === 'mosque_head_coach') router.push(`/${itemIdFromUrl}`);
-        else router.push(`?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`);
+
+        if (newRole === 'mosque_head_coach') {
+            router.push(`/${itemIdFromUrl}`);
+        } else {
+            const currentPathname = window.location.pathname;
+            if (currentPathname.includes('kartabl-gozaresh')) {
+                router.push(`/role/kartabl-gozaresh?item_id=${itemIdFromUrl}&role=${newRole}`);
+            } else if (currentPathname.includes('kartabl')) {
+                router.push(`/role/kartabl?role=${newRole}&item_id=${itemIdFromUrl}`);
+            } else {
+                router.push(`?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`);
+            }
+        }
     };
 
     useEffect(() => {
@@ -111,7 +122,7 @@ const Header = ({ bgBox, bgRole }) => {
     return (
         <>
             <img
-                className='w-12 lg:w-16 rounded-full ml-4'
+                className='w-12 lg:w-16 rounded-full object-cover aspect-[16/16] ml-4'
                 alt='user'
                 width={0}
                 height={0}

@@ -13,6 +13,8 @@ export const GET = async (req) => {
         const q = searchParams.get("q") || "";
         const item_id = searchParams.get("itemId");
         const role = searchParams.get("role");
+        const sub_type = searchParams.get("sub_type");
+        const school_coach_type = searchParams.get("school_coach_type");
         const page = parseInt(searchParams.get("page") || "1");
         const per_page = parseInt(searchParams.get("per_page") || "6");
         const plan_id = parseInt(searchParams.get("plan_id") || undefined);
@@ -24,6 +26,8 @@ export const GET = async (req) => {
         if (status) params.status = status;
         if (plan_id) params.plan_id = plan_id;
         if (unit_id) params.unit_id = unit_id;
+        if (sub_type) params.sub_type = sub_type;
+        if (school_coach_type) params.school_coach_type = school_coach_type;
 
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/reports`, {
             params,

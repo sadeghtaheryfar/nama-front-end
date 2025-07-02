@@ -25,6 +25,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const [connectionLetter, setConntectionLetter] = useState(null);
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [moreImages, setMoreImages] = useState([]); // Added state for additional images
   const [statusSend, setStatusSend] = useState("");
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
@@ -32,16 +33,17 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   // Validation states for each field
   const [errors, setErrors] = useState({
     student: "",
     cost: "",
     time: "",
     images: "",
-    videos: ""
+    videos: "",
+    moreImages: "", // Added error state for additional images
   });
-  
+
   // Track if fields have been touched/interacted with
   const [touched, setTouched] = useState({
     student: false,
@@ -49,18 +51,25 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     time: false,
     des: false,
     images: false,
-    videos: false
+    videos: false,
+    moreImages: false, // Added touched state for additional images
   });
 
   useEffect(() => {
     return () => {
       videos.forEach(v => {
-        if (v.file) { 
+        if (v.file) {
           URL.revokeObjectURL(v.preview);
         }
       });
+      // Added cleanup for moreImages
+      moreImages.forEach(img => {
+        if (img.file) {
+          URL.revokeObjectURL(img.preview);
+        }
+      });
     };
-  }, [videos]);
+  }, [videos, moreImages]); // Added moreImages to dependency array
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
@@ -68,7 +77,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
 
   const validateField = (name, value) => {
     let error = "";
-    
+
     switch(name) {
       case "student":
         if (!value) error = "تعداد دانش آموزان الزامی است";
@@ -88,16 +97,20 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
         if (value.length > 10) error = "حداکثر ۱۰ ویدئو مجاز است";
         if (value.some(fileObj => fileObj.file && !fileObj.file.type.startsWith("video/"))) error = "فقط فایل‌های ویدئویی مجاز هستند";
         break;
+      case "moreImages": // Validation for additional images
+        if (value.length > 10) error = "حداکثر ۱۰ تصویر اضافی مجاز است";
+        if (value.some(fileObj => fileObj.file && !fileObj.file.type.startsWith("image/"))) error = "فقط فایل‌های تصویری مجاز هستند";
+        break;
       default:
         break;
     }
-    
+
     return error;
   };
 
   const handleBlur = (name) => {
     setTouched(prev => ({ ...prev, [name]: true }));
-    
+
     let value;
     switch(name) {
       case "student":
@@ -115,10 +128,13 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       case "videos":
         value = videos;
         break;
+      case "moreImages": // Added blur handling for moreImages
+        value = moreImages;
+        break;
       default:
         value = "";
     }
-    
+
     const error = validateField(name, value);
     setErrors(prev => ({ ...prev, [name]: error }));
   };
@@ -126,7 +142,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const handleCostChange = (event) => {
     const value = event.target.value;
     setCost(value);
-    
+
     if (touched.cost) {
       const error = validateField("cost", value);
       setErrors(prev => ({ ...prev, cost: error }));
@@ -136,7 +152,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const handleStudentChange = (event) => {
     const value = event.target.value;
     setStudent(value);
-    
+
     if (touched.student) {
       const error = validateField("student", value);
       setErrors(prev => ({ ...prev, student: error }));
@@ -145,7 +161,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
 
   const handleTimeChange = (value) => {
     setTime(value);
-    
+
     setTouched(prev => ({ ...prev, time: true }));
     const error = validateField("time", value);
     setErrors(prev => ({ ...prev, time: error }));
@@ -155,7 +171,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     const files = Array.from(event.target.files);
     const newImages = [...images, ...files];
     setImages(newImages);
-    
+
     setTouched(prev => ({ ...prev, images: true }));
     const error = validateField("images", newImages);
     setErrors(prev => ({ ...prev, images: error }));
@@ -164,11 +180,63 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const removeImage = (index) => {
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
-    
+
     if (touched.images) {
       const error = validateField("images", newImages);
       setErrors(prev => ({ ...prev, images: error }));
     }
+  };
+
+  // New handler for moreImages
+  const handleMoreImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newValidFiles = [];
+    let hasInvalidType = false;
+
+    files.forEach(file => {
+      if (file.type.startsWith("image/")) {
+        newValidFiles.push({ id: Date.now() + Math.random(), file: file, preview: URL.createObjectURL(file) });
+      } else {
+        hasInvalidType = true;
+      }
+    });
+
+    setMoreImages(prev => {
+      const combinedFiles = [...prev, ...newValidFiles];
+      if (combinedFiles.length > 10) {
+        toast.error("حداکثر ۱۰ تصویر اضافی مجاز است.");
+        newValidFiles.forEach(img => URL.revokeObjectURL(img.preview));
+        setErrors(prevErrors => ({ ...prevErrors, moreImages: "حداکثر ۱۰ تصویر اضافی مجاز است" }));
+        return prev;
+      }
+      return combinedFiles;
+    });
+
+    setTouched(prev => ({ ...prev, moreImages: true }));
+    const error = validateField("moreImages", [...moreImages, ...newValidFiles]);
+    setErrors(prev => ({ ...prev, moreImages: error }));
+
+    if (hasInvalidType) {
+      toast.error("فقط فایل‌های تصویری مجاز هستند.");
+    }
+    event.target.value = '';
+  };
+
+  // New remover for moreImages
+  const removeMoreImage = (idToRemove) => {
+    setMoreImages(prev => {
+      const imageToRemove = prev.find(img => img.id === idToRemove);
+      if (imageToRemove && imageToRemove.preview) {
+        URL.revokeObjectURL(imageToRemove.preview);
+      }
+      const updatedImages = prev.filter(img => img.id !== idToRemove);
+
+      if (touched.moreImages) {
+        const error = validateField("moreImages", updatedImages);
+        setErrors(prevErrors => ({ ...prevErrors, moreImages: error }));
+      }
+      return updatedImages;
+    });
   };
 
   const handleVideoUpload = (event) => {
@@ -211,7 +279,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
         URL.revokeObjectURL(videoToRemove.preview);
       }
       const updatedVideos = prev.filter(v => v.id !== idToRemove);
-      
+
       if (touched.videos) {
         const error = validateField("videos", updatedVideos);
         setErrors(prevErrors => ({ ...prevErrors, videos: error }));
@@ -223,8 +291,8 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   const convertPersianToEnglish = (str) => {
     const persianNumbers = "۰۱۲۳۴۵۶۷۸۹";
     const englishNumbers = "0123456789";
-  
-    return str.replace(/[\u06F0-\u06F9]/g, (char) => 
+
+    return str.replace(/[\u06F0-\u06F9]/g, (char) =>
       englishNumbers[persianNumbers.indexOf(char)]
     );
   };
@@ -232,13 +300,13 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
   // Convert number to Persian text
   const numberToText = (num) => {
     if (!num || isNaN(num)) return "";
-    
+
     const units = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه", "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
     const tens = ["", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
     const scales = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
-    
+
     if (num === 0) return "صفر";
-    
+
     const numStr = String(num);
     if (num < 20) return units[num];
     if (num < 100) {
@@ -246,20 +314,20 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       const unit = num % 10;
       return tens[ten] + (unit > 0 ? " و " + units[unit] : "");
     }
-    
+
     // For simplicity, we'll handle up to 9999
     if (num < 1000) {
       const hundred = Math.floor(num / 100);
       const remainder = num % 100;
       return units[hundred] + " صد" + (remainder > 0 ? " و " + numberToText(remainder) : "");
     }
-    
+
     if (num < 10000) {
       const thousand = Math.floor(num / 1000);
       const remainder = num % 1000;
       return units[thousand] + " هزار" + (remainder > 0 ? " و " + numberToText(remainder) : "");
     }
-    
+
     return numStr; // For larger numbers, return as is
   };
 
@@ -269,9 +337,10 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       cost: validateField("cost", cost),
       time: validateField("time", time),
       images: validateField("images", images),
-      videos: validateField("videos", videos)
+      videos: validateField("videos", videos),
+      moreImages: validateField("moreImages", moreImages), // Added validation for moreImages
     };
-    
+
     setErrors(formErrors);
     setTouched({
       student: true,
@@ -279,15 +348,16 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       time: true,
       des: true,
       images: true,
-      videos: true
+      videos: true,
+      moreImages: true, // Added touched for moreImages
     });
-    
+
     return !Object.values(formErrors).some(error => error);
   };
 
   const hnadleForm = async () => {
     setMessage({ text: "", type: "" });
-    
+
     if (!checkbox) {
       setStatusCheckBox("این گزینه الزامی است.");
       return;
@@ -301,7 +371,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     } else {
       setStatusSend("");
     }
-    
+
     const englishTime = convertPersianToEnglish(String(time));
 
     const formDataToSend = new FormData();
@@ -315,10 +385,14 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     if (videos.length > 0) {
       formDataToSend.append("video", videos[0].file);
       for (let i = 1; i < videos.length; i++) {
-        formDataToSend.append(`otherVideos[${i - 1}]`, videos[i].file); 
+        formDataToSend.append(`otherVideos[${i - 1}]`, videos[i].file);
       }
     }
-    
+    // Append additional images to formDataToSend
+    moreImages.forEach((imgObj, index) => {
+      formDataToSend.append(`images2[${index}]`, imgObj.file);
+    });
+
     setLoading(true);
     setIsUploading(true);
 
@@ -355,6 +429,10 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       } else {
         setStatusSend("خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.");
       }
+      // Added error handling for moreImages from backend
+      if (error.response?.data?.errors?.images_more) {
+        setErrors(prevErrors => ({ ...prevErrors, moreImages: error.response.data.errors.images_more.join(', ') }));
+      }
     } finally {
       setLoading(false);
       setIsUploading(false);
@@ -372,40 +450,40 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
 
   const convertToPersianWords = (num) => {
     if (!num) return "";
-    
+
     const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
     const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
     const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
     const sadgan = ["", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد"];
     const scale = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
-    
+
     if (num === 0) return "صفر";
-    
+
     let result = "";
     let scaleIndex = 0;
-    
+
     const numStr = num.toString();
     const groups = [];
     for (let i = numStr.length; i > 0; i -= 3) {
       const start = Math.max(0, i - 3);
       groups.unshift(numStr.substring(start, i));
     }
-    
+
     for (let i = 0; i < groups.length; i++) {
       const groupIndex = groups.length - 1 - i;
       const group = parseInt(groups[i]);
-      
+
       if (group === 0) continue;
-      
+
       let groupStr = "";
       const hundreds = Math.floor(group / 100);
       const tens = Math.floor((group % 100) / 10);
       const ones = group % 10;
-      
+
       if (hundreds > 0) {
         groupStr += sadgan[hundreds] + " ";
       }
-      
+
       if (tens === 1) {
         groupStr += dah_ta_bist[ones] + " ";
       } else {
@@ -416,24 +494,24 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           groupStr += yekan[ones] + " ";
         }
       }
-      
+
       if (groupStr) {
         result += groupStr + scale[groupIndex] + " ";
       }
     }
-    
+
     return result.trim() + " ریال";
   };
-  
+
   function formatToCurrency(amount) {
     const number = Number(amount);
-    
+
     if (isNaN(number)) {
       return "مقدار وارد شده معتبر نیست";
     }
-    
+
     const formattedNumber = number.toLocaleString("fa-IR");
-    
+
     return `${formattedNumber} ریال`;
   }
 
@@ -444,7 +522,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           ارسال گزارش
         </h2>
       </div>
-      
+
       <hr className="h-2 mt-4 mb-7 md:mb-10" />
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
@@ -582,9 +660,52 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
               {images.map((image, index) => (
                 <div key={index} className="relative w-24 h-24">
                   <img src={URL.createObjectURL(image)} alt="" className="w-full h-full object-cover rounded-lg" />
-                  <button 
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center" 
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
                     onClick={() => removeImage(index)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* New Field: Upload Additional Attachments */}
+          <div className="mb-4">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+              آپلود فایل تصویری بیشتر (اختیاری) <span className="text-sm text-gray-500">(حداکثر ۱۰ عدد)</span>
+            </h3>
+            <label
+              htmlFor="file-upload_more_images"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
+                touched.moreImages
+                  ? errors.moreImages
+                    ? "border-red-500 bg-red-50"
+                    : "border-green-500 bg-green-50"
+                  : "border-gray-300"
+              }`}
+            >
+              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                برای آپلود فایل کلیک کنید
+              </span>
+              {moreImages.length > 0 && !errors.moreImages ? (
+                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
+              ) : (
+                <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+              )}
+              <input id="file-upload_more_images" type="file" multiple className="hidden" onChange={handleMoreImageUpload} accept="image/*" />
+            </label>
+            {errors.moreImages && touched.moreImages && (
+              <p className="mt-1 text-xs text-red-500">{errors.moreImages}</p>
+            )}
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {moreImages.map((image, index) => (
+                <div key={image.id || index} className="relative w-24 h-24">
+                  <img src={image.preview} alt="" className="w-full h-full object-cover rounded-lg" />
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={() => removeMoreImage(image.id || index)}
                   >
                     ×
                   </button>
@@ -617,15 +738,15 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             {errors.videos && touched.videos && ( // MODIFIED: Use 'videos' errors state
               <p className="mt-1 text-xs text-red-500">{errors.videos}</p>
             )}
-            <div className="mt-2 grid grid-cols-2 gap-2"> 
+            <div className="mt-2 grid grid-cols-2 gap-2">
               {videos.map((videoFile, index) => (
                 <div key={videoFile.id || index} className="relative w-full aspect-video"> {/* Use videoFile.id as key */}
                   <video controls className="w-full h-full object-cover rounded-lg">
                     <source src={videoFile.preview || URL.createObjectURL(videoFile.file)} type={videoFile.file?.type || 'video/mp4'} /> {/* Use videoFile.preview and videoFile.file.type */}
                     Your browser does not support the video tag.
                   </video>
-                  <button 
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg" 
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg"
                     onClick={() => removeVideo(videoFile.id || index)} // Remove by unique ID
                   >
                     &times;
@@ -656,7 +777,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
         {statusCheckBox && (
           <p className="mb-4 text-xs text-red-500">{statusCheckBox}</p>
         )}
-        
+
         <div className="flex justify-center w-full flex-col items-center">
           <button
             onClick={() => hnadleForm()}
@@ -667,7 +788,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
           </button>
 
           {isUploading && uploadProgress > 0 && (
-            <div className="mt-4 w-24 h-24"> 
+            <div className="mt-4 w-24 h-24">
               <CircularProgressbar
                 value={uploadProgress}
                 text={`${uploadProgress}%`}

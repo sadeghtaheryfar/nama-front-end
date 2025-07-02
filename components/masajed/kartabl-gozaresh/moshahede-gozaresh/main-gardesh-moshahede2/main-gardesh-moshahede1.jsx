@@ -123,7 +123,7 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:gap-x-6 2xl:gap-x-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-2 xl:gap-x-6 2xl:gap-x-8">
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">تصاویر</h3>
             <div className="mt-2 grid grid-cols-3 gap-2">
@@ -140,7 +140,7 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری)</h3>
             {/* Display other existing videos from data prop */}
-            {data?.data?.report?.other_videos && data?.data?.report?.other_videos?.length > 0 && (
+            {(data?.data?.report?.video?.original || (data?.data?.report?.other_videos && data?.data?.report?.other_videos?.length > 0 )) && (
               <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2"> {/* Added grid for multiple videos */}
                 {/* Display existing primary video from data prop */}
                 {data?.data?.report?.video?.original && (
@@ -162,6 +162,19 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="mb-4">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">پیوست های بیشتر</h3>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {data?.data?.report?.images2?.map((image, index) => (
+                <div key={index} className="relative w-24 h-24">
+                  <a href={image?.original} target="_blank" rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
+                    <img src={image?.original} alt={`تصویر ${index + 1}`} className="w-full h-full object-cover rounded-lg" /> {/* MODIFIED: Added alt text */}
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
