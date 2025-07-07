@@ -268,9 +268,14 @@ const MainGardeshJariRole = ({data,back_steps}) => {
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
       <div className="flex justify-between items-center pb-[2rem]">
-        <h2 className="text-base font-bold md:text-lg xl:text-2xl">
+        <h2 className="text-base font-bold md:text-lg xl:text-2xl flex justify-center items-center gap-[0.5rem]">
           {data?.data?.request_plan?.title || "بدون نام"}
           <span>({data?.data?.request_plan?.id || 0})</span>
+          {data?.data?.single_step && (
+            <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>تک مرحله ای</p>
+            </div>
+          )}
         </h2>
 
         {/* {data?.data?.status == 'rejected' ? (

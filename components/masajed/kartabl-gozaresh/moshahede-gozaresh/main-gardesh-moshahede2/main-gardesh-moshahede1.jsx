@@ -15,8 +15,13 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-base font-bold md:text-lg xl:text-2xl">
+        <h2 className="text-base font-bold md:text-lg xl:text-2xl flex justify-center items-center gap-[0.5rem]">
           گزارش شماره ({data?.data?.report?.id})
+          {data?.data?.request_plan?.single_step && (
+            <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>تک مرحله ای</p>
+            </div>
+          )}
         </h2>
 
         <div className="text-sm font-semibold text-[#258CC7] bg-[#D9EFFE] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:w-28 lg:h-12 xl:w-40 xl:h-14 2xl:w-48">

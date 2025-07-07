@@ -143,9 +143,14 @@ const MainGardeshJari = ({data}) => {
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
-        <h2 className="text-base font-bold md:text-lg xl:text-2xl">
+        <h2 className="text-base font-bold md:text-lg xl:text-2xl flex justify-center items-center gap-[0.5rem]">
           {data?.data?.request_plan?.title || "بدون نام"}
           <span>({data?.data?.request_plan?.id || 0} {data?.data?.unit?.code ? `- ${data?.data?.unit?.code}` : ''})</span>
+          {data?.data?.request_plan?.single_step && (
+            <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>تک مرحله ای</p>
+            </div>
+          )}
         </h2>
 
         {data?.data?.status == 'action_needed' && (

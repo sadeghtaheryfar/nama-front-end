@@ -386,7 +386,11 @@ const DarkhasthaGozaresh = () => {
         <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
           {(requests?.data && !loading) && requests?.data?.map((request) => (
             <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
-              <h2 className="text-sm text-[#202020] pb-3">{request?.request?.request_plan?.title || "بدون عنوان"}</h2>
+              <h2 className="text-sm text-[#202020] pb-3">{request?.request?.request_plan?.title || "بدون عنوان"} {request?.request?.request_plan?.single_step && (
+                <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mt-2 rounded-lg flex items-center justify-center">
+                  <p>تک مرحله ای</p>
+                </div>
+              )}</h2>
               
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">شماره</span>
@@ -473,6 +477,12 @@ const DarkhasthaGozaresh = () => {
                 <tr key={request.id} className="border border-gray-300">
                   <td className="border border-gray-300 px-7 py-5 text-base">
                     {request?.request?.request_plan?.title || "بدون عنوان"}
+
+                    {request?.request?.request_plan?.single_step && (
+                      <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mt-2 rounded-lg flex items-center justify-center">
+                        <p>تک مرحله ای</p>
+                      </div>
+                    )}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request.id}
@@ -489,7 +499,7 @@ const DarkhasthaGozaresh = () => {
                   <td className="border border-gray-300 px-7 py-5 text-base text-center !text-[12px]">
                     {stepTitles[request?.step]}
                   </td>
-                  <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex justify-center items-center">
+                  <td className="border-x border-y-0 border-gray-300 px-7 py-5 text-center flex flex-col justify-center items-center">
                     <div className={`w-[169px] h-7 text-sm py-1 rounded-lg flex items-center justify-center 
                       ${request.status === "in_progress" ? "text-[#258CC7] bg-[#D9EFFE]" : 
                         request.status === "done" ? "text-[#39A894] bg-[#DFF7F2]" : 
