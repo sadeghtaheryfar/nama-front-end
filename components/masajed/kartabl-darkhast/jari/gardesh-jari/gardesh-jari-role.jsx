@@ -165,7 +165,7 @@ const GardeshJariRole = ({data}) => {
     const fetching = async () => {
       try {
         const id = searchParams.get("id");
-        const response = await axios.get(`/api/request/comments?id=${id}&item_id=${item_id}&role=${currentRole}&step=${selectedStep}`);
+        const response = await axios.get(`/api/report/comments?id=${id}&item_id=${item_id}&role=${currentRole}&step=${selectedStep}`);
         
         if (response.data) {
           setRequsestComments(response?.data);
