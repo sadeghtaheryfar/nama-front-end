@@ -24,7 +24,26 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
         </div>
       </div>
 
-      <hr className="h-2 mt-4 mb-7 md:mb-10" />
+      <hr className="h-2 mt-4 mb-4" />
+      <div className="grid lg:grid-cols-2 mb-8">
+        {(data?.data?.report?.offer_amount) && (
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+              هزینه پیشنهادی معاونت مساجد:
+            </h3>
+            <span onClick={(e) => copyText(data?.data?.report?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.report?.offer_amount) ? formatPrice(data?.data?.report?.offer_amount) : 'وارد نشده است'}</span>
+          </div>
+        )}
+
+        {(data?.data?.report?.final_amount) && (
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+              هزینه پرداختی توسط آرمان:
+            </h3>
+            <span className="text-base lg:text-lg font-medium">{(data?.data?.report?.final_amount) ? formatPrice(data?.data?.report?.final_amount) : 'وارد نشده است'}</span>
+          </div>
+        )}
+      </div>''
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
           <div className="mb-4">
