@@ -563,7 +563,7 @@ export default function KartablGozaresh() {
                           {/* New Filter: نوع مربی (sub_type) */}
                           {item_id && (
                             <div className="p-2 border-b">
-                              <div className="font-bold mb-2">نوع مربی</div>
+                              <div className="font-bold mb-2">نوع واحد حقوقی</div>
                               <div className="px-2">
                                 <select
                                   id="sub_type"

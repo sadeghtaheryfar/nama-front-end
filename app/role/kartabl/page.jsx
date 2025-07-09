@@ -536,7 +536,7 @@ export default function Kartabl() {
 
                           {item_id && (
                             <div className="p-2 border-b">
-                              <div className="font-bold mb-2">نوع مربی</div> {/* Title for sub_type filter */}
+                              <div className="font-bold mb-2">نوع واحد حقوقی</div> {/* Title for sub_type filter */}
                                 <div className="px-2">
                                     <select
                                         className="w-full p-2 border rounded"
