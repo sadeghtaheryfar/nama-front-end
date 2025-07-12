@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname,useRouter  } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import Forms from './../forms/Forms';
 
 const  Header = ({bgBox,bgRole}) => {
     const [profile, setProfile] = useState(null);
@@ -112,6 +113,8 @@ const  Header = ({bgBox,bgRole}) => {
 
     return (
         <>
+            {pathname != "/" && <Forms />}
+
             <img
                 className="w-12 lg:w-16 rounded-full object-cover aspect-[16/16] object-cover aspect-[16/16]"
                 alt="user"
