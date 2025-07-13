@@ -236,9 +236,9 @@ const FormDetailPage = () => {
       );
 
       toast.success("اطلاعات با موفقیت ارسال شد! به زودی به صفحه فرم ها منتقل می شوید .");
-      setTimeout(() => {
-        window.location = `/${itemId}/forms`
-      }, 3000);
+      // setTimeout(() => {
+      //   window.location = `/${itemId}/forms`
+      // }, 3000);
       reset();
     } catch (apiError) {
       console.error("Error submitting form:", apiError.response ? apiError.response.data : apiError.message);

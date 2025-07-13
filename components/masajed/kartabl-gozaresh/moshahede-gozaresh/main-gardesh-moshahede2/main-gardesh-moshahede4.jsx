@@ -730,7 +730,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
               )}
               <input id="file-upload_videos" type="file" multiple className="hidden" onChange={handleVideoUpload} accept="video/*" />
             </label>
-            <small className="text-yellow-600">در صورت گویا نبودن گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
+            <small className="text-yellow-600">در صورت  گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
             {touched.videos && errors.videos && ( // MODIFIED: Ensure error message only shows if touched AND error
               <p className="mt-1 text-xs text-red-500">{errors.videos}</p>
             )}

@@ -734,7 +734,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
                 <Image className="w-7" alt="آپلود فایل" width={0} height={0} src={"/Images/masajed/darkhast/sabt/Group.svg"} />
               )}
               <input id="file-upload_videos" type="file" multiple className="hidden" onChange={handleVideoUpload} accept="video/*" /> </label>
-            <small className="text-yellow-600">در صورت گویا نبودن گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
+            <small className="text-yellow-600">در صورت  گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
             {errors.videos && touched.videos && ( // MODIFIED: Use 'videos' errors state
               <p className="mt-1 text-xs text-red-500">{errors.videos}</p>
             )}
