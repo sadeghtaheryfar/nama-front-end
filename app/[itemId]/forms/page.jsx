@@ -1,5 +1,5 @@
 "use client";
-import HeaderMasjed from "./../../../components/header-profile-loop/page";
+import HeaderProfile from "./../../../components/header-profile/page";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -185,7 +185,7 @@ const Masajed = () => {
               style={{ backgroundColor: lighterColor }}
               className="flex items-center justify-evenly gap-0.5 p-2 rounded-full justify-self-stretch col-span-4 text-white my-6 md:mx-2 md:col-start-4 md:row-start-1 lg:justify-self-end lg:gap-2 lg:p-3 xl:gap-3 xl:p-4 relative z-[12]"
             >
-              <HeaderMasjed bgRole={solighterColor} />
+              <HeaderProfile bgRole={solighterColor} />
             </div>
           </div>
         </header>
