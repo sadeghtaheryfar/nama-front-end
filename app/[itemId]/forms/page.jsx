@@ -158,7 +158,7 @@ const Masajed = () => {
                 src={header?.data?.logo || "/Images/masajed/mosque.svg"}
               />
               <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-                افزودن حلقه
+                فرم ها
               </span>
             </div>
             <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
