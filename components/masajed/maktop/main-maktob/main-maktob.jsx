@@ -134,12 +134,12 @@ const MainMaktob = ({ token }) => {
   };
 
   const translateRole = (role) => {
-    if (role === "deputy_for_planning_and_programming") {
+    if (role === "executive_vice_president_mosques") {
         return "معاونت اجرایی مساجد";
-    } else if (role === "super_admin") {
-        return "سوپر ادمین";
-    } else if (role === "executive_vice_president_mosques") {
+    } else if (role === "deputy_for_planning_and_programming") {
         return "معاونت طرح و برنامه";
+    } else if (role === "arman_bus") {
+        return "ریاست ستاد آرمان";
     } else {
         return "نامشخص";
     }

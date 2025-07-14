@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import HeaderProfile from "../../../../components/header-profile/page";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 
 const HeaderMaktob = () => {
@@ -81,6 +81,17 @@ const HeaderMaktob = () => {
     setLighterColor(lightenColor(header?.data?.color, 15));
     setSoLighterColor(lightenColor(header?.data?.color, 30));
   }, [header?.data?.color])
+  const router = useRouter();
+
+  const goBack = (e) => {
+    if (e) {
+      const newPath = pathname.split("/").slice(0, -1).join("/") || "/";
+      router.push(newPath);
+    } else {
+      router.push("/");
+    }
+  };
+
 
   return (
     <header className="container mx-auto">
@@ -101,7 +112,8 @@ const HeaderMaktob = () => {
       </div>
       <div className="flex gap-3 justify-self-end md:col-start-8 lg:gap-4 xl:gap-6">
         <Image
-          className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5"
+          onClick={() => goBack()}
+          className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer"
           alt="#"
           width={0}
           height={0}
@@ -109,7 +121,8 @@ const HeaderMaktob = () => {
           style={{backgroundColor : lighterColor}}
         />
         <Image
-          className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5"
+          onClick={() => goBack(true)}
+          className="w-10 lg:w-12 xl:w-16 rounded-full p-2 lg:p-3 xl:p-5 cursor-pointer"
           alt="#"
           width={0}
           height={0}
