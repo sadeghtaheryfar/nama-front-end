@@ -289,28 +289,60 @@ const MainGardeshJari = ({data}) => {
         </div>
 
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr] 2xl:gap-x-12">
-            {/* Display Imam Letter and other_imam_letter from 'data' prop/context */}
-            {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (
+          {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
                     <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
                         فایل پیوست نامه {typeField}:
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {data.data.imam_letter?.original && (
-                            <a href={data.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src={data.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
-                            </a>
+                            ((file) => {
+                                const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                                return (
+                                    <a href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                        {isPdf ? (
+                                            <>
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                                <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                                <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                                    کلیک کنید
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <img src={file.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
+                                        )}
+                                    </a>
+                                );
+                            })(data.data.imam_letter)
                         )}
-                        {data.data.other_imam_letter?.map((file, index) => (
-                            <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                            </a>
-                        ))}
+                        {data.data.other_imam_letter?.map((file, index) => {
+                            const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                            return (
+                                <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                    {isPdf ? (
+                                        <>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                                کلیک کنید
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                                    )}
+                                </a>
+                            );
+                        })}
                     </div>
                 </div>
             )}
 
-            {/* Display Area Interface Letter and other_area_interface_letter from 'data' prop/context */}
             {(data?.data?.area_interface_letter?.original || (data?.data?.other_area_interface_letter && data.data.other_area_interface_letter.length > 0)) && (
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6 lg:justify-self-end">
                     <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
@@ -318,32 +350,93 @@ const MainGardeshJari = ({data}) => {
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {data.data.area_interface_letter?.original && (
-                            <a href={data.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src={data.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
-                            </a>
+                            ((file) => {
+                                const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                                return (
+                                    <a href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                        {isPdf ? (
+                                            <>
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                                <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                                <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                                    کلیک کنید
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <img src={file.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
+                                        )}
+                                    </a>
+                                );
+                            })(data.data.area_interface_letter)
                         )}
-                        {data.data.other_area_interface_letter?.map((file, index) => (
-                            <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
-                            </a>
-                        ))}
+                        {data.data.other_area_interface_letter?.map((file, index) => {
+                            const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                            return (
+                                <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                    {isPdf ? (
+                                        <>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                                کلیک کنید
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
+                                    )}
+                                </a>
+                            );
+                        })}
                     </div>
                 </div>
             )}
 
             {(data?.data?.images?.original || (data?.data?.images && data.data.images.length > 0)) && (
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
-                    <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                        پیوست های بیشتر :
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                        {data.data.images?.map((file, index) => (
-                            <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                            </a>
-                        ))}
-                    </div>
-                </div>
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                      پیوست های بیشتر :
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                      {data.data.images?.map((file, index) => {
+                          const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                          return (
+                              <a
+                                  key={index}
+                                  href={file.original}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group" // اضافه کردن relative و group برای استایل هاور
+                              >
+                                  {isPdf ? (
+                                      <>
+                                          <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                              width="48px"
+                                              height="48px"
+                                              className="text-red-600 transition-transform duration-200 ease-in-out group-hover:scale-110" // استایل Tailwind برای تغییر اندازه هنگام هاور
+                                          >
+                                              <path d="M19 12h-2v4h-3v-4H12v-2h2V8h3V6h-3V4h-2v2h-2v2h2v2h-2v2h-2v2h2v2h2v-2h2v-2h2v-2zm-6-8h-2V2h2v2zm-2 18h2v-2h-2v2zM5 18h2v-2H5v2zm0-4h2v-2H5v2zm0-4h2V8H5v2zm0-4h2V4H5v2zm8 0h2V2h-2v2zM3 20h2v-2H3v2zm0-4h2v-2H3v2zm0-4h2v-2H3v2zm0-4h2V8H3v2zm0-4h2V4H3v2z"/>
+                                          </svg>
+                                          <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                              کلیک کنید
+                                          </p>
+                                      </>
+                                  ) : (
+                                      <img src={file.original} alt={`پیوست ${index + 1}`} className="w-full h-full object-cover" />
+                                  )}
+                              </a>
+                          );
+                      })}
+                  </div>
+              </div>
             )}
             
             {/* This section for final/offer amount remains as is if 'data.data' directly has these fields */}

@@ -163,7 +163,7 @@ const FormSabt = ({ id, data }) => {
     setStatusSend("");
 
     const files = Array.from(event.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg", "application/pdf"];
     const newFiles = [];
     let hasInvalidType = false;
 
@@ -592,7 +592,7 @@ const FormSabt = ({ id, data }) => {
               multiple // Allow multiple file selection
               className="hidden"
               onChange={(event) => handleFileChange(event, setImamLetters, setStatusFile1, "imamLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
             />
           </label>
           {touched.imamLetter && errors.imamLetter && (
@@ -660,7 +660,7 @@ const FormSabt = ({ id, data }) => {
               multiple // Allow multiple file selection
               className="hidden"
               onChange={(event) => handleFileChange(event, setConnectionLetters, setStatusFile2, "connectionLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
             />
           </label>
           {touched.connectionLetter && errors.connectionLetter && (
@@ -729,7 +729,7 @@ const FormSabt = ({ id, data }) => {
               multiple // Allow multiple file selection
               className="hidden"
               onChange={(event) => handleFileChange(event, setAdditionalAttachments, null, "additionalAttachments")}
-              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
             />
           </label>
           {touched.additionalAttachments && errors.additionalAttachments && (

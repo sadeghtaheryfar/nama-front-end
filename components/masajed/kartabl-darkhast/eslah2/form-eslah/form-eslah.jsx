@@ -396,7 +396,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     setStatusSend(""); // Clear general form submission status
 
     const selectedFiles = Array.from(event.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg", "application/pdf"];
     const newValidFiles = [];
     let hasInvalidType = false;
 
@@ -811,7 +811,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
               multiple // Allow multiple file selection
               className="hidden"
               onChange={(event) => handleFileChange(event, setImamLetters, "imamLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
             />
           </label>
           {touched.imamLetter && errors.imamLetter && (
@@ -881,7 +881,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
               multiple
               className="hidden"
               onChange={(event) => handleFileChange(event, setConnectionLetters, "connectionLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg"
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
             />
           </label>
           {touched.connectionLetter && errors.connectionLetter && (
@@ -953,7 +953,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
               multiple // Allow multiple file selection
               className="hidden"
               onChange={(event) => handleFileChange(event, setAdditionalAttachments, "additionalAttachments")}
-              accept="image/jpeg,image/png,image/gif,image/jpg" // Specify accepted file types
+              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
             />
           </label>
           {touched.additionalAttachments && errors.additionalAttachments && (
