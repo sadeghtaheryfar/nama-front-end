@@ -26,12 +26,14 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
 
       <hr className="h-2 mt-4 mb-4" />
       <div className="grid lg:grid-cols-2 mb-8">
-        {(data?.data?.report?.offer_amount) && (
+        {data?.data?.report?.offer_amount !== null && data?.data?.report?.offer_amount !== undefined && data?.data?.report?.offer_amount !== 0 && (
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی معاونت مساجد:
             </h3>
-            <span onClick={(e) => copyText(data?.data?.report?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">{(data?.data?.report?.offer_amount) ? formatPrice(data?.data?.report?.offer_amount) : 'وارد نشده است'}</span>
+            <span onClick={(e) => copyText(data?.data?.report?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
+              {(data?.data?.report?.offer_amount || data?.data?.report?.offer_amount === 0) ? formatPrice(data?.data?.report?.offer_amount) : 'وارد نشده است'}
+            </span>
           </div>
         )}
 
