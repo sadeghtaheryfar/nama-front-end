@@ -38,6 +38,7 @@ const FormSabt = ({ id, data }) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const [isImamLetterRequired, setIsImamLetterRequired] = useState(false);
+  const [isImagesRequired, setIsImagesRequired] = useState(false);
   const [isAreaLetterRequired, setIsAreaLetterRequired] = useState(false);
 
   const [typeField, setTypeField] = useState(null);
@@ -67,6 +68,7 @@ const FormSabt = ({ id, data }) => {
   useEffect(() => {
     if (data) {
       setIsImamLetterRequired(data.imam_letter === true);
+      setIsImagesRequired(data.images_required === true)
       setIsAreaLetterRequired(data.area_interface_letter === true);
     }
   }, [data]);
@@ -204,6 +206,8 @@ const FormSabt = ({ id, data }) => {
       // Re-validate if a required field becomes empty after removal
       if (fieldName === "imamLetter" && isImamLetterRequired && updatedFiles.length === 0) {
         setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: `فایل نامه الزامی است` }));
+      } else if (fieldName === "additionalAttachments" && isImagesRequired && updatedFiles.length === 0) {
+        setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: "پیوست های بیشتر الزامی است" }));
       } else if (fieldName === "connectionLetter" && isAreaLetterRequired && updatedFiles.length === 0) {
         setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: "فایل نامه رابط منطقه الزامی است" }));
       } else {
@@ -265,19 +269,17 @@ const FormSabt = ({ id, data }) => {
     return "";
   };
 
-  const validateAreaLetter = (files) => {
-    if (isAreaLetterRequired && files.length === 0) {
-      return "فایل نامه رابط منطقه الزامی است";
+  const validateImages = (files) => {
+    if (isImagesRequired && files.length === 0) {
+      return `پیوست‌های بیشتر الزامی است`;
     }
     return "";
   };
 
-  // No specific validation for additionalAttachments, but you can add it if needed
-  const validateAdditionalAttachments = (files) => {
-    // Example: If you want to limit the number of additional files
-    // if (files.length > 5) {
-    //   return "حداکثر 5 فایل پیوست اضافی مجاز است.";
-    // }
+  const validateAreaLetter = (files) => {
+    if (isAreaLetterRequired && files.length === 0) {
+      return "فایل نامه رابط منطقه الزامی است";
+    }
     return "";
   };
 
@@ -306,8 +308,8 @@ const FormSabt = ({ id, data }) => {
       student: validateStudent(student),
       time: validateTime(time),
       imamLetter: validateImamLetter(imamLetters),
+      additionalAttachments: validateImages(additionalAttachments),
       connectionLetter: validateAreaLetter(connectionLetters),
-      additionalAttachments: validateAdditionalAttachments(additionalAttachments), // Validate additional attachments
     };
 
     setErrors(newErrors);
@@ -693,6 +695,7 @@ const FormSabt = ({ id, data }) => {
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
             آپلود پیوست‌های بیشتر
+            {isImagesRequired && <RequiredStar />}
           </h3>
           <label
             htmlFor="file-upload_additional"

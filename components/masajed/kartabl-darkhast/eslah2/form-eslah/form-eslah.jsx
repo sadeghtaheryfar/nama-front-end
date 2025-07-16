@@ -101,6 +101,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
 
   // API-driven requirements for file fields
   const [isImamLetterRequired, setIsImamLetterRequired] = useState(false);
+  const [isImagesRequired, setIsImagesRequired] = useState(false);
   const [isAreaLetterRequired, setIsAreaLetterRequired] = useState(false);
   const [typeField, setTypeField] = useState(null); // 'امام جماعت' or 'مدیر'
 
@@ -236,6 +237,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
   useEffect(() => {
     if (initialRequestData) { // Use initialRequestData prop to check requirements
       setIsImamLetterRequired(initialRequestData?.request_plan?.imam_letter === true);
+      setIsImagesRequired(initialRequestData?.request_plan?.images_required === true)
       setIsAreaLetterRequired(initialRequestData?.request_plan?.area_interface_letter === true);
     }
   }, [initialRequestData]);
@@ -291,7 +293,9 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
 
   // No specific validation for additionalAttachments, but will apply file type and count
   const validateAdditionalAttachments = (files) => {
-    // If you want to enforce a minimum number or specific conditions for additional attachments, add them here.
+    if (isImagesRequired && files.length === 0) {
+      return `پیوست‌های بیشتر الزامی است`;
+    }
     return "";
   };
 
@@ -368,6 +372,7 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     } else {
         setErrors(prev => ({ ...prev, connectionLetter: "" }));
     }
+    
 
     // Validate additional attachments
     const additionalAttachmentsValidation = validateAdditionalAttachments(additionalAttachments);
@@ -917,6 +922,8 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
         <div className="mb-4">
           <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
             آپلود پیوست‌های بیشتر
+            
+            {isImagesRequired && <RequiredStar />}
           </h3>
           <label
             htmlFor="file-upload_additional"
