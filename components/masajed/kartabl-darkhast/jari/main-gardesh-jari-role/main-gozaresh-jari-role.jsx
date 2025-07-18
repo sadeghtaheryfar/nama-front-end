@@ -406,7 +406,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            {data?.data?.single_step ? (
+            {data?.data?.request?.single_step ? (
               <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.final_amount ?? 0)}</span>
             ) : (
                 <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.final_amount ? formatPrice(data?.data?.final_amount) : 'وارد نشده'}</span>
@@ -417,7 +417,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی معاونت مساجد:
             </h3>
-            {data?.data?.single_step ? (
+            {data?.data?.request?.single_step ? (
               <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{formatPrice(data?.data?.offer_amount ?? 0)}</span>
             ) : (
                 <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{data?.data?.offer_amount ? formatPrice(data?.data?.offer_amount) : 'وارد نشده'}</span>
