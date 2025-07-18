@@ -406,14 +406,22 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            <span onClick={(e) => copyText((data?.data?.final_amount ?? data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.final_amount ?? data?.data?.total_amount ?? 0)}</span>
+            {data?.data?.single_step ? (
+              <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.final_amount ?? 0)}</span>
+            ) : (
+                <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.final_amount ? formatPrice(data?.data?.final_amount) : 'وارد نشده'}</span>
+            )}
           </div>
 
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی معاونت مساجد:
             </h3>
-            <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{formatPrice(data?.data?.offer_amount ?? 0)}</span>
+            {data?.data?.single_step ? (
+              <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{formatPrice(data?.data?.offer_amount ?? 0)}</span>
+            ) : (
+                <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{data?.data?.offer_amount ? formatPrice(data?.data?.offer_amount) : 'وارد نشده'}</span>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-3 lg:flex-row lg:gap-6 xl:gap-8 2xl:gap-10">

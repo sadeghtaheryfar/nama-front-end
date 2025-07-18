@@ -101,10 +101,12 @@ const CartsDarkhastActive = ({ item }) => {
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
             سقف تعداد نفرات مورد حمایت: {item.max_number_people_supported}
           </li>
-          <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-            <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+          {!item?.single_step && (
+            <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+              <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
               سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(item.support_for_each_person_amount)} ریال می باشد
-          </li>
+            </li>
+          )}
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
             {item.expires_at === null

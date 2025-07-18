@@ -59,16 +59,26 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
           <h3 className="text-base lg:text-lg text-[#3B3B3B]">
             هزینه پیشنهادی معاونت مساجد:
           </h3>
-          <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
-            {formatPrice(data?.data?.report?.offer_amount ?? 0 )}
-          </span>
+          {data?.data?.single_step ? (
+            <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
+              {formatPrice(data?.data?.report?.offer_amount ?? 0)}
+            </span>
+          ) : (
+            <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
+              {data?.data?.report?.offer_amount != null ? formatPrice(data?.data?.report?.offer_amount) : 'وارد نشده'}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
           <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
             هزینه پرداختی توسط آرمان:
           </h3>
-          <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.report?.final_amount ?? 0)}</span>
+          {data?.data?.single_step ? (
+            <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.report?.final_amount ?? 0)}</span>
+          ) : (
+              <span className="text-base lg:text-lg font-medium">{data?.data?.report?.final_amount ? formatPrice(data?.data?.report?.final_amount) : 'وارد نشده'}</span>
+          )}
         </div>
       </div>
 
