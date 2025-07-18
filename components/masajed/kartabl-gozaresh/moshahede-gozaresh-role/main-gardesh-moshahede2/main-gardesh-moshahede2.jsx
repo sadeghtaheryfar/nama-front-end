@@ -196,7 +196,7 @@ const MainGardeshMoshahede2 = ({ id }) => {
                 editable={false}
                 value={time}
                 onChange={setTime}
-                maxDate={new Date()}
+                // maxDate={new Date()}
                 calendar={persian}
                 locale={persian_fa}
                 inputClass="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"

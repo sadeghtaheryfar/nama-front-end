@@ -593,7 +593,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             </label>
             <div className="relative w-full">
               <DatePicker
-                maxDate={new Date()}
+                // maxDate={new Date()}
                 editable={false}
                 value={time}
                 onChange={handleTimeChange}

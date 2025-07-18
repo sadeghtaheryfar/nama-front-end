@@ -18,9 +18,15 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
         <h2 className="text-base font-bold md:text-lg xl:text-2xl flex justify-center items-center gap-[0.5rem]">
           گزارش شماره ({data?.data?.report?.id})
           {data?.data?.request_plan?.single_step && (
-            <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
-              <p>تک مرحله ای</p>
-            </div>
+            <>
+              <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+                <p>تک مرحله ای</p>
+              </div>
+
+              <div className="text-[#c75825] bg-[#c758253e] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+                <p>تسویه شده در درخواست</p>
+              </div>
+            </>
           )}
         </h2>
 
@@ -34,25 +40,21 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
 
       <hr className="h-2 mt-4 mb-4" />
       <div className="grid lg:grid-cols-2 mb-8">
-          {data?.data?.offer_amount !== null && data?.data?.offer_amount !== undefined && data?.data?.offer_amount !== 0 && (
-            <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-              <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-                هزینه پیشنهادی معاونت مساجد:
-              </h3>
-              <span onClick={(e) => copyText(data?.data?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
-                {(data?.data?.offer_amount || data?.data?.offer_amount === 0) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+              هزینه پیشنهادی معاونت مساجد:
+            </h3>
+            <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
+              {formatPrice(data?.data?.report?.offer_amount ?? 0)}
+            </span>
+          </div>
 
-        {(data?.data?.final_amount) && (
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
               هزینه پرداختی توسط آرمان:
             </h3>
-            <span className="text-base lg:text-lg font-medium">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}</span>
+            <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.report?.final_amount ?? 0)}</span>
           </div>
-        )}
       </div>
 
       <div className="w-full bg-white rounded-lg">

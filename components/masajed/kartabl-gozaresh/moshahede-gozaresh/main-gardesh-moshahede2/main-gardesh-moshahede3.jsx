@@ -17,6 +17,17 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-base font-bold md:text-lg xl:text-2xl">
           گزارش شماره ({data?.data?.report?.id})
+          {data?.data?.request_plan?.single_step && (
+            <>
+              <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+                <p>تک مرحله ای</p>
+              </div>
+
+              <div className="text-[#c75825] bg-[#c758253e] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+                <p>تسویه شده در درخواست</p>
+              </div>
+            </>
+          )}
         </h2>
 
         <div className="text-sm font-semibold text-[#D32F2F] bg-[#F8E0E0] min-w-20 h-10 flex items-center justify-center rounded-lg px-3 lg:text-lg xl:text-2xl 2xl:text-[26px] lg:h-12">
@@ -26,25 +37,21 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
 
       <hr className="h-2 mt-4 mb-4" />
       <div className="grid lg:grid-cols-2 mb-8">
-        {data?.data?.report?.offer_amount !== null && data?.data?.report?.offer_amount !== undefined && data?.data?.report?.offer_amount !== 0 && (
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه پیشنهادی معاونت مساجد:
-            </h3>
-            <span onClick={(e) => copyText(data?.data?.report?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
-              {(data?.data?.report?.offer_amount || data?.data?.report?.offer_amount === 0) ? formatPrice(data?.data?.report?.offer_amount) : 'وارد نشده است'}
-            </span>
-          </div>
-        )}
+        <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+          <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+            هزینه پیشنهادی معاونت مساجد:
+          </h3>
+          <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
+            {formatPrice(data?.data?.report?.offer_amount ?? 0)}
+          </span>
+        </div>
 
-        {(data?.data?.report?.final_amount) && (
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              هزینه پرداختی توسط آرمان:
-            </h3>
-            <span className="text-base lg:text-lg font-medium">{(data?.data?.report?.final_amount) ? formatPrice(data?.data?.report?.final_amount) : 'وارد نشده است'}</span>
-          </div>
-        )}
+        <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+          <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+            هزینه پرداختی توسط آرمان:
+          </h3>
+          <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.report?.final_amount ?? 0)}</span>
+        </div>
       </div>''
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
