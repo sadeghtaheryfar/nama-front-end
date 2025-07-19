@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
 import toast from "react-hot-toast";
+import RejectConfirmationModal from './RejectConfirmationModal';
 
 const MainGozareshJariRole = ({data, back_steps}) => {
   function formatNumber(num) {
@@ -328,6 +329,8 @@ const MainGozareshJariRole = ({data, back_steps}) => {
     navigator.clipboard.writeText(e);
     toast.success('قیمت با موفقیت کپی شد .')
   }
+
+  const [showRejectConfirmationModal, setShowRejectConfirmationModal] = useState(false);
   
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
@@ -619,7 +622,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               </button>
 
               <button
-                onClick={() => hnadleForm('reject')}
+                onClick={() => setShowRejectConfirmationModal(true)} // Modified
                 className="px-[2rem] h-12 text-white bg-[#D32F2F] text-base font-medium rounded-[10px] hover:border border-[#D32F2F] hover:text-[#D32F2F] hover:bg-white md:max-w-[214px]"
               >
                 {loading ? 'صبر کنید ...' : 'رد کلی'}
@@ -677,6 +680,17 @@ const MainGozareshJariRole = ({data, back_steps}) => {
         </div>
       )}
 
+
+      <RejectConfirmationModal
+        show={showRejectConfirmationModal}
+        onClose={() => setShowRejectConfirmationModal(false)}
+        onConfirm={() => {
+          hnadleForm('reject');
+          setShowRejectConfirmationModal(false); // Close modal after confirming
+        }}
+        loading={loading}
+      />
+      
       <Modal showModal={showModal} setShowModal={setShowModal} hnadleForm={hnadleForm} selectedReason={selectedReason} setSelectedReason={setSelectedReason} backSteps={back_steps} />
     </div>
   );

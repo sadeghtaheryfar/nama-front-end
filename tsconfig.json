@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "components/masajed/kartabl-darkhast/jari/main-gardesh-jari-role/RejectConfirmationModal.jsx"  ],
   "exclude": [
     "node_modules"
   ]
