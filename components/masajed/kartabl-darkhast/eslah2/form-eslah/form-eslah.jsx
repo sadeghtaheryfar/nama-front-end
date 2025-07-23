@@ -663,6 +663,8 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
     return `${formattedNumber} ریال`;
   }
 
+  console.log('>>>>>>>>>>>', initialRequestData)
+
   return (
     <div className="w-full bg-white rounded-lg">
       <Toaster /> {/* React Hot Toast Toaster component */}
@@ -775,220 +777,226 @@ const FormEslah = ({ data: initialRequestData }) => { // Renamed data to initial
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-        <div className="mb-4">
-          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل پیوست نامه {typeField || 'امام جماعت'}
-            {isImamLetterRequired && <RequiredStar />}
-          </h3>
-          <label
-            htmlFor="file-upload_imam"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
-              "imamLetter"
-            )}`}
-          >
-            <div className="flex items-center justify-between pt-5 pb-6">
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-            </div>
-            {/* Show different image based on whether any files are selected */}
-            {imamLetters.length > 0 ? (
-              <Image
-                className="w-7"
-                alt="تأیید آپلود"
-                width={0}
-                height={0}
-                src={"/Images/masajed/upload.svg"}
+        {initialRequestData?.request_plan?.show_letter && (
+          <div className="mb-4">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+              آپلود فایل پیوست نامه {typeField || 'امام جماعت'}
+              {isImamLetterRequired && <RequiredStar />}
+            </h3>
+            <label
+              htmlFor="file-upload_imam"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
+                "imamLetter"
+              )}`}
+            >
+              <div className="flex items-center justify-between pt-5 pb-6">
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+              </div>
+              {/* Show different image based on whether any files are selected */}
+              {imamLetters.length > 0 ? (
+                <Image
+                  className="w-7"
+                  alt="تأیید آپلود"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/upload.svg"}
+                />
+              ) : (
+                <Image
+                  className="w-7"
+                  alt="آپلود فایل"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/darkhast/sabt/Group.svg"}
+                />
+              )}
+              <input
+                id="file-upload_imam"
+                name="imamLetter"
+                type="file"
+                multiple // Allow multiple file selection
+                className="hidden"
+                onChange={(event) => handleFileChange(event, setImamLetters, "imamLetter")}
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
               />
-            ) : (
-              <Image
-                className="w-7"
-                alt="آپلود فایل"
-                width={0}
-                height={0}
-                src={"/Images/masajed/darkhast/sabt/Group.svg"}
-              />
+            </label>
+            {touched.imamLetter && errors.imamLetter && (
+              <div className="text-red-500 text-sm mt-1">{errors.imamLetter}</div>
             )}
-            <input
-              id="file-upload_imam"
-              name="imamLetter"
-              type="file"
-              multiple // Allow multiple file selection
-              className="hidden"
-              onChange={(event) => handleFileChange(event, setImamLetters, "imamLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
-            />
-          </label>
-          {touched.imamLetter && errors.imamLetter && (
-            <div className="text-red-500 text-sm mt-1">{errors.imamLetter}</div>
-          )}
-          {imamLetters.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {imamLetters.map((file) => (
-                <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                  <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                    <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => removeFile(setImamLetters, file.id, "imamLetter", file.isExisting)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
-                    title="حذف فایل"
-                    disabled={loading} // Disable during API call
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            {imamLetters.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {imamLetters.map((file) => (
+                  <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
+                    <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                      <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(setImamLetters, file.id, "imamLetter", file.isExisting)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
+                      title="حذف فایل"
+                      disabled={loading} // Disable during API call
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-        <div className="mb-4">
-          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود فایل نامه رابط منطقه
-            {isAreaLetterRequired && <RequiredStar />}
-          </h3>
-          <label
-            htmlFor="file-upload_connection"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
-              "connectionLetter"
-            )}`}
-          >
-            <div className="flex items-center justify-between pt-5 pb-6">
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-            </div>
-            {connectionLetters.length > 0 ? (
-              <Image
-                className="w-7"
-                alt="تأیید آپلود"
-                width={0}
-                height={0}
-                src={"/Images/masajed/upload.svg"}
+        {initialRequestData?.request_plan?.show_area_interface && (
+          <div className="mb-4">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+              آپلود فایل نامه رابط منطقه
+              {isAreaLetterRequired && <RequiredStar />}
+            </h3>
+            <label
+              htmlFor="file-upload_connection"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
+                "connectionLetter"
+              )}`}
+            >
+              <div className="flex items-center justify-between pt-5 pb-6">
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+              </div>
+              {connectionLetters.length > 0 ? (
+                <Image
+                  className="w-7"
+                  alt="تأیید آپلود"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/upload.svg"}
+                />
+              ) : (
+                <Image
+                  className="w-7"
+                  alt="آپلود فایل"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/darkhast/sabt/Group.svg"}
+                />
+              )}
+              <input
+                id="file-upload_connection"
+                name="connectionLetter"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={(event) => handleFileChange(event, setConnectionLetters, "connectionLetter")}
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
               />
-            ) : (
-              <Image
-                className="w-7"
-                alt="آپلود فایل"
-                width={0}
-                height={0}
-                src={"/Images/masajed/darkhast/sabt/Group.svg"}
-              />
+            </label>
+            {touched.connectionLetter && errors.connectionLetter && (
+              <div className="text-red-500 text-sm mt-1">
+                {errors.connectionLetter}
+              </div>
             )}
-            <input
-              id="file-upload_connection"
-              name="connectionLetter"
-              type="file"
-              multiple
-              className="hidden"
-              onChange={(event) => handleFileChange(event, setConnectionLetters, "connectionLetter")}
-              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
-            />
-          </label>
-          {touched.connectionLetter && errors.connectionLetter && (
-            <div className="text-red-500 text-sm mt-1">
-              {errors.connectionLetter}
-            </div>
-          )}
-          {connectionLetters.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {connectionLetters.map((file) => (
-                <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                  <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                    <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => removeFile(setConnectionLetters, file.id, "connectionLetter", file.isExisting)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
-                    title="حذف فایل"
-                    disabled={loading}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            {connectionLetters.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {connectionLetters.map((file) => (
+                  <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
+                    <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                      <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(setConnectionLetters, file.id, "connectionLetter", file.isExisting)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
+                      title="حذف فایل"
+                      disabled={loading}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* New Field: Upload Additional Attachments */}
-        <div className="mb-4">
-          <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-            آپلود پیوست‌های بیشتر
-            
-            {isImagesRequired && <RequiredStar />}
-          </h3>
-          <label
-            htmlFor="file-upload_additional"
-            className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
-              "additionalAttachments"
-            )}`}
-          >
-            <div className="flex items-center justify-between pt-5 pb-6">
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-            </div>
-            {additionalAttachments.length > 0 ? (
-              <Image
-                className="w-7"
-                alt="تأیید آپلود"
-                width={0}
-                height={0}
-                src={"/Images/masajed/upload.svg"}
+        {initialRequestData?.request_plan?.show_images && (
+          <div className="mb-4">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+              آپلود پیوست‌های بیشتر
+              
+              {isImagesRequired && <RequiredStar />}
+            </h3>
+            <label
+              htmlFor="file-upload_additional"
+              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${getBorderStyle(
+                "additionalAttachments"
+              )}`}
+            >
+              <div className="flex items-center justify-between pt-5 pb-6">
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+              </div>
+              {additionalAttachments.length > 0 ? (
+                <Image
+                  className="w-7"
+                  alt="تأیید آپلود"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/upload.svg"}
+                />
+              ) : (
+                <Image
+                  className="w-7"
+                  alt="آپلود فایل"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/darkhast/sabt/Group.svg"}
+                />
+              )}
+              <input
+                id="file-upload_additional"
+                name="additionalAttachments"
+                type="file"
+                multiple // Allow multiple file selection
+                className="hidden"
+                onChange={(event) => handleFileChange(event, setAdditionalAttachments, "additionalAttachments")}
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
               />
-            ) : (
-              <Image
-                className="w-7"
-                alt="آپلود فایل"
-                width={0}
-                height={0}
-                src={"/Images/masajed/darkhast/sabt/Group.svg"}
-              />
+            </label>
+            {touched.additionalAttachments && errors.additionalAttachments && (
+              <div className="text-red-500 text-sm mt-1">{errors.additionalAttachments}</div>
             )}
-            <input
-              id="file-upload_additional"
-              name="additionalAttachments"
-              type="file"
-              multiple // Allow multiple file selection
-              className="hidden"
-              onChange={(event) => handleFileChange(event, setAdditionalAttachments, "additionalAttachments")}
-              accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
-            />
-          </label>
-          {touched.additionalAttachments && errors.additionalAttachments && (
-            <div className="text-red-500 text-sm mt-1">{errors.additionalAttachments}</div>
-          )}
-          {additionalAttachments.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {additionalAttachments.map((file) => (
-                <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                  <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                    <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => removeFile(setAdditionalAttachments, file.id, "additionalAttachments", file.isExisting)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
-                    title="حذف فایل"
-                    disabled={loading}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            {additionalAttachments.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {additionalAttachments.map((file) => (
+                  <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
+                    <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                      <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(setAdditionalAttachments, file.id, "additionalAttachments", file.isExisting)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
+                      title="حذف فایل"
+                      disabled={loading}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex items-start mb-7 mt-7">

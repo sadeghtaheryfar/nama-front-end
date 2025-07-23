@@ -31,9 +31,10 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
   const [cost, setCost] = useState("");
   const [imamLetter, setImamLetter] = useState(null);
   const [connectionLetter, setConntectionLetter] = useState(null);
-  const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [moreImages, setMoreImages] = useState([]); // New state for additional images
+  const [images, setImages] = useState([]); // For the main images (minimum 3)
+  const [videos, setVideos] = useState([]); // For the main report video (single video)
+  const [otherVideos, setOtherVideos] = useState([]); // For additional videos (up to 10)
+  const [moreImages, setMoreImages] = useState([]); // For additional images (up to 10)
   const [statusSend, setStatusSend] = useState("");
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
@@ -50,7 +51,8 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     des: "",
     images: "",
     videos: "",
-    moreImages: "", // Added error state for additional images
+    otherVideos: "",
+    moreImages: "",
   });
 
   // Track if fields have been touched
@@ -61,7 +63,8 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     des: false,
     images: false,
     videos: false,
-    moreImages: false, // Added touched state for additional images
+    otherVideos: false,
+    moreImages: false,
   });
 
   const pathname = usePathname();
@@ -70,12 +73,11 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
 
   useEffect(() => {
     if (data?.data?.report) {
-      setStudent(data?.data?.report?.students || ""); // Added || "" for safety
-      setDes(data?.data?.report?.body || ""); // Added || "" for safety
-      setCost(data?.data?.report?.amount || ""); // Added || "" for safety
+      setStudent(data?.data?.report?.students || "");
+      setDes(data?.data?.report?.body || "");
+      setCost(data?.data?.report?.amount || "");
 
       if (data?.data?.report?.date) {
-        // Convert Gregorian date from API to Persian for DatePicker
         const gregorianDate = new Date(data.data.report.date);
         const persianDate = new DateObject({
           date: gregorianDate,
@@ -85,23 +87,21 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
         setTime(formattedDate);
       }
 
-      setCheckBox(data?.data?.report?.confirm || false); // Initialize checkbox status
+      setCheckBox(data?.data?.report?.confirm || false);
     }
 
-    // Cleanup function for Object URLs (only for newly selected files)
     return () => {
-      images.forEach(img => URL.revokeObjectURL(img.preview)); // Assuming images are {file, preview} now
-      videos.forEach(v => URL.revokeObjectURL(v.preview)); // Clean up for videos
-      moreImages.forEach(img => URL.revokeObjectURL(img.preview)); // Added cleanup for moreImages
+      images.forEach(img => URL.revokeObjectURL(img.preview));
+      videos.forEach(v => URL.revokeObjectURL(v.preview));
+      otherVideos.forEach(v => URL.revokeObjectURL(v.preview));
+      moreImages.forEach(img => URL.revokeObjectURL(img.preview));
     };
-  }, [data, images, videos, moreImages]); // Added moreImages to dependencies
+  }, [data, images, videos, otherVideos, moreImages]);
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
     setImages((prev) => [...prev, ...files]);
     setTouched(prev => ({ ...prev, images: true }));
-
-    // Validate images
     validateField("images", [...images, ...files]);
   };
 
@@ -111,7 +111,6 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     validateField("images", updatedImages);
   };
 
-  // New handler for moreImages
   const handleMoreImageUpload = (event) => {
     const files = Array.from(event.target.files);
     const newValidFiles = [];
@@ -137,10 +136,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     });
 
     setTouched(prev => ({ ...prev, moreImages: true }));
-    const error = validateField("moreImages", [...moreImages, ...newValidFiles]);
-    console.log(error);
-    
-    setErrors(prev => ({ ...prev, moreImages: error }));
+    validateField("moreImages", [...moreImages, ...newValidFiles]);
 
     if (hasInvalidType) {
       toast.error("فقط فایل‌های تصویری مجاز هستند.");
@@ -148,7 +144,6 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     event.target.value = '';
   };
 
-  // New remover for moreImages
   const removeMoreImage = (idToRemove) => {
     setMoreImages(prev => {
       const imageToRemove = prev.find(img => img.id === idToRemove);
@@ -156,15 +151,14 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
         URL.revokeObjectURL(imageToRemove.preview);
       }
       const updatedImages = prev.filter(img => img.id !== idToRemove);
-
       if (touched.moreImages) {
-        const error = validateField("moreImages", updatedImages);
-        setErrors(prevErrors => ({ ...prevErrors, moreImages: error }));
+        validateField("moreImages", updatedImages);
       }
       return updatedImages;
     });
   };
 
+  // Handler for the main report video
   const handleVideoUpload = (event) => {
     const files = Array.from(event.target.files);
     const newValidVideos = [];
@@ -180,39 +174,84 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
 
     setVideos(prev => {
         const combinedVideos = [...prev, ...newValidVideos];
-        if (combinedVideos.length > 10) {
-            toast.error("حداکثر ۱۰ ویدئو مجاز است.");
-            newValidVideos.forEach(v => URL.revokeObjectURL(v.preview)); // Clean up excess
-            return prev; // Return previous state if over limit
+        if (combinedVideos.length > 1) {
+            toast.error("فقط یک ویدئو اصلی مجاز است.");
+            newValidVideos.forEach(v => URL.revokeObjectURL(v.preview));
+            return prev;
         }
         return combinedVideos;
     });
 
     setTouched(prev => ({ ...prev, videos: true }));
-    const error = validateField("videos", [...videos, ...newValidVideos]); // Validate against potential new state
-    
-    setErrors(prev => ({ ...prev, videos: error }));
+    validateField("videos", [...videos, ...newValidVideos]);
 
     if (hasInvalidType) {
         toast.error("فقط فایل‌های ویدئویی مجاز هستند.");
     }
-    event.target.value = ''; // Clear input for re-selection
+    event.target.value = '';
   };
 
-  // Function to remove a video from the list (only new files)
-  const removeVideo = (idToRemove) => { // MODIFIED: Removes by unique ID
+  // Function to remove the main video
+  const removeVideo = (idToRemove) => {
     setVideos(prev => {
         const videoToRemove = prev.find(v => v.id === idToRemove);
         if (videoToRemove) {
-            URL.revokeObjectURL(videoToRemove.preview); // Revoke URL
+            URL.revokeObjectURL(videoToRemove.preview);
         }
         const updatedVideos = prev.filter(v => v.id !== idToRemove);
-
         if (touched.videos) {
-            const error = validateField("videos", updatedVideos);
-            setErrors(prevErrors => ({ ...prevErrors, videos: error }));
+            validateField("videos", updatedVideos);
         }
-        toast.success("ویدئو با موفقیت حذف شد.");
+        toast.success("ویدئو اصلی با موفقیت حذف شد.");
+        return updatedVideos;
+    });
+  };
+
+  // Handler for other videos
+  const handleOtherVideoUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newValidOtherVideos = [];
+    let hasInvalidType = false;
+
+    files.forEach(file => {
+      if (file.type.startsWith("video/")) {
+        newValidOtherVideos.push({ id: Date.now() + Math.random(), file, preview: URL.createObjectURL(file) });
+      } else {
+        hasInvalidType = true;
+      }
+    });
+
+    setOtherVideos(prev => {
+        const combinedVideos = [...prev, ...newValidOtherVideos];
+        if (combinedVideos.length > 10) {
+            toast.error("حداکثر ۱۰ ویدئو اضافی مجاز است.");
+            newValidOtherVideos.forEach(v => URL.revokeObjectURL(v.preview));
+            return prev;
+        }
+        return combinedVideos;
+    });
+
+    setTouched(prev => ({ ...prev, otherVideos: true }));
+    validateField("otherVideos", [...otherVideos, ...newValidOtherVideos]);
+
+    if (hasInvalidType) {
+        toast.error("فقط فایل‌های ویدئویی مجاز هستند.");
+    }
+    event.target.value = '';
+  };
+
+  // Function to remove an other video
+  const removeOtherVideo = (idToRemove) => {
+    setOtherVideos(prev => {
+        const videoToRemove = prev.find(v => v.id === idToRemove);
+        if (videoToRemove) {
+            URL.revokeObjectURL(videoToRemove.preview);
+        }
+        const updatedVideos = prev.filter(v => v.id !== idToRemove);
+        if (touched.otherVideos) {
+            validateField("otherVideos", updatedVideos);
+        }
+        toast.success("ویدئو اضافی با موفقیت حذف شد.");
         return updatedVideos;
     });
   };
@@ -225,6 +264,45 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       englishNumbers[persianNumbers.indexOf(char)]
     );
   };
+
+  // Helper function to get field class based on validation state
+  const getFieldClass = (field) => {
+    const baseClass = "block w-full p-4 border rounded-lg";
+
+    if (!touched[field]) {
+      return `${baseClass} border-[#DFDFDF]`; // Default grey if not touched
+    }
+
+    if (errors[field]) {
+      return `${baseClass} border-red-500 bg-red-50`; // Red if touched and has error
+    }
+
+    return `${baseClass} border-green-500 bg-green-50`; // Green if touched and no error
+  };
+
+  // Handle field changes for input fields (not file uploads)
+  const handleFieldChange = (field, value) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field, value);
+
+    switch (field) {
+      case "student":
+        setStudent(value);
+        break;
+      case "time":
+        setTime(value);
+        break;
+      case "des":
+        setDes(value);
+        break;
+      case "cost":
+        setCost(value);
+        break;
+      default:
+        break; // Added default to handle all cases
+    }
+  };
+
 
   // Validate individual fields
   const validateField = (field, value) => {
@@ -253,67 +331,68 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
         }
         break;
       case "images":
-        if (!value || value.length < 3) {
+        // اگر فیلد اجباری است و کاربر هیچ فایلی انتخاب نکرده باشد
+        if (data?.data?.request_plan?.report_images_required && value.length === 0) {
           errorMessage = "حداقل 3 تصویر الزامی است";
-        } else if (value.length > 10) {
+        }
+        // اگر تعداد تصاویر کمتر از 3 باشد (صرف نظر از اجباری بودن کلی فیلد)
+        else if (value.length < 3) {
+            errorMessage = "حداقل 3 تصویر الزامی است";
+        }
+        // اگر تعداد تصاویر بیشتر از 10 باشد
+        else if (value.length > 10) {
           errorMessage = "حداکثر 10 تصویر مجاز است";
         }
         break;
+
       case "videos":
-        if (value.length > 10) errorMessage = "حداکثر ۱۰ ویدئو مجاز است"; // Changed 'error' to 'errorMessage'
-        // Check file types only for newly added files
-        if (value.some(file => !file.file.type.startsWith("video/"))) errorMessage = "فقط فایل‌های ویدئویی مجاز هستند"; // Changed 'error' to 'errorMessage'
+        // اگر فیلد اجباری است و کاربر هیچ فایلی انتخاب نکرده باشد
+        if (data?.data?.request_plan?.report_video_required && value.length === 0) {
+            errorMessage = "آپلود حداقل یک ویدئو الزامی است.";
+        }
+        // اگر تعداد ویدئوهای اصلی بیشتر از 1 باشد (فقط یک ویدئو اصلی مجاز است)
+        else if (value.length > 1) {
+            errorMessage = "فقط یک ویدئو اصلی مجاز است.";
+        }
+        // اگر هر یک از فایل‌های آپلود شده از نوع ویدئو نباشند
+        else if (value.some(fileObj => fileObj.file && !fileObj.file.type.startsWith("video/"))) {
+            errorMessage = "فقط فایل‌های ویدئویی مجاز هستند";
+        }
         break;
-      case "moreImages": // Added validation for moreImages
-        if (value.length > 10) errorMessage = "حداکثر ۱۰ تصویر اضافی مجاز است";
+
+      case "otherVideos":
+        // اگر فیلد اجباری است و کاربر هیچ فایلی انتخاب نکرده باشد
+        if (data?.data?.request_plan?.report_other_video_required && value.length === 0) {
+            errorMessage = "آپلود حداقل یک ویدئو اضافی الزامی است.";
+        }
+        // اگر تعداد ویدئوهای اضافی بیشتر از 10 باشد
+        else if (value.length > 10) {
+            errorMessage = "حداکثر ۱۰ ویدئو اضافی مجاز است";
+        }
+        // اگر هر یک از فایل‌های آپلود شده از نوع ویدئو نباشند
+        else if (value.some(fileObj => fileObj.file && !fileObj.file.type.startsWith("video/"))) {
+            errorMessage = "فقط فایل‌های ویدئویی مجاز هستند";
+        }
+        break;
+        
+      case "moreImages":
+        if (data?.data?.request_plan?.report_images2_required && value.length === 0) {
+            errorMessage = "حداقل یک تصویر اضافی الزامی است.";
+        } else if (value.length > 10) {
+            errorMessage = "حداکثر ۱۰ تصویر اضافی مجاز است";
+        }
         break;
       default:
         break;
     }
 
     setErrors(prev => ({ ...prev, [field]: errorMessage }));
+    // console.log(`Validating field: ${field}, Value:`, value, `Error: ${errorMessage}, Is Valid: ${!errorMessage}`); // For debugging
     return !errorMessage;
-  };
-
-  // Handle field changes
-  const handleFieldChange = (field, value) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    validateField(field, value);
-
-    switch (field) {
-      case "student":
-        setStudent(value);
-        break;
-      case "time":
-        setTime(value);
-        break;
-      case "des":
-        setDes(value);
-        break;
-      case "cost":
-        setCost(value);
-        break;
-    }
-  };
-
-  // Get form field class based on validation state
-  const getFieldClass = (field) => {
-    const baseClass = "block w-full p-4 border rounded-lg";
-
-    if (!touched[field]) {
-      return `${baseClass} border-[#DFDFDF]`;
-    }
-
-    if (errors[field]) {
-      return `${baseClass} border-red-500 bg-red-50`;
-    }
-
-    return `${baseClass} border-green-500 bg-green-50`;
   };
 
   const convertToPersianWords = (num) => {
     if (!num) return "";
-
     const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
     const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
     const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
@@ -321,10 +400,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     const scale = ["", "هزار", "میلیون", "میلیارد", "تریلیون"];
 
     if (num === 0) return "صفر";
-
     let result = "";
-    let scaleIndex = 0;
-
     const numStr = num.toString();
     const groups = [];
     for (let i = numStr.length; i > 0; i -= 3) {
@@ -337,7 +413,6 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       const group = parseInt(groups[i]);
 
       if (group === 0) continue;
-
       let groupStr = "";
       const hundreds = Math.floor(group / 100);
       const tens = Math.floor((group % 100) / 10);
@@ -346,7 +421,6 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       if (hundreds > 0) {
         groupStr += sadgan[hundreds] + " ";
       }
-
       if (tens === 1) {
         groupStr += dah_ta_bist[ones] + " ";
       } else {
@@ -357,37 +431,24 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
           groupStr += yekan[ones] + " ";
         }
       }
-
       if (groupStr) {
         result += groupStr + scale[groupIndex] + " ";
       }
     }
-
     return result.trim() + " ریال";
   };
 
   function formatToCurrency(amount) {
     const number = Number(amount);
-
     if (isNaN(number)) {
       return "مقدار وارد شده معتبر نیست";
     }
-
     const formattedNumber = number.toLocaleString("fa-IR");
-
     return `${formattedNumber} ریال`;
   }
 
   const validateForm = () => {
-    const validStudent = validateField("student", student);
-    const validCost = validateField("cost", cost);
-    const validTime = validateField("time", time);
-    const validDes = validateField("des", des);
-    const validImages = validateField("images", images);
-    const validVideos = validateField("videos", videos); // Added validation for videos
-    const validMoreImages = validateField("moreImages", moreImages); // Added validation for moreImages
-
-    // Mark all fields as touched
+    // Ensure all fields are marked as touched before final validation
     setTouched({
       student: true,
       time: true,
@@ -395,11 +456,24 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       des: true,
       images: true,
       videos: true,
-      moreImages: true, // Added touched for moreImages
+      otherVideos: true,
+      moreImages: true,
     });
 
-    return validStudent && validTime && validDes && validImages && validCost && validVideos && validMoreImages; // All validations must pass
+    // Run validations and collect results
+    const validStudent = validateField("student", student);
+    const validCost = validateField("cost", cost);
+    const validTime = validateField("time", time);
+    const validDes = validateField("des", des);
+    const validImages = validateField("images", images);
+    const validVideos = validateField("videos", videos);
+    const validOtherVideos = validateField("otherVideos", otherVideos);
+    const validMoreImages = validateField("moreImages", moreImages);
+
+    // Return true only if all validations pass
+    return validStudent && validTime && validDes && validImages && validCost && validVideos && validOtherVideos && validMoreImages;
   };
+
 
   const hnadleForm = async () => {
     setMessage({ text: "", type: "" });
@@ -411,6 +485,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       setStatusCheckBox("");
     }
 
+    // Call validateForm to ensure all fields are validated and touched state is updated
     if (!validateForm()) {
       setStatusSend("لطفا خطاهای فرم را برطرف کنید.");
       return;
@@ -428,13 +503,17 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
     images.forEach((img, index) => {
       formDataToSend.append(`images[${index + 1}]`, img);
     });
+
     if (videos.length > 0) {
-      formDataToSend.append("video", videos[0].file); // First new video
-      for (let i = 1; i < videos.length; i++) {
-        formDataToSend.append(`otherVideos[${i - 1}]`, videos[i].file); // Subsequent new videos
-      }
+      formDataToSend.append("report_video", videos[0].file);
     }
-    // Append additional images to formDataToSend
+
+    if (otherVideos.length > 0) {
+      otherVideos.forEach((videoObj, index) => {
+        formDataToSend.append(`otherVideos[${index}]`, videoObj.file);
+      });
+    }
+    
     moreImages.forEach((imgObj, index) => {
       formDataToSend.append(`images2[${index}]`, imgObj.file);
     });
@@ -474,10 +553,17 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
       if (error.response?.data?.error) {
         setStatusSend(error.response.data.error);
       }
-      // Added error handling for moreImages from backend errors
       if (error.response?.data?.errors?.images_more) {
         setErrors(prevErrors => ({ ...prevErrors, moreImages: error.response.data.errors.images_more.join(', ') }));
       }
+      // Added specific error handling for videos and otherVideos if needed from backend
+      if (error.response?.data?.errors?.report_video) {
+        setErrors(prevErrors => ({ ...prevErrors, videos: error.response.data.errors.report_video.join(', ') }));
+      }
+      if (error.response?.data?.errors?.otherVideos) {
+        setErrors(prevErrors => ({ ...prevErrors, otherVideos: error.response.data.errors.otherVideos.join(', ') }));
+      }
+
     } finally {
       setLoading(false);
       setIsUploading(false);
@@ -487,6 +573,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
 
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
+      <Toaster /> {/* Ensure Toaster is included for toast messages */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-base font-bold md:text-lg xl:text-2xl">
           گزارش شماره ({data?.data?.report?.id})
@@ -537,7 +624,7 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
               name="cost"
               value={cost}
               onChange={(e) => handleFieldChange("cost", e.target.value)}
-              onBlur={() => validateField("cost", student)}
+              onBlur={() => validateField("cost", cost)}
               min={1000}
               max={10000000000000}
               placeholder="از 1،000 تا 10،000،000،000،000"
@@ -608,150 +695,203 @@ const MainGardeshMoshahede4 = ({ id, data }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-          <div className="mb-4">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-              آپلود فایل تصویری حداقل ۳ عدد <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
-            </h3>
-            <label
-              htmlFor="file-upload_1"
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
-                touched.images && errors.images
-                  ? "border-red-500 bg-red-50"
-                  : images.length >= 3
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-300"
-              }`}
-            >
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-              <Image
-                className="w-7"
-                alt="#"
-                width={0}
-                height={0}
-                src={images.length > 0 ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
-              />
-              <input
-                id="file-upload_1"
-                type="file"
-                multiple
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </label>
-            {touched.images && errors.images && (
-              <p className="mt-1 text-sm text-red-500">{errors.images}</p>
-            )}
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {images.map((image, index) => (
-                <div key={index} className="relative w-24 h-24">
-                  <img
-                    src={URL.createObjectURL(image)}
-                    alt=""
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                    onClick={() => removeImage(index)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* New Field: Upload Additional Attachments */}
-          <div className="mb-4">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-              آپلود فایل تصویری بیشتر (اختیاری) <span className="text-sm text-gray-500">(حداکثر ۱۰ عدد)</span>
-            </h3>
-            <label
-              htmlFor="file-upload_more_images"
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
-                touched.moreImages
-                  ? errors.moreImages
-                    ? moreImages.length > 0 && !errors.moreImages ? "border-green-500 bg-green-50" : "border-gray-300"
-                    : "border-green-500 bg-green-50"
-                  : "border-gray-300"
-              }`}
-            >
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-              {moreImages.length > 0 && !errors.moreImages ? (
-                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
-              ) : (
-                <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+          {data?.data?.request_plan?.show_report_images && (
+            <div className="mb-4">
+              <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+                آپلود فایل تصویری حداقل ۳ عدد {data?.data?.request_plan?.report_images_required && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
+              </h3>
+              <label
+                htmlFor="file-upload_1"
+                className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
+                  touched.images && errors.images
+                    ? "border-red-500 bg-red-50"
+                    : images.length >= 3 && !errors.images
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-300"
+                }`}
+              >
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+                <Image
+                  className="w-7"
+                  alt="#"
+                  width={0}
+                  height={0}
+                  src={images.length > 0 ? "/Images/masajed/upload.svg" : "/Images/masajed/darkhast/sabt/Group.svg"}
+                />
+                <input
+                  id="file-upload_1"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                />
+              </label>
+              {touched.images && errors.images && (
+                <p className="mt-1 text-sm text-red-500">{errors.images}</p>
               )}
-              <input id="file-upload_more_images" type="file" multiple className="hidden" onChange={handleMoreImageUpload} accept="image/*" />
-            </label>
-            {errors.moreImages && touched.moreImages && (
-              <p className="mt-1 text-xs text-red-500">{errors.moreImages}</p>
-            )}
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {moreImages.map((image, index) => (
-                <div key={image.id || index} className="relative w-24 h-24">
-                  <img src={image.preview} alt="" className="w-full h-full object-cover rounded-lg" />
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                    onClick={() => removeMoreImage(image.id || index)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {images.map((image, index) => (
+                  <div key={index} className="relative w-24 h-24">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt=""
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => removeImage(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="mb-4">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
-              آپلود فایل ویدئویی حداقل ۳۰ ثانیه (اختیاری)
-            </h3>
-            <label
-              htmlFor="file-upload_videos"
-              // MODIFIED: Changed class logic to prevent red border on initial load for optional field
-              className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
-                touched.videos && errors.videos // Only if touched AND error exists, it's red
-                  ? "border-red-500 bg-red-50"
-                  : (touched.videos && videos.length > 0 && !errors.videos) // If touched, has files, and no errors, it's green
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-300" // Default grey otherwise (including untouched and no error)
-              }`}
-            >
-              <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
-                برای آپلود فایل کلیک کنید
-              </span>
-              {videos.length > 0 ? (
-                <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
-              ) : (
-                <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+          {data?.data?.request_plan?.show_report_images2 && (
+            <div className="mb-4">
+              <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+                آپلود فایل تصویری بیشتر (اختیاری) <span className="text-sm text-gray-500">(حداکثر ۱۰ عدد)</span>
+                {data?.data?.request_plan?.report_images2_required && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
+              </h3>
+              <label
+                htmlFor="file-upload_more_images"
+                className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
+                  touched.moreImages && errors.moreImages
+                    ? "border-red-500 bg-red-50"
+                    : moreImages.length > 0 && !errors.moreImages
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-300"
+                }`}
+              >
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+                {moreImages.length > 0 ? (
+                  <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
+                ) : (
+                  <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+                )}
+                <input id="file-upload_more_images" type="file" multiple className="hidden" onChange={handleMoreImageUpload} accept="image/*" />
+              </label>
+              {errors.moreImages && touched.moreImages && (
+                <p className="mt-1 text-xs text-red-500">{errors.moreImages}</p>
               )}
-              <input id="file-upload_videos" type="file" multiple className="hidden" onChange={handleVideoUpload} accept="video/*" />
-            </label>
-            <small className="text-yellow-600">در صورت  گویا نبودن تصاویر فایل ویدئو بارگزاری شود</small>
-            {touched.videos && errors.videos && ( // MODIFIED: Ensure error message only shows if touched AND error
-              <p className="mt-1 text-xs text-red-500">{errors.videos}</p>
-            )}
-            {/* ... rest of the video display and remove buttons ... */}
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {videos.map((videoFile, index) => (
-                <div key={videoFile.id} className="relative w-full aspect-video">
-                  <video controls className="w-full h-full object-cover rounded-lg">
-                    <source src={videoFile.preview} type={videoFile.file?.type || 'video/mp4'} />
-                    Your browser does not support the video tag.
-                  </video>
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg"
-                    onClick={() => removeVideo(videoFile.id)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {moreImages.map((image, index) => (
+                  <div key={image.id || index} className="relative w-24 h-24">
+                    <img src={image.preview} alt="" className="w-full h-full object-cover rounded-lg" />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => removeMoreImage(image.id || index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {data?.data?.request_plan?.show_report_video && (
+            <div className="mb-4">
+              <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+                آپلود فایل ویدئویی (اصلی) {data?.data?.request_plan?.report_video_required && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
+              </h3>
+              <label
+                htmlFor="file-upload_videos"
+                className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
+                  touched.videos && errors.videos // اگر تاچ شده و خطا دارد -> قرمز
+                    ? "border-red-500 bg-red-50"
+                    : videos.length > 0 && !errors.videos // اگر فایل دارد و خطا ندارد -> سبز
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-300" // در بقیه حالات (مثل لمس نشده، یا لمس شده و خالی بدون خطا) -> خاکستری
+                }`}
+              >
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+                {videos.length > 0 ? (
+                  <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
+                ) : (
+                  <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+                )}
+                <input id="file-upload_videos" type="file" /* Removed 'multiple' here as only one main video is allowed */ className="hidden" onChange={handleVideoUpload} accept="video/*" />
+              </label>
+              <small className="text-yellow-600">در صورت گویا نبودن تصاویر، فایل ویدئو بارگذاری شود. (حداکثر ۱ ویدئو)</small>
+              {touched.videos && errors.videos && (
+                <p className="mt-1 text-xs text-red-500">{errors.videos}</p>
+              )}
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {videos.map((videoFile, index) => (
+                  <div key={videoFile.id} className="relative w-full aspect-video">
+                    <video controls className="w-full h-full object-cover rounded-lg">
+                      <source src={videoFile.preview} type={videoFile.file?.type || 'video/mp4'} />
+                      Your browser does not support the video tag.
+                    </video>
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg"
+                      onClick={() => removeVideo(videoFile.id)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {data?.data?.request_plan?.show_report_other_video && (
+            <div className="mb-4">
+              <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
+                آپلود فایل ویدئویی بیشتر <span className="text-sm text-gray-500">(حداکثر ۱۰ عدد)</span>
+                {data?.data?.request_plan?.report_other_video_required && <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>}
+              </h3>
+              <label
+                htmlFor="file-upload_other_videos"
+                className={`flex items-center justify-between w-full h-14 p-4 border rounded-lg cursor-pointer gap-[0.3rem] ${
+                  touched.otherVideos && errors.otherVideos
+                    ? "border-red-500 bg-red-50"
+                    : otherVideos.length > 0 && !errors.otherVideos
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-300"
+                }`}
+              >
+                <span className="text-sm text-[#959595] bg-[#959595]/15 pr-4 pl-6 py-1 rounded-lg">
+                  برای آپلود فایل کلیک کنید
+                </span>
+                {otherVideos.length > 0 ? (
+                  <Image className="w-7" alt="تایید آپلود" width={0} height={0} src="/Images/masajed/upload.svg" />
+                ) : (
+                  <Image className="w-7" alt="آپلود فایل" width={0} height={0} src="/Images/masajed/darkhast/sabt/Group.svg" />
+                )}
+                <input id="file-upload_other_videos" type="file" multiple className="hidden" onChange={handleOtherVideoUpload} accept="video/*" />
+              </label>
+              {touched.otherVideos && errors.otherVideos && (
+                <p className="mt-1 text-xs text-red-500">{errors.otherVideos}</p>
+              )}
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {otherVideos.map((videoFile, index) => (
+                  <div key={videoFile.id} className="relative w-full aspect-video">
+                    <video controls className="w-full h-full object-cover rounded-lg">
+                      <source src={videoFile.preview} type={videoFile.file?.type || 'video/mp4'} />
+                      Your browser does not support the video tag.
+                    </video>
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg"
+                      onClick={() => removeOtherVideo(videoFile.id)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-start mb-7 mt-7">
