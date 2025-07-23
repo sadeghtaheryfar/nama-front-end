@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
 import toast from "react-hot-toast";
+import RejectConfirmationModal from './RejectConfirmationModal';
 
 const MainGardeshJariRole = ({data,back_steps}) => {
   function formatNumber(num) {
@@ -265,6 +266,8 @@ const MainGardeshJariRole = ({data,back_steps}) => {
     toast.success('قیمت با موفقیت کپی شد .')
   }
 
+  const [showRejectConfirmationModal, setShowRejectConfirmationModal] = useState(false);
+
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
       <div className="flex justify-between items-center pb-[2rem]">
@@ -336,7 +339,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            <span onClick={(e) => copyText((data?.data?.final_amount ? data?.data?.final_amount : data?.data?.total_amount))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
+            <span onClick={(e) => copyText((data?.data?.final_amount ? data?.data?.final_amount : 'وارد نشده'))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
           </div>
           {data?.data?.offer_amount !== null && data?.data?.offer_amount !== undefined && data?.data?.offer_amount !== 0 && (
             <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
@@ -503,16 +506,34 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         <hr className="hidden md:block h-2 my-10" />
       )}
 
-      {data?.data?.total_amount && (
-        <div class="flex items-center p-4 my-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
-          <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-          </svg>
-          <div>
-            <p>حداکثر مبلغ قابل پرداخت در مرحله درخواست : {formatPrice(Number(data.data.total_amount * 0.5))} / {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
-          </div>
-        </div>
+      {data?.data?.single_step ? (
+        <>
+          {data?.data?.total_amount && (
+            <div class="flex items-center p-4 my-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
+              <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              <div>
+                <p>حداکثر مبلغ قابل پرداخت در مرحله درخواست : {formatPrice(Number(data.data.total_amount))} / {convertToPersianWords(Number(data.data.total_amount))} ( تسویه کامل )</p>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+          <>
+            {data?.data?.total_amount && (
+              <div class="flex items-center p-4 my-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
+                <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                </svg>
+                <div>
+                  <p>حداکثر مبلغ قابل پرداخت در مرحله درخواست : {formatPrice(Number(data.data.total_amount * 0.5))} / {convertToPersianWords(Number(data.data.total_amount * 0.5))}</p>
+                </div>
+              </div>
+            )}
+          </>
       )}
+      
       
       {((data?.data?.status == "in_progress" || data?.data?.status == "action_needed") && data?.data?.role?.[0] == role) && (
         <div className="w-full bg-white rounded-lg">
@@ -640,7 +661,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               </button>
 
               <button
-                onClick={() => hnadleForm('reject')}
+                onClick={() => setShowRejectConfirmationModal(true)}
                 className={`px-[2rem] h-12 text-base font-medium rounded-[10px] ${
                   loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#D32F2F] text-white hover:border hover:border-[#D32F2F] hover:text-[#D32F2F] hover:bg-white"
                 }`}
@@ -690,6 +711,15 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         </div>
       )}
 
+      <RejectConfirmationModal
+        show={showRejectConfirmationModal}
+        onClose={() => setShowRejectConfirmationModal(false)}
+        onConfirm={() => {
+          hnadleForm('reject');
+          setShowRejectConfirmationModal(false); // Close modal after confirming
+        }}
+        loading={loading}
+      />
       <Modal showModal={showModal} setShowModal={setShowModal} hnadleForm={hnadleForm} selectedReason={selectedReason} setSelectedReason={setSelectedReason} backSteps={back_steps}  />
     </div>
   );

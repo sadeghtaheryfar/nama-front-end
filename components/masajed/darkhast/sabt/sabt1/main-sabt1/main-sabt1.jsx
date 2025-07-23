@@ -79,10 +79,12 @@ const MainSabt1 = () => {
                 <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
                 سقف تعداد نفرات مورد حمایت: {requestData.max_number_people_supported || 0}
               </li>
-              <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
-                <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
-                سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(requestData.support_for_each_person_amount)} ریال می باشد
-              </li>
+              {!requestData?.single_step && (
+                <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
+                  <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
+                  سرانه حمایتی هر نفر به مبلغ حداکثر {numberToPersianWords(requestData.support_for_each_person_amount)} ریال می باشد
+                </li>
+              )}
               <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
                 <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
                 {requestData.expires_at === null
