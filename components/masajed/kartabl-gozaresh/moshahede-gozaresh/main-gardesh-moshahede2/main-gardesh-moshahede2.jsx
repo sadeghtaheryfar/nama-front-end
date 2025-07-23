@@ -523,7 +523,7 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
 
     // Append main video
     if (videos.length > 0) {
-      formDataToSend.append("report_video", videos[0].file);
+      formDataToSend.append("video", videos[0].file);
     }
 
     // Append other videos

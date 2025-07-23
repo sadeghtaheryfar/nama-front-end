@@ -472,7 +472,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             </div>
           )}
 
-          {(data?.data?.video?.original || (data?.data?.otherVideos && data.data.otherVideos.length > 0)) && (
+          {(data?.data?.other_videos && data.data.other_videos.length > 0) && (
             <div className="flex flex-col gap-4 2xl:gap-6">
               <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
                 ویدئو های بیشتر :
