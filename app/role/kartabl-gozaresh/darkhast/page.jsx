@@ -124,10 +124,11 @@ export default function Accept() {
     return `#${newHex}`;
   };
   
+  
   return (
     <>
       <div className=" h-screen relative">
-         <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden" style={{ backgroundColor :  (requestData?.data?.data?.golden && '#878108') }}>
+         <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854] relative overflow-hidden" style={{ backgroundColor :  (requestData?.data?.data?.request?.golden && '#878108') }}>
           <div className="absolute top-[9rem] lg:top-[11rem] w-full">
             <img className="w-full opacity-20" src="/assets/Vector.png" alt="" />
           </div>
@@ -142,8 +143,8 @@ export default function Accept() {
               </div>
             </div>
             <div className="flex">
-              <div className="rounded-full hidden bg-[#43637E] text-white md:flex items-center p-3" style={{ backgroundColor :  (requestData?.data?.data?.golden && lightenColor('#878108',15)) }}>
-                <HeaderProfile bgRole={requestData?.data?.data?.golden ? lightenColor('#878108',30) : '#3A5C78'}  />
+              <div className="rounded-full hidden bg-[#43637E] text-white md:flex items-center p-3" style={{ backgroundColor :  (requestData?.data?.data?.request?.golden && lightenColor('#878108',15)) }}>
+                <HeaderProfile bgRole={requestData?.data?.data?.request?.golden ? lightenColor('#878108',30) : '#3A5C78'}  />
               </div>
               <div className="flex">
                 <Image
@@ -161,8 +162,8 @@ export default function Accept() {
               </div>
             </div>
           </div>
-          <div className="rounded-full bg-[#43637E] text-[10px] text-white flex md:hidden items-center mx-6 p-3" style={{ backgroundColor :  (requestData?.data?.data?.golden && lightenColor('#878108',15)) }} >
-              <HeaderProfile bgRole={requestData?.data?.data?.golden ? lightenColor('#878108',30) : '#3A5C78'}  />
+          <div className="rounded-full bg-[#43637E] text-[10px] text-white flex md:hidden items-center mx-6 p-3" style={{ backgroundColor :  (requestData?.data?.data?.request?.golden && lightenColor('#878108',15)) }} >
+              <HeaderProfile bgRole={requestData?.data?.data?.request?.golden ? lightenColor('#878108',30) : '#3A5C78'}  />
           </div>
         </div>
 
