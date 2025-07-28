@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 
 
-const HeaderSabt = () => {
+const HeaderSabt = ({golden = false}) => {
   const [show, setShow] = useState(false);
   const pathname = usePathname();
   const [header, setHeader] = useState(null);
@@ -33,7 +33,7 @@ const HeaderSabt = () => {
               
               const rectElements = svgDoc.querySelectorAll("rect");
               rectElements.forEach(rect => {
-                rect.setAttribute("fill", response?.data?.data?.color);
+                rect.setAttribute("fill", golden ? '#878108' : response?.data?.data?.color);
               })
               
               const serializer = new XMLSerializer();
@@ -80,8 +80,14 @@ const HeaderSabt = () => {
   const [solighterColor, setSoLighterColor] = useState();
   useEffect(() => {
     if(!header?.data?.color) return
-    setLighterColor(lightenColor(header?.data?.color, 15));
-    setSoLighterColor(lightenColor(header?.data?.color, 30));
+    if(!golden)
+    {
+      setLighterColor(lightenColor(header?.data?.color, 15));
+      setSoLighterColor(lightenColor(header?.data?.color, 30));
+    }else{
+      setLighterColor(lightenColor('#878108', 15));
+      setSoLighterColor(lightenColor('#878108', 30));
+    }
   }, [header?.data?.color])
 
   const router = useRouter();
@@ -96,6 +102,7 @@ const HeaderSabt = () => {
       router.push('/');
     }
   };
+  
 
   return (
     <header className="container mx-auto">

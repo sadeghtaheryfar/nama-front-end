@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { formatPrice } from "../../../../../components/utils/formatPrice";
 import DatePicker from "react-multi-date-picker";
@@ -18,44 +18,57 @@ const FormSabt = ({ id, data }) => {
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/");
-  const itemId = pathSegments[1];
+  const itemId = pathSegments[1]; // This is item_id for requests
 
   const [student, setStudent] = useState("");
   const [cost, setCost] = useState("");
   const [time, setTime] = useState("");
   const [des, setDes] = useState("");
-  // Storing objects with file and its preview URL
   const [imamLetters, setImamLetters] = useState([]);
   const [connectionLetters, setConnectionLetters] = useState([]);
-  const [additionalAttachments, setAdditionalAttachments] = useState([]); // Added state for additional attachments
+  const [additionalAttachments, setAdditionalAttachments] = useState([]);
   const [statusFile1, setStatusFile1] = useState("مقدار فایل وجود ندارد");
   const [statusFile2, setStatusFile2] = useState("مقدار فایل وجود ندارد");
   const [statusSend, setStatusSend] = useState("");
   const [checkbox, setCheckBox] = useState(false);
   const [statusCheckBox, setStatusCheckBox] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // General loading for form submission/member fetch
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
   const [isImamLetterRequired, setIsImamLetterRequired] = useState(false);
   const [isImagesRequired, setIsImagesRequired] = useState(false);
   const [isAreaLetterRequired, setIsAreaLetterRequired] = useState(false);
+  const [isRingMemberRequired, setIsRingMemberRequired] = useState(false);
 
   const [typeField, setTypeField] = useState(null);
 
+  // States for handling ring selection and its membersم
+  const [selectedRingId, setSelectedRingId] = useState(null); // The ID of the currently selected ring
+  const [availableRings, setAvailableRings] = useState({ data: [] }); // List of all available rings (from loop/index)
+  const [loadingRings, setLoadingRings] = useState(false);
+
+  const [selectedRingMembers, setSelectedRingMembers] = useState([]); // Members of the selected ring
+  const [AllRingMembers, setAllRingMembers] = useState([]); // Members of the selected ring
+  const [allCoachesForSelection, setAllCoachesForSelection] = useState({ data: [] }); // All coaches globally available for selection
+  const [loadingCoachesForSelection, setLoadingCoachesForSelection] = useState(false); // Loading for all coaches
+  const [isMembersDropdownOpen, setIsMembersDropdownOpen] = useState(false);
+  const [memberSearchTerm, setMemberSearchTerm] = useState("");
+  const membersDropdownRef = useRef(null);
+
+  // 1. Fetch initial data (mosque/school type)
   useEffect(() => {
     if (!pathname) return;
-    const pathSegments = pathname.split("/");
-    const itemId = pathSegments[1];
+    const currentItemId = pathSegments[1];
 
     const fetching = async () => {
       try {
-        const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
+        const response = await axios.get(`/api/show-item-dashboard?item_id=${currentItemId}&role=mosque_head_coach`);
         if (response.data) {
-          if (response?.data?.data?.title == "مساجد") {
-            setTypeField('امام جماعت')
-          } else if (response?.data?.data?.title == "مدارس") {
-            setTypeField('مدیر')
+          if (response?.data?.data?.title === "مساجد") {
+            setTypeField('امام جماعت');
+          } else if (response?.data?.data?.title === "مدارس") {
+            setTypeField('مدیر');
           }
         }
       } catch (error) {
@@ -63,27 +76,127 @@ const FormSabt = ({ id, data }) => {
       }
     };
     fetching();
-  }, []);
+  }, [pathname]);
 
+  // Set required fields based on 'data' prop
   useEffect(() => {
     if (data) {
       setIsImamLetterRequired(data.imam_letter === true);
-      setIsImagesRequired(data.images_required === true)
+      setIsImagesRequired(data.images_required === true);
       setIsAreaLetterRequired(data.area_interface_letter === true);
+      setIsRingMemberRequired(data.ring_member_required === true);
     }
   }, [data]);
 
+  // 2. Fetch all available rings (from loop/index)
+  useEffect(() => {
+    const fetchAllRings = async () => {
+      setLoadingRings(true);
+      try {
+        // Assuming /api/loop/index returns a list of rings with id and name
+        const response = await axios.get(`/api/loop/index?item_id=${itemId}&role=mosque_head_coach`);
+        if (response.data) {
+          setAvailableRings(response.data);
+        }
+      } catch (error) {
+        console.log("خطا در دریافت لیست حلقه‌ها:", error);
+      } finally {
+        setLoadingRings(false);
+      }
+    };
+
+    fetchAllRings();
+  }, [itemId]);
+
+  // 3. Fetch all coaches that can be selected (from loop/index - if it returns coaches)
+  // Or from another API if 'loop/index' only returns rings.
+  // For now, assuming loop/index can return individual coaches too, or a similar endpoint.
+  // If not, you might need a separate API for 'all coaches'.
+  useEffect(() => {
+    var type;
+    if (itemId == 2) {
+      type = "mosque";
+    } else if (itemId == 3) {
+      type = "school";
+    } else if (itemId == 8) {
+      type = "university";
+    } else {
+      type = "center";
+    }
+
+    const fetchAllCoachesForSelection = async () => {
+      setLoadingCoachesForSelection(true);
+      try {
+        // This API call should ideally return all individual coaches globally
+        // For demonstration, let's assume `api/loop/index` can also list coaches,
+        // or you would replace this with your actual coaches API endpoint.
+        const response = await axios.get(`/api/loop/index?item_id=${itemId}&role=mosque_head_coach&type=${type}`); // Added a hypothetical 'type=coaches'
+        if (response.data && response.data.data) {
+          // Filter out ring data and keep only coach data if mixed
+          const coaches = response.data.data.filter(item => item.name && item.national_code); // Simple heuristic
+          setAllCoachesForSelection({ data: coaches });
+        }
+      } catch (error) {
+        console.log("خطا در دریافت لیست کلی مربیان:", error);
+      } finally {
+        setLoadingCoachesForSelection(false);
+      }
+    };
+    fetchAllCoachesForSelection();
+  }, [itemId]);
+
+
+  // 4. Fetch members for the selected ring (triggered when selectedRingId changes)
+  useEffect(() => {
+    var type;
+    if (itemId == 2) {
+      type = "mosque";
+    } else if (itemId == 3) {
+      type = "school";
+    } else if (itemId == 8) {
+      type = "university";
+    } else {
+      type = "center";
+    }
+
+    const fetchMembersForSelectedRing = async () => {
+      if (selectedRingId && itemId) {
+        setLoading(true); // General loading for fetching members of specific ring
+        try {
+          const response = await axios.get(`/api/loop/show?item_id=${itemId}&id=${selectedRingId}&type=${type}`);
+          if (response.data && response.data.data && response.data.data.members) {
+            const initialMembers = response.data.data.members.map(member => ({
+              id: member.id,
+              name: member.name,
+            }));
+            
+            setAllRingMembers(initialMembers); // Set initial members from the selected ring
+          } else {
+            setAllRingMembers([]); // Clear if no members found for this ring
+          }
+        } catch (error) {
+          console.log("خطا در دریافت مربیان حلقه انتخاب شده:", error);
+          setAllRingMembers([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setAllRingMembers([]); // Clear members if no ring is selected
+      }
+    };
+
+    fetchMembersForSelectedRing();
+  }, [selectedRingId, itemId]);
+
+
   // Clean up object URLs when component unmounts
-  // This useEffect will run once when the component unmounts.
-  // It's also good to clean up URLs when files are explicitly removed.
   useEffect(() => {
     return () => {
       imamLetters.forEach(file => URL.revokeObjectURL(file.preview));
       connectionLetters.forEach(file => URL.revokeObjectURL(file.preview));
-      additionalAttachments.forEach(file => URL.revokeObjectURL(file.preview)); // Clean up additional attachments
+      additionalAttachments.forEach(file => URL.revokeObjectURL(file.preview));
     };
-  }, []); // Empty dependency array means it runs only on mount and unmount
-
+  }, []);
 
   // Validation states
   const [errors, setErrors] = useState({
@@ -92,7 +205,9 @@ const FormSabt = ({ id, data }) => {
     time: "",
     imamLetter: "",
     connectionLetter: "",
-    additionalAttachments: "", // Added for validation
+    additionalAttachments: "",
+    selectedRingId: "", // Validation for selecting a ring
+    ringMember: "", // Validation for selecting members within the chosen ring
   });
 
   const [touched, setTouched] = useState({
@@ -101,13 +216,14 @@ const FormSabt = ({ id, data }) => {
     time: false,
     imamLetter: false,
     connectionLetter: false,
-    additionalAttachments: false, // Added for validation
+    additionalAttachments: false,
+    selectedRingId: false,
+    ringMember: false,
   });
 
   // Function to convert numbers to Persian words
   const convertToPersianWords = (num) => {
     if (!num) return "";
-
     const yekan = ["", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
     const dahgan = ["", "ده", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود"];
     const dah_ta_bist = ["ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده"];
@@ -117,9 +233,6 @@ const FormSabt = ({ id, data }) => {
     if (num === 0) return "صفر";
 
     let result = "";
-    let scaleIndex = 0;
-
-    // Convert to string and process in groups of 3 digits
     const numStr = num.toString();
     const groups = [];
     for (let i = numStr.length; i > 0; i -= 3) {
@@ -157,13 +270,11 @@ const FormSabt = ({ id, data }) => {
         result += groupStr + scale[groupIndex] + " ";
       }
     }
-
     return result.trim() + " ریال";
   };
 
   const handleFileChange = (event, setFiles, setStatus, fieldName) => {
     setStatusSend("");
-
     const files = Array.from(event.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg", "application/pdf"];
     const newFiles = [];
@@ -171,7 +282,6 @@ const FormSabt = ({ id, data }) => {
 
     files.forEach(file => {
       if (allowedTypes.includes(file.type)) {
-        // Add a unique ID to each file object for better keying in React lists
         newFiles.push({ id: Date.now() + Math.random(), file, preview: URL.createObjectURL(file) });
       } else {
         hasInvalidType = true;
@@ -181,18 +291,16 @@ const FormSabt = ({ id, data }) => {
     setFiles((prevFiles) => {
       const combinedFiles = [...prevFiles, ...newFiles];
       if (combinedFiles.length > 10) {
-        if (setStatus) setStatus("حداکثر 10 فایل مجاز است"); // Only set status if it's provided
+        if (setStatus) setStatus("حداکثر 10 فایل مجاز است");
         setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: "حداکثر 10 فایل مجاز است" }));
-        // Revoke URLs of files that exceed the limit immediately
         newFiles.forEach(file => URL.revokeObjectURL(file.preview));
-        return prevFiles; // Do not update state if more than 10 files
+        return prevFiles;
       }
       if (setStatus) setStatus(newFiles.length > 0 ? "فایل(های) مورد نظر انتخاب شد" : "مقدار فایل وجود ندارد");
       setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: hasInvalidType ? "فقط فایل‌های عکس مجاز هستند" : "" }));
       setTouched((prevTouched) => ({ ...prevTouched, [fieldName]: true }));
       return combinedFiles;
     });
-    // Clear the input value so the same file can be selected again
     event.target.value = '';
   };
 
@@ -200,10 +308,9 @@ const FormSabt = ({ id, data }) => {
     setFiles((prevFiles) => {
       const fileToRemove = prevFiles.find(file => file.id === idToRemove);
       if (fileToRemove) {
-        URL.revokeObjectURL(fileToRemove.preview); // Revoke the URL of the removed file
+        URL.revokeObjectURL(fileToRemove.preview);
       }
       const updatedFiles = prevFiles.filter((file) => file.id !== idToRemove);
-      // Re-validate if a required field becomes empty after removal
       if (fieldName === "imamLetter" && isImamLetterRequired && updatedFiles.length === 0) {
         setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: `فایل نامه الزامی است` }));
       } else if (fieldName === "additionalAttachments" && isImagesRequired && updatedFiles.length === 0) {
@@ -217,7 +324,6 @@ const FormSabt = ({ id, data }) => {
     });
   };
 
-
   const validateStudent = (value) => {
     if (!value) {
       return "تعداد دانش آموزان الزامی است";
@@ -230,6 +336,20 @@ const FormSabt = ({ id, data }) => {
   const validateTime = (value) => {
     if (!value) {
       return "تاریخ برگزاری الزامی است";
+    }
+    return "";
+  };
+
+  const validateSelectedRingId = (value) => {
+    if (isRingMemberRequired && !value) {
+      return "انتخاب حلقه الزامی است";
+    }
+    return "";
+  };
+
+  const validateRingMember = (selectedMembers) => {
+    if (isRingMemberRequired && selectedRingId && selectedMembers.length === 0) {
+      return "انتخاب حداقل یک مربی برای حلقه الزامی است";
     }
     return "";
   };
@@ -262,6 +382,66 @@ const FormSabt = ({ id, data }) => {
     setTouched({ ...touched, time: true });
   };
 
+  const handleRingSelection = (ringId) => {
+    setSelectedRingId(ringId);
+    setIsMembersDropdownOpen(false); // Close members dropdown when a new ring is selected
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      selectedRingId: validateSelectedRingId(ringId),
+      ringMember: "", // Clear member error as new members will be loaded
+    }));
+    setTouched(prevTouched => ({ ...prevTouched, selectedRingId: true }));
+    setMemberSearchTerm(""); // Clear search term when ring changes
+  };
+
+  const handleMemberSelection = (member) => {
+    setTouched({ ...touched, ringMember: true });
+    setSelectedRingMembers((prevSelected) => {
+      const isSelected = prevSelected.some((m) => m.id === member.id);
+      let newSelection;
+      if (isSelected) {
+        newSelection = prevSelected.filter((m) => m.id !== member.id);
+      } else {
+        newSelection = [...prevSelected, member];
+      }
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ringMember: validateRingMember(newSelection),
+      }));
+      return newSelection;
+    });
+  };
+
+  const removeMemberTag = (memberId) => {
+    setSelectedRingMembers((prevSelected) => {
+      const newSelection = prevSelected.filter((m) => m.id !== memberId);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ringMember: validateRingMember(newSelection),
+      }));
+      return newSelection;
+    });
+    setTouched({ ...touched, ringMember: true });
+  };
+
+  // Close members dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (membersDropdownRef.current && !membersDropdownRef.current.contains(event.target)) {
+        setIsMembersDropdownOpen(false);
+        setTouched((prevTouched) => ({ ...prevTouched, ringMember: true }));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ringMember: validateRingMember(selectedRingMembers),
+        }));
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [membersDropdownRef, selectedRingMembers]);
+
   const validateImamLetter = (files) => {
     if (isImamLetterRequired && files.length === 0) {
       return `فایل نامه الزامی است`;
@@ -286,35 +466,35 @@ const FormSabt = ({ id, data }) => {
   const convertPersianToEnglish = (str) => {
     const persianNumbers = "۰۱۲۳۴۵۶۷۸۹";
     const englishNumbers = "0123456789";
-
     return str.replace(/[\u06F0-\u06F9]/g, (char) =>
       englishNumbers[persianNumbers.indexOf(char)]
     );
   };
 
   const hnadleForm = async () => {
-    // Mark all fields as touched
     setTouched({
       student: true,
       cost: true,
       time: true,
       imamLetter: true,
       connectionLetter: true,
-      additionalAttachments: true, // Mark additional attachments as touched
+      additionalAttachments: true,
+      selectedRingId: true,
+      ringMember: true,
     });
 
-    // Validate all fields
     const newErrors = {
       student: validateStudent(student),
       time: validateTime(time),
       imamLetter: validateImamLetter(imamLetters),
       additionalAttachments: validateImages(additionalAttachments),
       connectionLetter: validateAreaLetter(connectionLetters),
+      selectedRingId: validateSelectedRingId(selectedRingId),
+      ringMember: validateRingMember(selectedRingMembers),
     };
 
     setErrors(newErrors);
 
-    // Check if there are any validation errors
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
 
     if (!checkbox) {
@@ -339,25 +519,34 @@ const FormSabt = ({ id, data }) => {
     formDataToSend.append("body", des);
     formDataToSend.append("date", englishTime);
     formDataToSend.append("request_plan_id", id);
+    if (selectedRingId) {
+        formDataToSend.append("ring_id", selectedRingId); // Send selected ring ID if available
+    }
 
     if (imamLetters.length > 0) {
-      formDataToSend.append("imam_letter", imamLetters[0].file); // First file for imam_letter
+      formDataToSend.append("imam_letter", imamLetters[0].file);
       for (let i = 1; i < imamLetters.length; i++) {
-        formDataToSend.append(`other_imam_letter[${i - 1}]`, imamLetters[i].file); // Other files for other_imam_letter
+        formDataToSend.append(`other_imam_letter[${i - 1}]`, imamLetters[i].file);
       }
     }
 
     if (connectionLetters.length > 0) {
-      formDataToSend.append("area_interface_letter", connectionLetters[0].file); // First file for area_interface_letter
+      formDataToSend.append("area_interface_letter", connectionLetters[0].file);
       for (let i = 1; i < connectionLetters.length; i++) {
-        formDataToSend.append(`other_area_interface_letter[${i - 1}]`, connectionLetters[i].file); // Other files for other_area_interface_letter
+        formDataToSend.append(`other_area_interface_letter[${i - 1}]`, connectionLetters[i].file);
       }
     }
 
-    // Append additional attachments
     if (additionalAttachments.length > 0) {
       additionalAttachments.forEach((fileObj, index) => {
         formDataToSend.append(`images[${index}]`, fileObj.file);
+      });
+    }
+
+    // Append selected ring members
+    if (selectedRingMembers.length > 0) {
+      selectedRingMembers.forEach((memberObj, index) => {
+        formDataToSend.append(`members[${index}]`, memberObj.id);
       });
     }
 
@@ -398,7 +587,6 @@ const FormSabt = ({ id, data }) => {
             ...errors,
             cost: error.response.data.errors.amount[0]
           };
-
           setErrors(newErrors);
         }
       }
@@ -414,23 +602,28 @@ const FormSabt = ({ id, data }) => {
     return errors[fieldName] ? "border-red-500" : "border-green-500";
   };
 
-  // Required field indicator
   const RequiredStar = () => (
     <span className="text-red-500 mr-1" style={{ fontFamily: 'none' }}>*</span>
   );
 
   function formatToCurrency(amount) {
     const number = Number(amount);
-
     if (isNaN(number)) {
       return "مقدار وارد شده معتبر نیست";
     }
-
     const formattedNumber = number.toLocaleString("fa-IR");
-
     return `${formattedNumber} ریال`;
   }
 
+  // Combine and filter members for the dropdown based on search term
+  // This list should include *all* coaches that can be selected, and filter by search term
+  // It should also show which ones are already selected.
+  const combinedAndFilteredCoaches = Array.from(
+    new Map(
+      [...AllRingMembers, ...selectedRingMembers].map(item => [item['id'], item])
+    ).values()
+  ).filter(member => member.name.toLowerCase().includes(memberSearchTerm.toLowerCase()));
+  
   return (
     <div className="w-full bg-white rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
@@ -483,6 +676,11 @@ const FormSabt = ({ id, data }) => {
               "cost"
             )}`}
           />
+          {data?.staff && (
+            <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+              مبلغ ثابت : {formatToCurrency(Number(data?.staff_amount))}
+            </small>
+          )}
           {touched.cost && errors.cost && (
             <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
           )}
@@ -531,6 +729,123 @@ const FormSabt = ({ id, data }) => {
             )}
           </div>
         </div>
+
+        {/* New Field: انتخاب حلقه (Ring Selection) */}
+        {data?.show_ring_member && (
+          <div className="mb-4">
+            <label
+              htmlFor="ringSelection"
+              className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
+            >
+              انتخاب حلقه
+              {isRingMemberRequired && <RequiredStar />}
+            </label>
+            <div className={`grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded-lg ${getBorderStyle("selectedRingId")}`}>
+              {loadingRings ? (
+                <div className="col-span-2 text-center text-gray-500">در حال بارگذاری حلقه‌ها...</div>
+              ) : availableRings.data && availableRings.data.length > 0 ? (
+                availableRings.data.map((ring) => (
+                  <div
+                    key={ring.id}
+                    className={`p-3 border rounded-lg cursor-pointer text-center
+                      ${selectedRingId === ring.id
+                        ? "bg-blue-500 text-white border-blue-600"
+                        : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                      }`}
+                    onClick={() => handleRingSelection(ring.id)}
+                  >
+                    {ring.title || `حلقه ${ring.id}`} {/* Display ring name or ID */}
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-2 text-center text-gray-500">حلقه‌ای یافت نشد.</div>
+              )}
+            </div>
+            {touched.selectedRingId && errors.selectedRingId && (
+              <div className="text-red-500 text-sm mt-1">{errors.selectedRingId}</div>
+            )}
+          </div>
+        )}
+
+        {/* New Field: انتخاب مربیان حلقه (Members of Selected Ring) */}
+        {data?.show_ring_member && selectedRingId && ( // Only show if a ring is selected
+          <div className="mb-4 relative" ref={membersDropdownRef}>
+            <label
+              htmlFor="ringMembers"
+              className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
+            >
+              انتخاب مربیان حلقه
+              {isRingMemberRequired && <RequiredStar />}
+            </label>
+            <div
+              className={`w-full p-4 border rounded-lg text-gray-700 cursor-pointer flex flex-wrap gap-2 items-center min-h-[56px] ${getBorderStyle(
+                "ringMember"
+              )}`}
+              onClick={() => setIsMembersDropdownOpen(!isMembersDropdownOpen)}
+            >
+              {selectedRingMembers.length === 0 ? (
+                <span className="text-gray-500">مربیان حلقه را انتخاب کنید...</span>
+              ) : (
+                selectedRingMembers.map((member) => (
+                  <span
+                    key={member.id}
+                    className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center gap-1"
+                  >
+                    {member.name}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeMemberTag(member.id);
+                      }}
+                      className="ml-1 text-blue-800 hover:text-blue-600 focus:outline-none"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
+            {isMembersDropdownOpen && (
+              <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    placeholder="جستجوی مربی..."
+                    className="w-full p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={memberSearchTerm}
+                    onChange={(e) => setMemberSearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                {loadingCoachesForSelection ? ( // Use loading state for all coaches
+                  <div className="p-4 text-center text-gray-500">در حال بارگذاری مربیان...</div>
+                ) : combinedAndFilteredCoaches.length > 0 ? (
+                  combinedAndFilteredCoaches.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleMemberSelection(member)}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedRingMembers.some((m) => m.id === member.id)}
+                        onChange={() => handleMemberSelection(member)}
+                        className="ml-2"
+                      />
+                      <span>{member.name}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-gray-500">مربی‌ای یافت نشد.</div>
+                )}
+              </div>
+            )}
+            {touched.ringMember && errors.ringMember && (
+              <div className="text-red-500 text-sm mt-1">{errors.ringMember}</div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mb-4 mt-3">
@@ -592,10 +907,10 @@ const FormSabt = ({ id, data }) => {
                 id="file-upload_imam"
                 name="imamLetter"
                 type="file"
-                multiple // Allow multiple file selection
+                multiple
                 className="hidden"
                 onChange={(event) => handleFileChange(event, setImamLetters, setStatusFile1, "imamLetter")}
-                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
               />
             </label>
             {touched.imamLetter && errors.imamLetter && (
@@ -662,10 +977,10 @@ const FormSabt = ({ id, data }) => {
                 id="file-upload_connection"
                 name="connectionLetter"
                 type="file"
-                multiple // Allow multiple file selection
+                multiple
                 className="hidden"
                 onChange={(event) => handleFileChange(event, setConnectionLetters, setStatusFile2, "connectionLetter")}
-                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
               />
             </label>
             {touched.connectionLetter && errors.connectionLetter && (
@@ -734,10 +1049,10 @@ const FormSabt = ({ id, data }) => {
                 id="file-upload_additional"
                 name="additionalAttachments"
                 type="file"
-                multiple // Allow multiple file selection
+                multiple
                 className="hidden"
                 onChange={(event) => handleFileChange(event, setAdditionalAttachments, null, "additionalAttachments")}
-                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf" // Specify accepted file types
+                accept="image/jpeg,image/png,image/gif,image/jpg,application/pdf"
               />
             </label>
             {touched.additionalAttachments && errors.additionalAttachments && (

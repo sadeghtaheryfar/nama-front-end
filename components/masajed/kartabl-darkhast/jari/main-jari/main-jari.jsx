@@ -1,6 +1,7 @@
 "use client";
 import GardeshJari from "../gardesh-jari/gardesh-jari";
 import HeaderJari from "../header-jari/header-jari";
+import HeaderJariGolden from "../header-jari/header-jari-golden";
 import MainGardeshJari from "../main-gardesh-jari/main-gardesh-jari";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,7 +40,12 @@ const MainJari = () => {
 
   return (
     <div className="bg-header-masjed bg-repeat-x bg-auto lg:bg-header-masjed-desktop lg:bg-no-repeat lg:bg-contain px-7">
-      <HeaderJari/>
+      {requestData?.data?.golden ? (
+        <HeaderJariGolden />
+      ) : (
+        <HeaderJari />
+      )}
+
       <div className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-10 lg:mt-2 container mx-auto lg:p-9 xl:px-12 xl:py-[53px]">
         <GardeshJari data={requestData}/>
       </div>

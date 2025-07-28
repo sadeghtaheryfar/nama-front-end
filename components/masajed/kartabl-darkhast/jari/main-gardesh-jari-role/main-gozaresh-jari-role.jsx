@@ -349,6 +349,12 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               </div>
             </>
           )}
+          
+          {data?.data?.request_plan?.staff && (
+            <div className="text-[#b7c725] bg-[#f4ffac] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>ستادی</p>
+            </div>
+          )}
         </h2>
 
         {/* {data?.data?.status == 'rejected' ? (
@@ -416,6 +422,11 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             )}
           </div>
 
+          {data?.data?.request_plan?.staff && (
+            <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+              مبلغ ثابت : {formatPrice(Number(data?.data?.request_plan?.staff_amount))}
+            </small>
+          )}
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی معاونت مساجد:

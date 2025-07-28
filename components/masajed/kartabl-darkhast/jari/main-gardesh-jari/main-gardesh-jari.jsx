@@ -151,6 +151,11 @@ const MainGardeshJari = ({data}) => {
               <p>تک مرحله ای</p>
             </div>
           )}
+          {data?.data?.request_plan?.staff && (
+            <div className="text-[#b7c725] bg-[#f4ffac] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>ستادی</p>
+            </div>
+          )}
         </h2>
 
         {data?.data?.status == 'action_needed' && (
@@ -205,7 +210,7 @@ const MainGardeshJari = ({data}) => {
             <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
               <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
               {data?.data?.request_plan?.expires_at === null
-                ? "ندارد"
+                ? "محدودیت زمانی ندارد"
                 : `محدود مهلت زمانی انتخاب این درخواست تا تاریخ ${data?.data?.request_plan?.expires_at} میباشد.`}
             </li>
           </ul>
@@ -231,9 +236,15 @@ const MainGardeshJari = ({data}) => {
                 </span>
               )}
             </li>
+            {data?.data?.request_plan?.staff && (
+              <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
+              <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
+                این اکشن پلن ستادی می باشد .
+              </li>
+            )}
             {data?.data?.request_plan?.single_step && (
-              <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
-                <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+              <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
+              <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
                 این درخواست یک مرحله ای می باشد و کل بودجه یکجا آزاد می شود
               </li>
             )}
@@ -266,12 +277,17 @@ const MainGardeshJari = ({data}) => {
             </h3>
             <span className="text-base lg:text-lg font-medium">{data?.data?.students}</span>
           </div>
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+          <div className="flex items-start justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه کلی عملیات:
             </h3>
             <span className="text-base lg:text-lg font-medium">
               {formatPrice(data?.data?.amount)} ({toPersianText(data?.data?.amount)})
+              {data?.data?.request_plan?.staff && (
+                <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                  مبلغ ثابت : {formatPrice(Number(data?.data?.request_plan?.staff_amount))}
+                </small>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
@@ -289,6 +305,24 @@ const MainGardeshJari = ({data}) => {
             {data?.data?.body}
           </p>
         </div>
+
+        {data?.data?.members && data?.data.members.length > 0 && (
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+              مربیان حلقه:
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {data?.data.members.map((member, index) => (
+                <span
+                  key={index} // It's better to use member.id if available and unique, otherwise index is fine.
+                  className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center gap-1"
+                >
+                  {member.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr] 2xl:gap-x-12">
           {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (

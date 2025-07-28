@@ -4,11 +4,11 @@ import Link from "next/link";
 import ButtonSabt from "../button-sabt/button-sabt";
 import CartsDarkhastFuture from "./carts-darkhast-future";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react"; // Add useRef
 import axios from "axios";
 import CartsDarkhastActive from "./carts-darkhast-active";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import useDebounce from "../../../utils/useDebounce"; // مسیر را بر اساس مکان فایل useDebounce.js تنظیم کنید
+import useDebounce from "../../../utils/useDebounce";
 
 const CartsDarkhast = () => {
   const [futureCarts, setFutureCarts] = useState([]);
@@ -22,29 +22,30 @@ const CartsDarkhast = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // State برای عبارت جستجو و مقدار دی‌بونس شده آن
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms دیلی برای دی‌بونس
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // State برای شماره صفحه جاری
-  const [currentPage, setCurrentPage] = useState(1); // مقدار اولیه 1
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
-  // useEffect برای همگام‌سازی searchTerm و currentPage با URL هنگام بارگذاری یا تغییر URL
-  // این useEffect باید قبل از هر useEffect دیگری که به searchParams وابسته است اجرا شود
-  // تا stateهای داخلی با URL همگام باشند.
+  // Use a ref to track if it's the initial mount
+  const isInitialMount = useRef(true);
+
+  // Effect to initialize state from URL on first mount
+  // This should run only once or when searchParams (and thus URL) truly changes externally
   useEffect(() => {
     const qFromUrl = searchParams.get("q");
-    // اگر qFromUrl برابر null یا undefined باشد، آن را به یک رشته خالی تبدیل کنید
-    // وگرنه، مقدار آن را به searchTerm تنظیم کنید.
     setSearchTerm(qFromUrl || "");
 
     const pageFromUrl = Number(searchParams.get("page")) || 1;
     setCurrentPage(pageFromUrl);
-  }, [searchParams]); // این useEffect فقط به searchParams وابسته است.
 
-  // useEffect برای واکشی futureCarts (بدون تغییر)
+    // After initial mount, set the ref to false
+    isInitialMount.current = false;
+  }, [searchParams]); // Depend on searchParams to react to external URL changes
+
+  // useEffect for fetching futureCarts (no change needed here)
   useEffect(() => {
     const fetchFutureCarts = async () => {
       setFutureCartsLoading(true);
@@ -65,9 +66,7 @@ const CartsDarkhast = () => {
     fetchFutureCarts();
   }, [itemId]);
 
-  // Main useEffect برای واکشی activeCarts و به‌روزرسانی URL
-  // این useEffect باید به تغییرات currentPage و debouncedSearchTerm واکنش نشان دهد.
-  // همچنین باید مقادیر صحیح page و q را از searchParams برای URL بسازد و router.push کند.
+  // Main useEffect for fetching activeCarts and updating URL
   useEffect(() => {
     const fetchActiveCarts = async () => {
       setActiveCartsLoading(true);
@@ -75,8 +74,6 @@ const CartsDarkhast = () => {
         const queryParams = new URLSearchParams();
         queryParams.append("item_id", itemId);
         queryParams.append("role", "mosque_head_coach");
-
-        // از currentPage برای API call استفاده کنید
         queryParams.append("page", currentPage.toString());
         queryParams.append("per_page", itemsPerPage.toString());
 
@@ -90,7 +87,11 @@ const CartsDarkhast = () => {
           if (active.data.meta && active.data.meta.total) {
             setTotalPages(Math.ceil(active.data.meta.total / itemsPerPage));
           } else {
-            setTotalPages(active.data.data.length > 0 ? Math.ceil(active.data.data.length / itemsPerPage) : 1);
+            setTotalPages(
+              active.data.data.length > 0
+                ? Math.ceil(active.data.data.length / itemsPerPage)
+                : 1
+            );
           }
         }
       } catch (error) {
@@ -102,39 +103,37 @@ const CartsDarkhast = () => {
 
     fetchActiveCarts();
 
-    // به‌روزرسانی URL
-    // این بخش تضمین می‌کند که URL همواره با currentPage و debouncedSearchTerm فعلی همگام باشد.
+    // Update URL only if not initial mount or if values truly changed
+    // And only if the current state values are different from the URL
     const current = new URLSearchParams();
     current.set("page", currentPage.toString());
     if (debouncedSearchTerm) {
       current.set("q", debouncedSearchTerm);
-    } else {
-      current.delete("q"); // اگر عبارت جستجو خالی است، q را از URL حذف کنید
     }
 
     const newQueryString = current.toString();
     const currentQueryString = searchParams.toString();
 
-    // فقط در صورتی که query string واقعاً تغییر کرده باشد router.push را فراخوانی کنید.
-    // این از حلقه بی‌نهایت و افزودن ورودی‌های غیرضروری به تاریخچه مرورگر جلوگیری می‌کند.
-    if (newQueryString !== currentQueryString) {
+    // Prevent pushing the same URL on initial render if already matched
+    // And only push if the new query string is different
+    if (!isInitialMount.current && newQueryString !== currentQueryString) {
       router.push(`${pathname}?${newQueryString}`, undefined, { shallow: true });
     }
 
-  }, [currentPage, itemId, debouncedSearchTerm, searchParams, pathname, router]); // وابستگی‌ها
+  }, [currentPage, itemId, debouncedSearchTerm, pathname, router]); // Remove searchParams from dependencies to prevent re-triggering on URL push
 
-  // مدیریت تغییر عبارت جستجو
+  // Management of search term change
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    // وقتی کاربر چیزی را جستجو می‌کند، صفحه را به 1 بازنشانی کنید.
-    // این باعث می‌شود useEffect اصلی مجدداً اجرا شود با currentPage=1 و عبارت جستجوی جدید.
+    // When a user searches, reset the page to 1.
+    // This will cause the main useEffect to re-run with currentPage=1 and the new search term.
     setCurrentPage(1);
   };
 
-  // مدیریت تغییر صفحه
+  // Management of page change
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // useEffect اصلی مسئول به‌روزرسانی URL بر اساس currentPage جدید خواهد بود.
+    // The main useEffect will be responsible for updating the URL based on the new currentPage.
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
@@ -233,7 +232,7 @@ const CartsDarkhast = () => {
   return (
     <>
       <div className="mt-7">
-        {/* فیلد جستجو */}
+        {/* Search field */}
         <div className="mb-6">
           <input
             type="text"
@@ -272,7 +271,6 @@ const CartsDarkhast = () => {
           )}
         </div>
       </div>
-
 
       {/* Pagination */}
       {totalPages > 1 && (

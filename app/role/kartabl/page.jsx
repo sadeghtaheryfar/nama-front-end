@@ -480,8 +480,11 @@ export default function Kartabl() {
 
             <div className="flex flex-col gap-4 lg:gap-16 xl:gap-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center md:justify-between">
-                <h2 className="text-base font-bold text-center min-w-fit lg:text-lg xl:text-[22px]">
+                <h2 className="text-base font-bold text-center min-w-fit lg:text-lg xl:text-[22px] flex justify-center items-center gap-[1rem]">
                   همه درخواست ها
+                  <div>
+                    <Link className="flex hover:scale-[1.03] active:scale-[1] transition-[0.9s] bg-sky-400 text-[16px] text-white whitespace-nowrap px-[1rem] py-[0.5rem] rounded-full" href={`/role/invoice?id=` + `&role=${role}&item_id=${item_id}`}>صورت حساب</Link>
+                  </div>
                 </h2>
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
                   <div className="bg-[#F6F6F6] rounded-full flex items-center gap-2 px-3 flex-auto xl:px-6 h-[60px] lg:min-w-80 xl:w-[480px] 2xl:w-[560px] xl:max-w-lg">

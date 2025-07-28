@@ -7,6 +7,8 @@ import { toPersianDate  } from "../../../../../../components/utils/toPersianDate
 import { usePathname, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import HeaderSabt2 from "../../../../../../components/masajed/darkhast/sabt/sabt2/header-sabt2/header-sabt2";
+import HeaderGolden2 from "../../../../../../components/masajed/darkhast/sabt/sabt2/header-sabt2/header-golden2";
 // import HeaderTaeed from "@/components/masajed/kartabl-darkhast/taeed/header-taeed/header-taeed";
 function numberToPersianWords(num) {
   const ones = [
@@ -191,6 +193,12 @@ const MainSabt2 = () => {
 
   return (
     <Suspense>
+      {requestData?.golden ? (
+        <HeaderGolden2 />
+      ) : (
+        <HeaderSabt2 />
+      )}
+
       <div className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-11 lg:mt-2 container mx-auto lg:p-9 xl:px-12 xl:py-[53px]">
           <h2 className="text-base font-bold md:text-lg xl:text-2xl">
             {requestData.title || "بدون نام"}
@@ -239,6 +247,12 @@ const MainSabt2 = () => {
                     </span>
                   )}
                 </li>
+                {requestData?.staff && (
+                  <li className="text-sm flex items-start gap-2 leading-6 lg:text-base">
+                  <div className="w-1.5 h-1.5 bg-[#D5B260] rounded-full p-0.5 my-2"></div>
+                    این اکشن پلن ستادی می باشد .
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -251,7 +265,12 @@ const MainSabt2 = () => {
               </div>
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">هزینه کلی عملیات:</h3>
-                <span className="text-base lg:text-lg font-medium">{formatPrice(formData?.data?.amount)}</span>
+                <span className="text-base lg:text-lg font-medium flex justify-center items-center gap-4">{formatPrice(formData?.data?.amount)} 
+                {requestData?.staff && (
+                  <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm">
+                    مبلغ ثابت : {formatPrice(Number(requestData?.staff_amount))}
+                  </small>
+                )}</span>
               </div>
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">تاریخ برگزاری:</h3>
@@ -302,6 +321,24 @@ const MainSabt2 = () => {
                       <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                         <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
                       </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {formData?.data?.members && formData.data.members.length > 0 && (
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                    مربیان حلقه:
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.data.members.map((member, index) => (
+                      <span
+                        key={index} // It's better to use member.id if available and unique, otherwise index is fine.
+                        className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center gap-1"
+                      >
+                        {member.name}
+                      </span>
                     ))}
                   </div>
                 </div>

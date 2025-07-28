@@ -13,6 +13,11 @@ const initialState = {
     unit_id: null,
     currentPage: 1,
     totalPages: 1,
+    // Add new filter states here
+    version: null, // New: Arman version filter
+    request_type: null, // New: 'single' or 'normal' for request type
+    from_date: null, // New: Start date for date range filter
+    to_date: null, // New: End date for date range filter
   },
   reportDashboard: {
     item_id: null,
@@ -34,6 +39,26 @@ const dashboardSlice = createSlice({
   initialState,
   reducers: {
     setRequestDashboardFilters: (state, action) => {
+      // Ensure mutual exclusivity for request_type if it's part of the payload
+      if (action.payload.request_type !== undefined) {
+        if (action.payload.request_type === "single") {
+          state.requestDashboard.single_request = true;
+          state.requestDashboard.normal_request = false;
+        } else if (action.payload.request_type === "normal") {
+          state.requestDashboard.single_request = false;
+          state.requestDashboard.normal_request = true;
+        } else { // If 'همه' or null is selected
+          state.requestDashboard.single_request = false;
+          state.requestDashboard.normal_request = false;
+        }
+      } else {
+        // If request_type is not in payload, ensure single_request and normal_request are maintained
+        // based on existing state's request_type, or reset if request_type itself is nulled
+        if (action.payload.request_type === null) {
+            state.requestDashboard.single_request = false;
+            state.requestDashboard.normal_request = false;
+        }
+      }
       state.requestDashboard = { ...state.requestDashboard, ...action.payload };
     },
     setRequestDashboardCurrentPage: (state, action) => {
@@ -61,7 +86,7 @@ const dashboardSlice = createSlice({
     },
     resetReportDashboardFilters: (state) => {
       state.reportDashboard = {
-        ...initialState.reportDashboard, 
+        ...initialState.reportDashboard,
         item_id: state.reportDashboard.item_id,
         role: state.reportDashboard.role,
       };

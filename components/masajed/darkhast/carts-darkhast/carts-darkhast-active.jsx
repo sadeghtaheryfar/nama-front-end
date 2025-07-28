@@ -128,6 +128,12 @@ const CartsDarkhastActive = ({ item }) => {
               </span>
             )}
           </li>
+          {item?.staff && (
+            <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
+              <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
+              این اکشن پلن ستادی می باشد .
+            </li>
+          )}
           {item?.single_step && (
             <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
               <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>

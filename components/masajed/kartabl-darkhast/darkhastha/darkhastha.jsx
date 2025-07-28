@@ -295,6 +295,9 @@ const Darkhastha = () => {
           <h2 className="text-base font-bold text-center min-w-fit lg:text-lg xl:text-[22px]">
             همه درخواست ها
           </h2>
+          <div>
+            <Link className="flex hover:scale-[1.03] active:scale-[1] transition-[0.9s] bg-sky-400 text-white whitespace-nowrap px-[1rem] py-[0.5rem] rounded-full" href={`/${itemId}/invoice`}>صورت حساب</Link>
+          </div>
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="bg-[#F6F6F6] rounded-full flex items-center gap-2 px-3 flex-auto xl:px-6 h-[60px] lg:min-w-80 xl:w-[480px] 2xl:w-[560px] xl:max-w-lg">
               <Image

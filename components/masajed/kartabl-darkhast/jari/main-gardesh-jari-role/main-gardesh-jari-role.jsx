@@ -279,6 +279,12 @@ const MainGardeshJariRole = ({data,back_steps}) => {
               <p>تک مرحله ای</p>
             </div>
           )}
+          
+          {data?.data?.request_plan?.staff && (
+            <div className="text-[#b7c725] bg-[#f4ffac] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
+              <p>ستادی</p>
+            </div>
+          )}
         </h2>
 
         {/* {data?.data?.status == 'rejected' ? (
@@ -333,6 +339,11 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             </h3>
             <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => copyText(data?.data?.amount)}>
               {formatPrice(data?.data?.amount)}
+              {data?.data?.request_plan?.staff && (
+                <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                  مبلغ ثابت : {formatPrice(Number(data?.data?.request_plan?.staff_amount))}
+                </small>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
@@ -360,6 +371,25 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             {data?.data?.body}
           </p>
         </div>
+        
+        {data?.data?.members && data?.data.members.length > 0 && (
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
+            <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+              مربیان حلقه:
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {data?.data.members.map((member, index) => (
+                <span
+                  key={index} // It's better to use member.id if available and unique, otherwise index is fine.
+                  className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center gap-1"
+                >
+                  {member.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr] 2xl:gap-x-12">
           {(data?.data?.imam_letter?.original || (data?.data?.other_imam_letter && data.data.other_imam_letter.length > 0)) && (
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">

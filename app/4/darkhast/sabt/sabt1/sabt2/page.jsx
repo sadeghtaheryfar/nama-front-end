@@ -8,7 +8,7 @@ const Sabt2 = () => {
   return (
     <Suspense>
       <div className="bg-header-masjed bg-repeat-x bg-auto lg:bg-header-masjed-desktop lg:bg-no-repeat lg:bg-contain px-7">
-        <HeaderSabt2 />
+        {/* <HeaderSabt2 /> */}
         <MainSabt2 />
       </div>
       <FooterMasajed />
