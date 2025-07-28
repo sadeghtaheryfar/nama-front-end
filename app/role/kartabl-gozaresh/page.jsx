@@ -17,8 +17,10 @@ import {
   setReportDashboardTotalPages,
   setHeaderData,
   setGlobalDashboardParams,
+  setUnitFilterSearch, // اضافه شده
+  setUnitFilterCurrentPage, // اضافه شده
+  setUnitFilterTotalPages, // اضافه شده
   resetReportDashboardFilters,
-  // فرض می‌کنیم این اکشن‌ها در dashboardSlice وجود دارند یا به setReportDashboardFilters اضافه می‌شوند
   // setReportDashboardSubType,
   // setReportDashboardSchoolCoachType,
 } from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
@@ -48,6 +50,12 @@ export default function KartablGozaresh() {
     school_coach_type, // Added for 'نوع مربی در مدارس'
   } = useSelector(state => state.dashboards.reportDashboard); // *** استفاده از reportDashboard ***
 
+  const {
+    search: unitFilterSearch, // نامگذاری متفاوت برای جلوگیری از تداخل
+    currentPage: unitFilterCurrentPage, // currentPage برای فیلتر واحدها
+    totalPages: unitFilterTotalPages,  // totalPages برای فیلتر واحدها
+  } = useSelector(state => state.dashboards.unitFilter);
+
   const header = useSelector(state => state.dashboards.headerData);
   const [loadingHeader, setLoadingHeader] = useState(true);
 
@@ -57,6 +65,7 @@ export default function KartablGozaresh() {
   const sortRef = useRef(null);
   const [planSearch, setPlanSearch] = useState("");
   const [unitSearch, setUnitSearch] = useState("");
+  const [loadingUnits, setLoadingUnits] = useState(false); 
 
   const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
   const debouncedSearchTerm = useDebounce(localSearchInput, 500);
@@ -64,6 +73,9 @@ export default function KartablGozaresh() {
   // Added states for select options
   const [subTypesData, setSubTypesData] = useState({});
   const [schoolCoachTypes, setSchoolCoachTypes] = useState({});
+
+  const [localUnitSearchInput, setLocalUnitSearchInput] = useState(unitFilterSearch);
+  const debouncedUnitSearchTerm = useDebounce(localUnitSearchInput, 500);
 
   useEffect(() => {
     setLocalSearchInput(reduxSearch);
@@ -75,6 +87,13 @@ export default function KartablGozaresh() {
         dispatch(setReportDashboardCurrentPage(1));
     }
   }, [debouncedSearchTerm, dispatch, reduxSearch]);
+  
+  useEffect(() => {
+    if (debouncedUnitSearchTerm !== unitFilterSearch) {
+        dispatch(setUnitFilterSearch(debouncedUnitSearchTerm));
+        dispatch(setUnitFilterCurrentPage(1)); // با تغییر جستجو، صفحه واحد را به 1 ریست کنید
+    }
+  }, [debouncedUnitSearchTerm, dispatch, unitFilterSearch]);
 
   useEffect(() => {
     const roleParam = searchParams.get("role");
@@ -170,6 +189,7 @@ export default function KartablGozaresh() {
   const [loading, setLoading] = useState(false);
 
   const itemsPerPage = 10;
+  const unitsPerPage = 10; 
 
   // تابع به روز رسانی URL: فقط item_id و role را در URL نگه می‌دارد
   // این تابع هیچ وابستگی به فیلترها یا صفحه ندارد.
@@ -190,21 +210,31 @@ export default function KartablGozaresh() {
 
   const [units, setUnits] = useState([]);
   useEffect(() => {
-    if(!item_id) return;
+    if(!item_id || !role) return; // اطمینان از وجود item_id و role
+
     const fetchUnits = async () => { // تغییر نام تابع
+      setLoadingUnits(true); // شروع لودینگ
       try {
-        const response = await axios.get(
-          `/api/unit?item_id=${item_id}&role=${role}`
+        const response = await axios.get( // تغییر یافته
+          `/api/unit?item_id=${item_id}&role=${role}&page=${unitFilterCurrentPage}&per_page=${unitsPerPage}&q=${unitFilterSearch}`
         );
-        if (response.data) {
+        if (response.data && response.data.data) { // فرض بر این است که پاسخ شامل data و meta است
           setUnits(response.data.data);
+          if (response.data.meta && response.data.meta.total) { // فرض بر این است که API اطلاعات meta را برمی‌گرداند
+            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.meta.total / unitsPerPage))); // تنظیم totalPages برای واحدها
+          } else {
+             // Fallback اگر meta وجود نداشت، بر اساس طول داده‌های دریافت شده (کمتر دقیق برای داده‌های جزئی)
+            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.data.length / unitsPerPage) || 1));
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching units:", error);
+      } finally {
+        setLoadingUnits(false); // پایان لودینگ
       }
     };
     fetchUnits();
-  }, [item_id, role]);
+  }, [item_id, role, unitFilterCurrentPage, unitFilterSearch, dispatch, unitsPerPage]); // اضافه شدن dependencies جدید
 
   const [plans, setPlans] = useState([]);
   useEffect(() => {
@@ -263,6 +293,7 @@ export default function KartablGozaresh() {
     setLocalSearchInput('');
     setPlanSearch('');
     setUnitSearch('');
+    setLocalUnitSearchInput('');
     setIsFilterOpen(false);
   };
 
@@ -328,6 +359,10 @@ export default function KartablGozaresh() {
   const handlePageChange = (page) => {
     dispatch(setReportDashboardCurrentPage(page)); // *** استفاده از setReportDashboardCurrentPage ***
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleUnitPageChange = (page) => {
+    dispatch(setUnitFilterCurrentPage(page)); // صفحه را به Redux برای واحدها ارسال کنید
   };
 
   const renderPaginationButtons = () => {
@@ -411,6 +446,60 @@ export default function KartablGozaresh() {
         disabled={currentPage === totalPages}
         className={`px-3 py-1 rounded-md ${
           currentPage === totalPages
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        بعدی
+      </button>
+    );
+
+    return buttons;
+  };
+
+  const renderUnitPaginationButtons = () => {
+    const buttons = [];
+    buttons.push(
+      <button
+        key="unit-prev"
+        onClick={() => unitFilterCurrentPage > 1 && handleUnitPageChange(unitFilterCurrentPage - 1)}
+        disabled={unitFilterCurrentPage === 1}
+        className={`px-2 py-1 rounded-md ${
+          unitFilterCurrentPage === 1
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-[#39A894] hover:bg-gray-100"
+        }`}
+      >
+        قبلی
+      </button>
+    );
+
+    const startPage = Math.max(1, unitFilterCurrentPage - 1);
+    const endPage = Math.min(unitFilterTotalPages, unitFilterCurrentPage + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={`unit-page-${i}`}
+          onClick={() => handleUnitPageChange(i)}
+          className={`px-2 py-1 rounded-md ${
+            unitFilterCurrentPage === i
+              ? "bg-[#39A894] text-white"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    buttons.push(
+      <button
+        key="unit-next"
+        onClick={() => unitFilterCurrentPage < unitFilterTotalPages && handleUnitPageChange(unitFilterCurrentPage + 1)}
+        disabled={unitFilterCurrentPage === unitFilterTotalPages}
+        className={`px-2 py-1 rounded-md ${
+          unitFilterCurrentPage === unitFilterTotalPages
             ? "text-gray-400 cursor-not-allowed"
             : "text-[#39A894] hover:bg-gray-100"
         }`}
@@ -655,27 +744,36 @@ export default function KartablGozaresh() {
                                   type="text"
                                   placeholder="جستجوی واحد سازمانی..."
                                   className="w-full p-2 border rounded mb-2"
-                                  value={unitSearch}
-                                  onChange={(e) => setUnitSearch(e.target.value)}
+                                  value={localUnitSearchInput} // مقدار ورودی از state محلی
+                                  onChange={(e) => setLocalUnitSearchInput(e.target.value)} // به‌روزرسانی state محلی
                                 />
-                                <select
-                                  className="w-full p-2 border rounded"
-                                  value={unit_id || ''}
-                                  onChange={(e) => handleFilterChange({ unit_id: e.target.value })}
-                                  size={unitSearch ? Math.min(5, units.filter(unit => 
-                                    unit.title.toLowerCase().includes(unitSearch.toLowerCase())
-                                  ).length + 1) : 1}
-                                >
-                                  <option value="">همه</option>
-                                  {units
-                                    .filter(unit => unit.title.toLowerCase().includes(unitSearch.toLowerCase()))
-                                    .map(unit => (
-                                      <option key={unit.id} value={unit.id}>
+                                {loadingUnits && ( // نمایش spinner هنگام لودینگ واحدها
+                                  <div className="flex justify-center items-center py-2">
+                                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                  </div>
+                                )}
+                                {/* نمایش واحدهای paginated به جای select */}
+                                <div className="max-h-40 overflow-y-auto border rounded">
+                                  {units.length > 0 ? (
+                                    units.map(unit => (
+                                      <div
+                                        key={unit.id}
+                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${unit_id === unit.id ? 'bg-[#D9EFFE] text-[#258CC7]' : ''}`}
+                                        onClick={() => handleFilterChange({ unit_id: unit.id })} // تنظیم unit_id در فیلتر اصلی
+                                      >
                                         {unit.title}
-                                      </option>
+                                      </div>
                                     ))
-                                  }
-                                </select>
+                                  ) : (
+                                    !loadingUnits && <div className="p-2 text-gray-500">یافت نشد</div>
+                                  )}
+                                </div>
+                                {/* کنترل‌های Pagination برای واحدها */}
+                                {unitFilterTotalPages > 1 && (
+                                  <div className="flex justify-center items-center mt-2 gap-1 text-xs">
+                                    {renderUnitPaginationButtons()} {/* رندر دکمه‌های pagination واحدها */}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>

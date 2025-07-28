@@ -8,11 +8,14 @@ export const GET = async (req) => {
   const token = cookies().get("token")?.value;
   const itemId = searchParams.get("item_id");
   const role = searchParams.get("role");
+  const page = searchParams.get("page") || 1;
+  const perPage = searchParams.get("per_page") || 10;
+  const q = searchParams.get("q") || "";
 
   try {
-    let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/units?per_page=100&role=${role}&item_id=${itemId}`;
+    let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/units?per_page=${perPage}&page=${page}&role=${role}&q=${q}`;
     if (itemId) {
-      apiUrl += `?item_id=${itemId}`;
+      apiUrl += `&item_id=${itemId}`;
     }
 
     const response = await axios.get(apiUrl, {

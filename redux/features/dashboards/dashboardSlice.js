@@ -11,9 +11,10 @@ const initialState = {
     status: null,
     plan_id: null,
     unit_id: null,
-    currentPage: 1,
-    totalPages: 1,
-    // Add new filter states here
+    currentPage: 1, // Current page for main requests pagination
+    totalPages: 1,  // Total pages for main requests pagination
+    school_coach_type: null,
+    sub_type: null,
     version: null, // New: Arman version filter
     request_type: null, // New: 'single' or 'normal' for request type
     from_date: null, // New: Start date for date range filter
@@ -32,6 +33,12 @@ const initialState = {
     totalPages: 1,
   },
   headerData: null,
+  // Moved unitFilter outside requestDashboard to prevent name collision
+  unitFilter: { // New separate state for organizational unit filter
+    search: '',
+    currentPage: 1, // Current page for unit filter pagination
+    totalPages: 1,  // Total pages for unit filter pagination
+  },
 };
 
 const dashboardSlice = createSlice({
@@ -39,7 +46,7 @@ const dashboardSlice = createSlice({
   initialState,
   reducers: {
     setRequestDashboardFilters: (state, action) => {
-      // Ensure mutual exclusivity for request_type if it's part of the payload
+      // Logic for request_type mutual exclusivity
       if (action.payload.request_type !== undefined) {
         if (action.payload.request_type === "single") {
           state.requestDashboard.single_request = true;
@@ -62,16 +69,20 @@ const dashboardSlice = createSlice({
       state.requestDashboard = { ...state.requestDashboard, ...action.payload };
     },
     setRequestDashboardCurrentPage: (state, action) => {
-      state.requestDashboard.currentPage = action.payload;
+      state.requestDashboard.currentPage = action.payload; // Updates main dashboard page
     },
     setRequestDashboardTotalPages: (state, action) => {
-      state.requestDashboard.totalPages = action.payload;
+      state.requestDashboard.totalPages = action.payload; // Updates main dashboard total pages
     },
     resetRequestDashboardFilters: (state) => {
       state.requestDashboard = {
-        ...initialState.requestDashboard,
+        ...initialState.requestDashboard, // Reset to initial state, but preserve item_id and role
         item_id: state.requestDashboard.item_id,
         role: state.requestDashboard.role,
+      };
+      // Explicitly reset unitFilter when main dashboard filters are reset
+      state.unitFilter = {
+        ...initialState.unitFilter,
       };
     },
 
@@ -101,6 +112,16 @@ const dashboardSlice = createSlice({
       state.reportDashboard.item_id = action.payload.item_id;
       state.reportDashboard.role = action.payload.role;
     },
+    // New reducers for unitFilter (اضافه شده)
+    setUnitFilterSearch: (state, action) => {
+      state.unitFilter.search = action.payload;
+    },
+    setUnitFilterCurrentPage: (state, action) => {
+      state.unitFilter.currentPage = action.payload;
+    },
+    setUnitFilterTotalPages: (state, action) => {
+      state.unitFilter.totalPages = action.payload;
+    },
   },
 });
 
@@ -115,6 +136,10 @@ export const {
   resetReportDashboardFilters,
   setHeaderData,
   setGlobalDashboardParams,
+  // Export new actions for unitFilter (اضافه شده)
+  setUnitFilterSearch,
+  setUnitFilterCurrentPage,
+  setUnitFilterTotalPages,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

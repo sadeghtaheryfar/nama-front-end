@@ -498,13 +498,6 @@ const FormEslah = ({ data: initialRequestData }) => {
   };
 
   const handleMemberSelection = (member) => {
-    // Prevent selection if already in previouslySelectedMembers
-    const isPreviouslySelected = previouslySelectedMembers.some(prevMember => prevMember.id === member.id);
-    if (isPreviouslySelected) {
-      toast.error("این مربی قبلاً برای این حلقه انتخاب شده است.");
-      return;
-    }
-
     setTouched({ ...touched, ringMember: true });
     setSelectedRingMembers((prevSelected) => {
       const isSelected = prevSelected.some((m) => m.id === member.id);
@@ -763,15 +756,19 @@ const FormEslah = ({ data: initialRequestData }) => {
       });
     }
 
-    // Append only currently selected ring members that are NOT previously selected
-    const membersToAppend = selectedRingMembers.filter(member =>
-        !previouslySelectedMembers.some(prevMember => prevMember.id === member.id)
-    );
-
-    if (membersToAppend.length > 0) {
-      membersToAppend.forEach((memberObj, index) => {
+    // Append all currently selected ring members (both previously selected and newly added)
+    if (selectedRingMembers.length > 0) {
+      selectedRingMembers.forEach((memberObj, index) => {
         formDataToUpdate.append(`members[${index}]`, memberObj.id);
       });
+    } else {
+      // If no members are selected, ensure the 'members' field is explicitly handled
+      // This is crucial for telling the API to remove all members if none are selected.
+      // Depending on your API, you might need to send an empty array or a specific flag.
+      // For FormData, appending an empty string might signal an empty array to some APIs
+      // or simply omitting the field if the API knows to handle missing 'members' as no members.
+      // For explicit removal of all members, you might need to send a specific value like:
+      // formDataToUpdate.append("members", ""); // or some other explicit indicator if your API expects it
     }
 
 
@@ -869,17 +866,17 @@ const FormEslah = ({ data: initialRequestData }) => {
 
     return `${formattedNumber} ریال`;
   }
-
-  // Combine and filter members for the dropdown based on search term
-  // This list should exclude previously selected members from the selectable list
+  
   const combinedAndFilteredCoaches = Array.from(
     new Map(
-      [...AllRingMembers, ...selectedRingMembers].map(item => [item['id'], item])
+      [...AllRingMembers, ...previouslySelectedMembers].map(item => [item['id'], item])
     ).values()
   ).filter(member =>
-    member.name.toLowerCase().includes(memberSearchTerm.toLowerCase()) &&
-    !previouslySelectedMembers.some(prevMember => prevMember.id === member.id)
+    member.name.toLowerCase().includes(memberSearchTerm.toLowerCase())
   );
+
+  console.log(allCoachesForSelection.data);
+  
 
   return (
     <div className="w-full bg-white rounded-lg">
@@ -1015,41 +1012,6 @@ const FormEslah = ({ data: initialRequestData }) => {
           </div>
         )}
 
-        {/* New Box: مربی های انتخاب شده قبلی (Previously Selected Coaches) */}
-        {initialRequestData?.request_plan?.show_ring_member && previouslySelectedMembers.length > 0 && (
-          <div className="mb-4">
-            <h3 className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              مربی های انتخاب شده قبلی
-            </h3>
-            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg min-h-[56px]">
-              {previouslySelectedMembers.map(member => (
-                <span
-                  key={`prev-${member.id}`}
-                  className="bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center gap-1"
-                >
-                  {member.name}
-                  <button
-                    type="button"
-                    onClick={() => handleDeletePreviousMember(member.id, member.ring_id)}
-                    className="ml-1 text-purple-800 hover:text-purple-600 focus:outline-none"
-                    title="حذف مربی قبلی"
-                    disabled={isDeletingMember === member.id}
-                  >
-                    {isDeletingMember === member.id ? (
-                      <svg className="animate-spin h-4 w-4 text-purple-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    ) : (
-                      <>&times;</>
-                    )}
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* New Field: انتخاب مربیان حلقه (Members of Selected Ring) */}
         {initialRequestData?.request_plan?.show_ring_member && selectedRingId && (
           <div className="mb-4 relative" ref={membersDropdownRef}>
@@ -1079,13 +1041,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Only allow removal from selectedRingMembers if NOT in previouslySelectedMembers
-                        const isMemberPreviouslySelected = previouslySelectedMembers.some(prevMember => prevMember.id === member.id);
-                        if (!isMemberPreviouslySelected) {
-                            removeMemberTag(member.id);
-                        } else {
-                            toast.error("مربیان قبلاً انتخاب شده را از این لیست نمی‌توان حذف کرد. برای حذف دائم از بخش 'مربی های انتخاب شده قبلی' اقدام کنید.");
-                        }
+                        removeMemberTag(member.id); // Call removeMemberTag directly for any member
                       }}
                       className="ml-1 text-blue-800 hover:text-blue-600 focus:outline-none"
                     >
@@ -1112,21 +1068,24 @@ const FormEslah = ({ data: initialRequestData }) => {
                 ) : combinedAndFilteredCoaches.length > 0 ? (
                   combinedAndFilteredCoaches.map((member) => {
                     const isMemberSelectedInCurrentList = selectedRingMembers.some(m => m.id === member.id);
-                    const isMemberPreviouslySelected = previouslySelectedMembers.some(prevMember => prevMember.id === member.id);
                     return (
                       <div
                         key={member.id}
-                        className={`flex items-center p-2 hover:bg-gray-100 cursor-pointer ${isMemberPreviouslySelected ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : ''}`}
-                        onClick={() => !isMemberPreviouslySelected && handleMemberSelection(member)}
+                        className={`flex items-center p-2 hover:bg-gray-100 cursor-pointer`}
+                        onClick={() => handleMemberSelection(member)}
                       >
                         <input
                           type="checkbox"
-                          checked={isMemberSelectedInCurrentList} // Check if currently selected
-                          onChange={() => !isMemberPreviouslySelected && handleMemberSelection(member)}
+                          checked={isMemberSelectedInCurrentList}
+                          onChange={() => handleMemberSelection(member)}
                           className="ml-2"
-                          disabled={isMemberPreviouslySelected}
                         />
-                        <span>{member.name} {isMemberPreviouslySelected && "(قبلاً انتخاب شده)"}</span>
+                        <span>
+                          {member.name}
+                          {previouslySelectedMembers.some(prevMember => prevMember.id === member.id) && (
+                            <span className="text-gray-500 text-xs mr-1">(قبلاً انتخاب شده)</span>
+                          )}
+                        </span>
                       </div>
                     );
                   })
