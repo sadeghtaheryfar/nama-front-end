@@ -416,9 +416,9 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               هزینه پیشنهادی آرمان:
             </h3>
             {data?.data?.request?.single_step ? (
-              <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.final_amount ?? 0)}</span>
+              <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.total_amount ?? 0)}</span>
             ) : (
-                <span onClick={(e) => copyText((data?.data?.final_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.final_amount ? formatPrice(data?.data?.final_amount) : 'وارد نشده'}</span>
+                <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.total_amount ? formatPrice(data?.data?.total_amount) : 'وارد نشده'}</span>
             )}
           </div>
 

@@ -350,15 +350,25 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
             </h3>
-            <span onClick={(e) => copyText((data?.data?.final_amount ? data?.data?.final_amount : 'وارد نشده'))} className="text-base lg:text-lg font-medium cursor-pointer">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : formatPrice(data?.data?.total_amount)}</span>
+            <span onClick={(e) => copyText((data?.data?.total_amount ? data?.data?.total_amount : 'وارد نشده'))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.total_amount)}</span>
           </div>
           {data?.data?.offer_amount !== null && data?.data?.offer_amount !== undefined && data?.data?.offer_amount !== 0 && (
             <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
               <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-                هزینه پیشنهادی معاونت مساجد:
+                هزینه پیشنهادی معاونت اجرایی مساجد:
               </h3>
               <span onClick={(e) => copyText(data?.data?.offer_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
                 {(data?.data?.offer_amount || data?.data?.offer_amount === 0) ? formatPrice(data?.data?.offer_amount) : 'وارد نشده است'}
+              </span>
+            </div>
+          )}
+          {data?.data?.final_amount !== null && data?.data?.final_amount !== undefined && data?.data?.final_amount !== 0 && (
+            <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+              <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                هزینه پیشنهادی معاونت طرح و برنامه:
+              </h3>
+              <span onClick={(e) => copyText(data?.data?.final_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
+                {(data?.data?.final_amount || data?.data?.final_amount === 0) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}
               </span>
             </div>
           )}

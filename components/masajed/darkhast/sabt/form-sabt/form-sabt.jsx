@@ -716,7 +716,7 @@ const FormSabt = ({ id, data }) => {
               onOpen={() => setTouched({ ...touched, time: true })}
               calendar={persian}
               locale={persian_fa}
-              minDate={new Date()}
+              // minDate={new Date()}
               editable={false}
               inputClass={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle(
                 "time"
