@@ -44,7 +44,7 @@ export default function Role() {
       "deputy_for_planning_and_programming"
     ];
 
-    const validItemIds = ["1", "2", "3", "4"];
+    const validItemIds = ["1", "2", "3", "4","8"];
 
     if (!validRoles.includes(roleParam) || !validItemIds.includes(itemIdParam)) {
       router.push("/");
