@@ -343,7 +343,6 @@ const DataLoop = ({item_id}) => {
         });
     };
     const onSubmit = async (data) => {
-        console.log("Form Data:", data);
         setIsUploading(true);
         setUploadProgress(0);
 

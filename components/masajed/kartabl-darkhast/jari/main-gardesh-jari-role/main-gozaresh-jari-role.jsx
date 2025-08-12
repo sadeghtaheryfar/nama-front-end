@@ -446,20 +446,34 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             {data?.data?.body}
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20 2xl:grid-cols-[auto,auto,1fr]  2xl:gap-x-12">
+        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:gap-x-4 xl:gap-x-20  2xl:gap-x-12">
           <div className="flex flex-col gap-4 2xl:gap-6">
             <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
               فایل پیوست تصویری:
             </h3>
             
             <div className="flex flex-wrap w-full gap-[1rem]">
-              {data?.data?.images?.map((item) => (
-                <a href={item?.original} key={item?.id}>
-                  <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                    برای مشاهده فایل کلیک کنید
-                  </button>
-                </a>
-              ))}
+              {data?.data?.images?.map((file, index) => {
+                const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                return (
+                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                        {isPdf ? (
+                            <>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+
+                                <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                    کلیک کنید
+                                </p>
+                            </>
+                        ) : (
+                            <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                        )}
+                    </a>
+                  );
+              })}
             </div>
           </div>
 
@@ -506,19 +520,33 @@ const MainGozareshJariRole = ({data, back_steps}) => {
           )}
 
           {(data?.data?.images2?.original || (data?.data?.images2 && data.data.images2.length > 0)) && (
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-start lg:justify-normal xl:gap-12 2xl:gap-6">
-                  <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-                    پیوست های بیشتر :
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                      {data?.data?.images2?.map((item) => (
-                        <a href={item?.original} key={item?.id}>
-                          <button className="px-[2rem] h-12 px-4 md:w-60 text-base font-medium text-[#345894] border border-[#345894] rounded-[10px] hover:text-white hover:bg-[#345894]">
-                            برای مشاهده فایل کلیک کنید
-                          </button>
+            <div className="flex flex-col gap-4 2xl:gap-6">
+                <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
+                  پیوست های بیشتر :
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {data?.data?.images2?.map((file, index) => {
+                    const isPdf = file.original.toLowerCase().endsWith('.pdf');
+                    return (
+                        <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                            {isPdf ? (
+                                <>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+                                    <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+
+                                    <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
+                                        کلیک کنید
+                                    </p>
+                                </>
+                            ) : (
+                                <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
+                            )}
                         </a>
-                      ))}
-                  </div>
+                      );
+                  })}
+                </div>
               </div>
           )}
         </div>
