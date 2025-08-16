@@ -429,7 +429,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
           )}
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه پیشنهادی معاونت مساجد:
+              هزینه پیشنهادی معاونت :
             </h3>
             {data?.data?.request?.single_step ? (
               <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{formatPrice(data?.data?.offer_amount ?? 0)}</span>
