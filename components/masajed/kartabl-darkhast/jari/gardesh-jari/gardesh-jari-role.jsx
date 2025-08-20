@@ -311,18 +311,18 @@ const GardeshJariRole = ({data}) => {
   const getStepText = (stepName, associatedRole) => {
     const status = getStepStatus(stepName, associatedRole);
     const stepTitles = {
-      'approval_mosque_head_coach': 'تایید سر مربی مسجد',
-      'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی مسجد',
+      'approval_mosque_head_coach': 'تایید سر مربی ',
+      'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی ',
       'approval_area_interface': 'تایید رابط منطقه',
-      'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی مساجد',
+      'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی ',
       'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
     };
 
     const roleDisplayNames = {
-      'mosque_head_coach': 'سر مربی مسجد',
-      'mosque_cultural_officer': 'مسئول فرهنگی مسجد',
+      'mosque_head_coach': 'سر مربی ',
+      'mosque_cultural_officer': 'مسئول فرهنگی ',
       'area_interface': 'رابط منطقه',
-      'executive_vice_president_mosques': 'معاونت اجرایی مساجد',
+      'executive_vice_president_mosques': 'معاونت اجرایی ',
       'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
     };
 
@@ -350,10 +350,10 @@ const GardeshJariRole = ({data}) => {
   };
 
   const stepsConfig = [
-    { name: 'approval_mosque_head_coach', title: 'تایید سر مربی مسجد', associatedRole: 'mosque_head_coach' },
-    { name: 'approval_mosque_cultural_officer', title: 'تایید مسئول فرهنگی مسجد', associatedRole: 'mosque_cultural_officer' },
+    { name: 'approval_mosque_head_coach', title: 'تایید سر مربی ', associatedRole: 'mosque_head_coach' },
+    { name: 'approval_mosque_cultural_officer', title: 'تایید مسئول فرهنگی ', associatedRole: 'mosque_cultural_officer' },
     { name: 'approval_area_interface', title: 'تایید رابط منطقه', associatedRole: 'area_interface' },
-    { name: 'approval_executive_vice_president_mosques', title: 'تایید معاونت اجرایی مساجد', associatedRole: 'executive_vice_president_mosques' },
+    { name: 'approval_executive_vice_president_mosques', title: 'تایید معاونت اجرایی ', associatedRole: 'executive_vice_president_mosques' },
     { name: 'approval_deputy_for_planning_and_programming', title: 'تایید معاونت طرح و برنامه', associatedRole: 'deputy_for_planning_and_programming' },
   ];
 
