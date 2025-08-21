@@ -720,7 +720,12 @@ const FormEslah = ({ data: initialRequestData }) => {
       setStatusSend("");
     }
 
-    const newDate = time?.replaceAll("/", "-");
+    let newDate = time;
+    if (typeof time === 'string') {
+        newDate = time.replaceAll("/", "-");
+    } else if (time instanceof DateObject) {
+        newDate = time.format("YYYY-MM-DD");
+    }
 
     const formDataToUpdate = new FormData();
     formDataToUpdate.append("students", Number(student));
