@@ -60,9 +60,9 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
               هزینه پرداختی توسط آرمان:
             </h3>
           {data?.data?.single_step ? (
-            <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.report?.final_amount ?? 0)}</span>
+            <span className="text-base lg:text-lg font-medium">{formatPrice(data?.data?.total_amount ?? 0)}</span>
           ) : (
-            <span className="text-base lg:text-lg font-medium">{data?.data?.report?.final_amount ? formatPrice(data?.data?.report?.final_amount) : 'وارد نشده'}</span>
+            <span className="text-base lg:text-lg font-medium">{data?.data?.total_amount ? formatPrice(data?.data?.total_amount) : 'وارد نشده'}</span>
           )}
           </div>
       </div>

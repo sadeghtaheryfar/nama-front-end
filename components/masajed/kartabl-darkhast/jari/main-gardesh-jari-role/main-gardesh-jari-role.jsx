@@ -739,7 +739,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
             <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
               هزینه پرداختی توسط آرمان:
             </h3>
-            <span className="text-base lg:text-lg font-medium">{(data?.data?.final_amount) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}</span>
+            <span className="text-base lg:text-lg font-medium">{(data?.data?.total_amount) ? formatPrice(data?.data?.total_amount) : 'وارد نشده است'}</span>
           </div>
 
           <div className="mt-[1rem]">
@@ -756,7 +756,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         onClose={() => setShowRejectConfirmationModal(false)}
         onConfirm={() => {
           hnadleForm('reject');
-          setShowRejectConfirmationModal(false); // Close modal after confirming
+          setShowRejectConfirmationModal(false);
         }}
         loading={loading}
       />
