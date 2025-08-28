@@ -81,6 +81,9 @@ const FormEslah = ({ data: initialRequestData }) => {
   const [time, setTime] = useState("");
   const [des, setDes] = useState(initialRequestData?.body || "");
 
+  const [programTitle, setProgramTitle] = useState(initialRequestData?.title || "");
+  const [programLocation, setProgramLocation] = useState(initialRequestData?.location || "");
+
   const [imamLetters, setImamLetters] = useState([]);
   const [connectionLetters, setConnectionLetters] = useState([]);
   const [additionalAttachments, setAdditionalAttachments] = useState([]);
@@ -129,6 +132,8 @@ const FormEslah = ({ data: initialRequestData }) => {
       setCost(initialRequestData.amount || "");
       setDes(initialRequestData.body || "");
       setSelectedRingId(initialRequestData.ring_id || null);
+      setProgramLocation(initialRequestData?.location || "");
+      setProgramTitle(initialRequestData?.title || "");
 
       if (initialRequestData.date) {
         const gregorianDate = new Date(initialRequestData.date);
@@ -388,6 +393,8 @@ const FormEslah = ({ data: initialRequestData }) => {
     additionalAttachments: "",
     selectedRingId: "",
     ringMember: "",
+    programTitle: "",
+    programLocation: "",
   });
 
   // Touched states for input validation UI
@@ -400,6 +407,8 @@ const FormEslah = ({ data: initialRequestData }) => {
     additionalAttachments: false,
     selectedRingId: false,
     ringMember: false,
+    programTitle: false,
+    programLocation: false,
   });
 
 
@@ -423,6 +432,20 @@ const FormEslah = ({ data: initialRequestData }) => {
   const validateImamLetter = (files) => {
     if (isImamLetterRequired && files.length === 0) {
       return `فایل نامه ${typeField || 'امام جماعت'} الزامی است`;
+    }
+    return "";
+  };
+
+  const validateProgramTitle = (value) => {
+    if (!value.trim()) {
+      return "عنوان برنامه الزامی است";
+    }
+    return "";
+  };
+
+  const validateProgramLocation = (value) => {
+    if (!value.trim()) {
+      return "لوکیشن برنامه الزامی است";
     }
     return "";
   };
@@ -533,7 +556,6 @@ const FormEslah = ({ data: initialRequestData }) => {
     let isValid = true;
 
     const newErrors = {
-      student: validateStudent(student),
       time: validateTime(time),
       imamLetter: validateImamLetter(imamLetters),
       additionalAttachments: validateAdditionalAttachments(additionalAttachments),
@@ -542,6 +564,12 @@ const FormEslah = ({ data: initialRequestData }) => {
       ringMember: validateRingMember(selectedRingMembers),
     };
 
+    if (initialRequestData?.request_plan?.type === "university") {
+        newErrors.programTitle = validateProgramTitle(programTitle);
+        newErrors.programLocation = validateProgramLocation(programLocation);
+    } else {
+        newErrors.student = validateStudent(student);
+    }
     setErrors(newErrors);
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
@@ -728,8 +756,13 @@ const FormEslah = ({ data: initialRequestData }) => {
     }
 
     const formDataToUpdate = new FormData();
-    formDataToUpdate.append("students", Number(student));
-    formDataToUpdate.append("amount", Number(cost));
+    if (initialRequestData?.request_plan?.type === "university") {
+      formDataToUpdate.append("title", programTitle);
+      formDataToUpdate.append("location", programLocation);
+    } else {
+      formDataToUpdate.append("students", Number(student));
+      formDataToUpdate.append("amount", Number(cost));
+    }
     formDataToUpdate.append("body", des);
     formDataToUpdate.append("date", newDate);
     formDataToUpdate.append("request_plan_id", initialRequestData?.request_plan?.id);
@@ -738,19 +771,21 @@ const FormEslah = ({ data: initialRequestData }) => {
         formDataToUpdate.append("ring_id", selectedRingId);
     }
 
-    const newImamFiles = imamLetters.filter(f => !f.isExisting);
-    if (newImamFiles.length > 0) {
-      formDataToUpdate.append("imam_letter", newImamFiles[0].file);
-      for (let i = 1; i < newImamFiles.length; i++) {
-        formDataToUpdate.append(`other_imam_letter[${i - 1}]`, newImamFiles[i].file);
+    if (initialRequestData?.request_plan?.type !== "university") {
+      const newImamFiles = imamLetters.filter(f => !f.isExisting);
+      if (newImamFiles.length > 0) {
+        formDataToUpdate.append("imam_letter", newImamFiles[0].file);
+        for (let i = 1; i < newImamFiles.length; i++) {
+          formDataToUpdate.append(`other_imam_letter[${i - 1}]`, newImamFiles[i].file);
+        }
       }
-    }
 
-    const newConnectionFiles = connectionLetters.filter(f => !f.isExisting);
-    if (newConnectionFiles.length > 0) {
-      formDataToUpdate.append("area_interface_letter", newConnectionFiles[0].file);
-      for (let i = 1; i < newConnectionFiles.length; i++) {
-        formDataToUpdate.append(`other_area_interface_letter[${i - 1}]`, newConnectionFiles[i].file);
+      const newConnectionFiles = connectionLetters.filter(f => !f.isExisting);
+      if (newConnectionFiles.length > 0) {
+        formDataToUpdate.append("area_interface_letter", newConnectionFiles[0].file);
+        for (let i = 1; i < newConnectionFiles.length; i++) {
+          formDataToUpdate.append(`other_area_interface_letter[${i - 1}]`, newConnectionFiles[i].file);
+        }
       }
     }
 
@@ -883,73 +918,121 @@ const FormEslah = ({ data: initialRequestData }) => {
   return (
     <div className="w-full bg-white rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-        <div className="mb-4">
-          <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-            تعداد دانش آموزان / نوجوان
-            <RequiredStar />
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              id="student"
-              value={student}
-              onChange={handleStudentChange}
-              onBlur={() => setTouched({ ...touched, student: true })}
-              name="student"
-              placeholder="به عنوان مثال 25 عدد..."
-              className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle(
-                "student"
-              )}`}
-            />
-            {touched.student && errors.student && (
-              <div className="text-red-500 text-sm mt-1">{errors.student}</div>
-            )}
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-            هزینه کلی عملیات
-            <RequiredStar />
-          </label>
-          <input
-            type="number"
-            id="cost"
-            name="cost"
-            value={cost}
-            onChange={handleCostChange}
-            onBlur={() => setTouched({ ...touched, cost: true })}
-            min={1000}
-            max={10000000000000}
-            placeholder="از 1،000 تا 10،000،000،000،000"
-            className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle(
-              "cost"
-            )}`}
-          />
-          {initialRequestData?.request_plan?.staff && (
-            <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
-              مبلغ ثابت : {formatToCurrency(Number(initialRequestData?.request_plan?.staff_amount))}
-            </small>
-          )}
-          {touched.cost && errors.cost && (
-            <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
-          )}
-          {cost ? (
-            <>
-              <div className="mt-2 text-sm text-gray-600">
-                <span className="font-medium">مبلغ به حروف: </span>
-                {convertToPersianWords(Number(cost))}
+        {initialRequestData?.request_plan?.type === "university" ? (
+          <>
+            <div className="mb-4">
+              <label htmlFor="programTitle" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                عنوان برنامه <RequiredStar />
+              </label>
+              <input
+                type="text"
+                id="programTitle"
+                value={programTitle}
+                onChange={(e) => {
+                  setProgramTitle(e.target.value);
+                  setErrors(prevErrors => ({ ...prevErrors, programTitle: validateProgramTitle(e.target.value) }));
+                }}
+                onBlur={() => setTouched({ ...touched, programTitle: true })}
+                name="programTitle"
+                placeholder="به عنوان مثال همایش سالانه..."
+                className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle("programTitle")}`}
+              />
+              {touched.programTitle && errors.programTitle && (
+                <div className="text-red-500 text-sm mt-1">{errors.programTitle}</div>
+              )}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="programLocation" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                لوکیشن برنامه <RequiredStar />
+              </label>
+              <input
+                type="text"
+                id="programLocation"
+                value={programLocation}
+                onChange={(e) => {
+                  setProgramLocation(e.target.value);
+                  setErrors(prevErrors => ({ ...prevErrors, programLocation: validateProgramLocation(e.target.value) }));
+                }}
+                onBlur={() => setTouched({ ...touched, programLocation: true })}
+                name="programLocation"
+                placeholder="به عنوان مثال تهران، دانشگاه شریف..."
+                className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle("programLocation")}`}
+              />
+              {initialRequestData?.request_plan?.staff && (
+                <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                  مبلغ ثابت : {formatToCurrency(Number(initialRequestData?.request_plan?.staff_amount))}
+                </small>
+              )}
+              {touched.programLocation && errors.programLocation && (
+                <div className="text-red-500 text-sm mt-1">{errors.programLocation}</div>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="mb-4">
+              <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                تعداد دانش آموزان / نوجوان
+                <RequiredStar />
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  id="student"
+                  value={student}
+                  onChange={handleStudentChange}
+                  onBlur={() => setTouched({ ...touched, student: true })}
+                  name="student"
+                  placeholder="به عنوان مثال 25 عدد..."
+                  className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle("student")}`}
+                />
+                {touched.student && errors.student && (
+                  <div className="text-red-500 text-sm mt-1">{errors.student}</div>
+                )}
               </div>
-
-              <div className="mt-2 text-sm text-gray-600">
-                <span className="font-medium">مبلغ به عدد: </span>
-                {formatToCurrency(cost)}
-              </div>
-            </>
-          ) : (
-            <small className="mt-2">&nbsp;</small>
-          )}
-        </div>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                هزینه کلی عملیات
+                <RequiredStar />
+              </label>
+              <input
+                type="number"
+                id="cost"
+                name="cost"
+                value={cost}
+                onChange={handleCostChange}
+                onBlur={() => setTouched({ ...touched, cost: true })}
+                min={1000}
+                max={10000000000000}
+                placeholder="از 1،000 تا 10،000،000،000،000"
+                className={`block w-full p-4 border rounded-lg text-gray-700 ${getBorderStyle("cost")}`}
+              />
+              {initialRequestData?.request_plan?.staff && (
+                <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                  مبلغ ثابت : {formatToCurrency(Number(initialRequestData?.request_plan?.staff_amount))}
+                </small>
+              )}
+              {touched.cost && errors.cost && (
+                <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
+              )}
+              {cost ? (
+                <>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <span className="font-medium">مبلغ به حروف: </span>
+                    {convertToPersianWords(Number(cost))}
+                  </div>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <span className="font-medium">مبلغ به عدد: </span>
+                    {formatToCurrency(cost)}
+                  </div>
+                </>
+              ) : (
+                <small className="mt-2">&nbsp;</small>
+              )}
+            </div>
+          </>
+        )}
 
         <div className="mb-4">
           <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
@@ -1121,7 +1204,7 @@ const FormEslah = ({ data: initialRequestData }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-        {initialRequestData?.request_plan?.show_letter && (
+        {initialRequestData?.request_plan?.show_letter && initialRequestData?.request_plan?.type !== "university" && (
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
               آپلود فایل پیوست نامه {typeField || 'امام جماعت'}
@@ -1193,7 +1276,7 @@ const FormEslah = ({ data: initialRequestData }) => {
           </div>
         )}
 
-        {initialRequestData?.request_plan?.show_area_interface && (
+        {initialRequestData?.request_plan?.show_area_interface && initialRequestData?.request_plan?.type !== "university" && (
           <div className="mb-4">
             <h3 className="text-base lg:text-lg text-[#3B3B3B] mb-2">
               آپلود فایل نامه رابط منطقه

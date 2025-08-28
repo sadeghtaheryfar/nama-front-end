@@ -327,25 +327,58 @@ const MainGardeshJariRole = ({data,back_steps}) => {
       <hr className="hidden md:block h-2 mb-10" />
       <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
         <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              تعداد دانش آموزان نوجوان:
-            </h3>
-            <span className="text-base lg:text-lg font-medium">{data?.data?.students}</span>
-          </div>
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه کلی عملیات:
-            </h3>
-            <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => copyText(data?.data?.amount)}>
-              {formatPrice(data?.data?.amount)}
-              {data?.data?.request_plan?.staff && (
-                <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
-                  مبلغ ثابت : {formatPrice(Number(data?.data?.request_plan?.staff_amount))}
-                </small>
-              )}
-            </span>
-          </div>
+          {data?.data?.request_plan?.type !== "university" ? (
+            <>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  تعداد دانش آموزان نوجوان:
+                </h3>
+                <span className="text-base lg:text-lg font-medium">{data?.data?.students}</span>
+              </div>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  هزینه کلی عملیات:
+                </h3>
+                <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => copyText(data?.data?.amount)}>
+                  {formatPrice(data?.data?.amount)}
+                  {data?.data?.request_plan?.staff && (
+                    <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                      مبلغ ثابت : {formatPrice(Number(data?.data?.request_plan?.staff_amount))}
+                    </small>
+                  )}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  عنوان برنامه:
+                </h3>
+                <span className="text-base lg:text-lg font-medium">{data?.data?.title}</span>
+              </div>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  لوکیشن برنامه:
+                </h3>
+                <span className="text-base lg:text-lg font-medium">{data?.data?.location}</span>
+              </div>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <span className="text-base lg:text-lg font-medium cursor-pointer" onClick={(e) => copyText(data?.data?.amount)}>
+                  {data?.data?.request_plan?.staff && (
+                    <p className="flex items-center gap-2">
+                      {data?.data?.request_plan?.designated_by_council ? (
+                        "هزینه توسط شورا تعیین میگردد ."
+                      ) : (
+                        `مبلغ ثابت : ${formatPrice(Number(data?.data?.request_plan?.staff_amount))}`
+                      )}
+                    </p>
+                  )}
+                </span>
+              </div>
+            </>
+          )}
+
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
               هزینه پیشنهادی آرمان:
@@ -548,7 +581,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
 
       {data?.data?.single_step ? (
         <>
-          {data?.data?.total_amount && (
+          {(data?.data?.total_amount != null) && (
             <div class="flex items-center p-4 my-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
               <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
@@ -561,7 +594,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         </>
       ) : (
           <>
-            {data?.data?.total_amount && (
+            {(data?.data?.total_amount != null) && (
               <div class="flex items-center p-4 my-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
                 <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />

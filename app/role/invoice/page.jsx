@@ -571,7 +571,7 @@ export default function KartablPage() { // Renamed to KartablPage to avoid confl
 
               <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:hidden" id="future-carts-section">
                 {(requests && !loading) && requests.map((request) => (
-                  <div key={request.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
+                  <div key={request?.id} className="flex flex-col border rounded-lg px-5 py-4 gap-2">
                     <h2 className="text-sm text-[#202020] pb-3">{request?.request_plan?.title || "بدون عنوان"}{request?.request_plan?.single_step && (
                       <div className="text-[#258CC7] bg-[#D9EFFE] text-[12px] py-1 px-4 mt-2 rounded-lg flex items-center justify-center">
                         <p>تک مرحله ای</p>
@@ -585,7 +585,7 @@ export default function KartablPage() { // Renamed to KartablPage to avoid confl
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                       <span className="text-xs text-[#959595]">شماره</span>
-                      <span className="text-sm text-[#202020]">{request.id} {request?.unit?.code ? `- ${request?.unit?.code}` : ''}</span>
+                      <span className="text-sm text-[#202020]">{request?.id} {request?.unit?.code ? `- ${request?.unit?.code}` : ''}</span>
                     </div>
 
                     <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
@@ -625,14 +625,14 @@ export default function KartablPage() { // Renamed to KartablPage to avoid confl
                       <span className="text-sm text-[#202020]">{formatPrice((request?.report?.final_amount || 0) + (request?.final_amount || 0))}</span>
                     </div>
 
-                    <Link href={`/role/kartabl/darkhast?id=` + request.id + `&role=${role}&item_id=${item_id}`}>
+                    <Link href={`/role/kartabl/darkhast?id=` + request?.id + `&role=${role}&item_id=${item_id}`}>
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده درخواست
                       </button>
                     </Link>
 
                     <Link
-                      href={`/role/kartabl-gozaresh/darkhast?id=` + request?.report.id + `&role=${role}&item_id=${item_id}`}
+                      href={`/role/kartabl-gozaresh/darkhast?id=` + request?.report?.id + `&role=${role}&item_id=${item_id}`}
                     >
                       <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                         مشاهده گزارش
@@ -666,7 +666,7 @@ export default function KartablPage() { // Renamed to KartablPage to avoid confl
                     )}
 
                     {(requests && !loading) && requests.map((request) => (
-                      <tr key={request.id} className="border">
+                      <tr key={request?.id} className="border">
                         <td className="border border-gray-300 px-7 py-5 text-base">
                           {request?.request_plan?.title || "بدون عنوان"}
                           {request?.request_plan?.single_step && (
@@ -688,12 +688,12 @@ export default function KartablPage() { // Renamed to KartablPage to avoid confl
                           {formatPrice((request?.report?.final_amount || 0) + (request?.final_amount || 0))}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base underline underline-offset-2 text-center">
-                          <Link className="hover:text-[#D5B260] hover:decoration-[#D5B260]" href={`/role/kartabl/darkhast?id=` + request.id + `&role=${role}&item_id=${item_id}`}>
+                          <Link className="hover:text-[#D5B260] hover:decoration-[#D5B260]" href={`/role/kartabl/darkhast?id=` + request?.id + `&role=${role}&item_id=${item_id}`}>
                           مشاهده درخواست</Link>
                           <br />
-                          {request?.report.status != "pending" && (
+                          {request?.report?.status != "pending" && (
                             <Link className="hover:text-[#D5B260] hover:decoration-[#D5B260]" 
-                              href={`/role/kartabl-gozaresh/darkhast?id=` + request?.report.id + `&role=${role}&item_id=${item_id}`}
+                              href={`/role/kartabl-gozaresh/darkhast?id=` + request?.report?.id + `&role=${role}&item_id=${item_id}`}
                             >مشاهده گزارش</Link>
                           )}
                         </td>

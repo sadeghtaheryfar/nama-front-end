@@ -10,6 +10,15 @@ import { useRouter } from "next/navigation";
 import HeaderSabt2 from "../../../../../../components/masajed/darkhast/sabt/sabt2/header-sabt2/header-sabt2";
 import HeaderGolden2 from "../../../../../../components/masajed/darkhast/sabt/sabt2/header-sabt2/header-golden2";
 // import HeaderTaeed from "@/components/masajed/kartabl-darkhast/taeed/header-taeed/header-taeed";
+function formatToCurrency(amount) {
+  const number = Number(amount);
+  if (isNaN(number)) {
+    return "مقدار وارد شده معتبر نیست";
+  }
+  const formattedNumber = number.toLocaleString("fa-IR");
+  return `${formattedNumber} ریال`;
+}
+
 function numberToPersianWords(num) {
   const ones = [
     "", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه",
@@ -259,19 +268,62 @@ const MainSabt2 = () => {
           <hr className="hidden md:block h-2 mb-10" />
           <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
             <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">
-              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-                <h3 className="text-base lg:text-lg text-[#3B3B3B]">تعداد دانش آموزان نوجوان:</h3>
-                <span className="text-base lg:text-lg font-medium">{formData?.data?.students}</span>
-              </div>
-              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-                <h3 className="text-base lg:text-lg text-[#3B3B3B]">هزینه کلی عملیات:</h3>
-                <span className="text-base lg:text-lg font-medium flex justify-center items-center gap-4">{formatPrice(formData?.data?.amount)} 
-                {requestData?.staff && (
-                  <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm">
-                    مبلغ ثابت : {formatPrice(Number(requestData?.staff_amount))}
-                  </small>
-                )}</span>
-              </div>
+              {requestData?.type !== "university" ? (
+                <>
+                    <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">تعداد دانش آموزان نوجوان:</h3>
+                        <span className="text-base lg:text-lg font-medium">{formData?.data?.students}</span>
+                    </div>
+                    <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">هزینه کلی عملیات:</h3>
+                        <span className="text-base lg:text-lg font-medium flex justify-center items-center gap-4">
+                            {formatPrice(formData?.data?.amount)} 
+                            {requestData?.staff && (
+                              <>
+                                {(requestData?.designated_by_council) ? (
+                                  <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                                    هزینه توسط شورا تعیین میگردد .
+                                  </small>
+                                ) : (
+                                  <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">
+                                    مبلغ ثابت : {formatToCurrency(Number(requestData?.staff_amount))}
+                                  </small>
+                                )}
+                              </>
+                            )}
+                        </span>
+                    </div>
+                </>
+              ) : (
+                <>
+                    <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">عنوان برنامه:</h3>
+                        <span className="text-base lg:text-lg font-medium">{formData?.data?.title}</span>
+                    </div>
+                    <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">لوکیشن برنامه:</h3>
+                        <span className="text-base lg:text-lg font-medium">{formData?.data?.location}</span>
+                    </div>
+                    <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                        <span className="text-base lg:text-lg font-medium flex justify-center items-center gap-4">
+                          {requestData?.staff && (
+                            <>
+                              {(requestData?.designated_by_council) ? (
+                                <p className="flex items-center gap-2 mt-2">
+                                  هزینه توسط شورا تعیین میگردد .
+                                </p>
+                              ) : (
+                                <p className="flex items-center gap-2 mt-2">
+                                  مبلغ ثابت : {formatToCurrency(Number(requestData?.staff_amount))}
+                                </p>
+                              )}
+                            </>
+                          )}
+                        </span>
+                    </div>
+                </>
+              )}
+
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">تاریخ برگزاری:</h3>
                 <span className="text-base lg:text-lg font-medium">{toPersianDate(formData?.data?.date)}</span>

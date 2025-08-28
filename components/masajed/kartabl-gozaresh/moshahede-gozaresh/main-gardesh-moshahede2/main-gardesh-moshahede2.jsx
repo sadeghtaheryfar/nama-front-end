@@ -472,16 +472,22 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     });
 
     // Run all validations and store results locally
-    const currentErrors = {
-      student: validateField("student", student),
-      time: validateField("time", time),
-      cost: validateField("cost", cost),
-      des: validateField("des", des),
-      images: validateField("images", images),
-      videos: validateField("videos", videos),
-      otherVideos: validateField("otherVideos", otherVideos),
-      moreImages: validateField("moreImages", moreImages),
-    };
+    let currentErrors = {};
+
+    // Conditionally validate fields based on report type
+    if (data?.data?.request_plan?.type !== "university") {
+        currentErrors.student = validateField("student", student);
+        currentErrors.time = validateField("time", time);
+        currentErrors.cost = validateField("cost", cost);
+    }
+    
+    // These fields are always required
+    currentErrors.des = validateField("des", des);
+    currentErrors.images = validateField("images", images);
+    currentErrors.videos = validateField("videos", videos);
+    currentErrors.otherVideos = validateField("otherVideos", otherVideos);
+    currentErrors.moreImages = validateField("moreImages", moreImages);
+
 
     // Update the state with all collected errors
     setErrors(currentErrors);
@@ -511,9 +517,12 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
     const englishTime = convertPersianToEnglish(String(time));
 
     const formDataToSend = new FormData();
-    formDataToSend.append("students", Number(student));
-    formDataToSend.append("body", des);
-    formDataToSend.append("date", englishTime);
+    if (data?.data?.request_plan?.type !== "university") {
+      formDataToSend.append("students", Number(student));
+      formDataToSend.append("body", des);
+      formDataToSend.append("date", englishTime);
+    }
+
     formDataToSend.append("amount", Number(cost));
     
     // Append main images
@@ -620,88 +629,92 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
       <hr className="h-2 mt-4 mb-7 md:mb-10" />
       <div className="w-full bg-white rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-          <div className="mb-4">
-            <label htmlFor="student" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              تعداد دانش آموزان نوجوان <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                id="student"
-                value={student}
-                onChange={(e) => handleFieldChange("student", e.target.value)}
-                onBlur={() => handleBlur("student")}
-                name="student"
-                placeholder="به عنوان مثال 25 عدد..."
-                className={getFieldClass("student")}
-              />
-              {touched.student && errors.student && (
-                <p className="mt-1 text-sm text-red-500">{errors.student}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="hesab"
-              className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
-            >
-              هزینه کلی عملیات
-              <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
-            </label>
-            <input
-              type="number"
-              id="cost"
-              name="cost"
-              value={cost}
-              onChange={(e) => handleFieldChange("cost", e.target.value)}
-              onBlur={() => handleBlur("cost")}
-              min={1000}
-              max={10000000000000}
-              placeholder="از 1،000 تا 10،000،000،000،000"
-              className={getFieldClass("cost")}
-            />
-            {errors.cost && touched.cost && (
-              <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
-            )}
-            {cost ? (
-              <>
-                <div className="mt-2 text-sm text-gray-600">
-                  <span className="font-medium">مبلغ به حروف: </span>
-                  {convertToPersianWords(Number(cost))}
+          {data?.data?.request_plan?.type !== "university" && (
+            <>
+              <div className="mb-4">
+                <label htmlFor="student" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  تعداد دانش آموزان نوجوان <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="student"
+                    value={student}
+                    onChange={(e) => handleFieldChange("student", e.target.value)}
+                    onBlur={() => handleBlur("student")}
+                    name="student"
+                    placeholder="به عنوان مثال 25 عدد..."
+                    className={getFieldClass("student")}
+                  />
+                  {touched.student && errors.student && (
+                    <p className="mt-1 text-sm text-red-500">{errors.student}</p>
+                  )}
                 </div>
+              </div>
 
-                <div className="mt-2 text-sm text-gray-600">
-                  <span className="font-medium">مبلغ به عدد: </span>
-                  {formatToCurrency(cost)}
+              <div className="mb-4">
+                <label
+                  htmlFor="hesab"
+                  className="block text-base lg:text-lg text-[#3B3B3B] mb-2"
+                >
+                  هزینه کلی عملیات
+                  <span className="text-red-500" style={{ fontFamily: 'none' }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  id="cost"
+                  name="cost"
+                  value={cost}
+                  onChange={(e) => handleFieldChange("cost", e.target.value)}
+                  onBlur={() => handleBlur("cost")}
+                  min={1000}
+                  max={10000000000000}
+                  placeholder="از 1،000 تا 10،000،000،000،000"
+                  className={getFieldClass("cost")}
+                />
+                {errors.cost && touched.cost && (
+                  <div className="text-red-500 text-sm mt-1">{errors.cost}</div>
+                )}
+                {cost ? (
+                  <>
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به حروف: </span>
+                      {convertToPersianWords(Number(cost))}
+                    </div>
+
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span className="font-medium">مبلغ به عدد: </span>
+                      {formatToCurrency(cost)}
+                    </div>
+                  </>
+                ) : (
+                  <small className="mt-2">&nbsp;</small>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                  تاریخ برگزاری <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
+                </label>
+                <div className="relative w-full">
+                  <DatePicker
+                    editable={false}
+                    value={time}
+                    onChange={(val) => handleFieldChange("time", val)}
+                    onOpen={() => setTouched(prev => ({ ...prev, time: true }))}
+                    calendar={persian}
+                    locale={persian_fa}
+                    inputClass={getFieldClass("time").replace("block w-full", "")} // Using getFieldClass
+                    format="YYYY-MM-DD"
+                    placeholder="انتخاب تاریخ"
+                  />
+                  {touched.time && errors.time && (
+                    <p className="mt-1 text-sm text-red-500">{errors.time}</p>
+                  )}
                 </div>
-              </>
-            ) : (
-              <small className="mt-2">&nbsp;</small>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              تاریخ برگزاری <span className="text-red-500" style={{ fontFamily : 'none' }}>*</span>
-            </label>
-            <div className="relative w-full">
-              <DatePicker
-                editable={false}
-                value={time}
-                onChange={(val) => handleFieldChange("time", val)}
-                onOpen={() => setTouched(prev => ({ ...prev, time: true }))}
-                calendar={persian}
-                locale={persian_fa}
-                inputClass={getFieldClass("time").replace("block w-full", "")} // Using getFieldClass
-                format="YYYY-MM-DD"
-                placeholder="انتخاب تاریخ"
-              />
-              {touched.time && errors.time && (
-                <p className="mt-1 text-sm text-red-500">{errors.time}</p>
-              )}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="mb-4 mt-3">

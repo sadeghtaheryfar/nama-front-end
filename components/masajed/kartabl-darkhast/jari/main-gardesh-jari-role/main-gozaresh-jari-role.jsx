@@ -350,7 +350,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             </>
           )}
           
-          {data?.data?.request_plan?.staff && (
+          {data?.data?.request?.request_plan?.staff && (
             <div className="text-[#b7c725] bg-[#f4ffac] text-[12px] py-1 px-4 mr-2 rounded-lg flex items-center justify-center">
               <p>ستادی</p>
             </div>
@@ -397,30 +397,34 @@ const MainGozareshJariRole = ({data, back_steps}) => {
       <hr className="hidden md:block h-2 mb-10" />
       <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
         <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              تعداد دانش آموزان نوجوان:
-            </h3>
-            <span className="text-base lg:text-lg font-medium">{data?.data?.students}</span>
-          </div>
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-            تاریخ برگزاری:
-            </h3>
-            <span className="text-base lg:text-lg font-medium">
-              {toPersianDate(data?.data?.date)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه پیشنهادی آرمان:
-            </h3>
-            {data?.data?.request?.single_step ? (
-              <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.total_amount ?? 0)}</span>
-            ) : (
-                <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.total_amount ? formatPrice(data?.data?.total_amount) : 'وارد نشده'}</span>
-            )}
-          </div>
+          {data?.data?.request?.request_plan?.type !== "university" && (
+            <>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  تعداد دانش آموزان نوجوان:
+                </h3>
+                <span className="text-base lg:text-lg font-medium">{data?.data?.students}</span>
+              </div>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                تاریخ برگزاری:
+                </h3>
+                <span className="text-base lg:text-lg font-medium">
+                  {toPersianDate(data?.data?.date)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+                <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+                  هزینه پیشنهادی آرمان:
+                </h3>
+                {data?.data?.request?.single_step ? (
+                  <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{formatPrice(data?.data?.total_amount ?? 0)}</span>
+                ) : (
+                    <span onClick={(e) => copyText((data?.data?.total_amount ?? 0))} className="text-base lg:text-lg font-medium cursor-pointer">{data?.data?.total_amount ? formatPrice(data?.data?.total_amount) : 'وارد نشده'}</span>
+                )}
+              </div>
+            </>
+          )}
 
           {data?.data?.request_plan?.staff && (
             <small className="text-xs text-[#0a2fff] leading-5 flex items-center gap-2 lg:text-sm mt-2">

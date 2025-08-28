@@ -68,83 +68,85 @@ const MainGardeshMoshahede1 = ({ id,data }) => {
       </div>
 
       <div className="w-full bg-white rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
-          <div className="mb-4">
-            <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
-              تعداد دانش آموزان نوجوان{" "}
-            </label>
-            <div className="relative">
+        {data?.data?.request_plan?.type !== "university" && (
+          <div className="grid grid-cols-1 md:grid-cols-[auto,auto] md:gap-x-2 xl:grid-cols-3 xl:gap-x-6 2xl:gap-x-8">
+            <div className="mb-4">
+              <label htmlFor="options" className="block text-base lg:text-lg text-[#3B3B3B] mb-2 ">
+                تعداد دانش آموزان نوجوان{" "}
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  id="student"
+                  value={data?.data?.report?.students}
+                  disabled
+                  name="student"
+                  placeholder="به عنوان مثال 25 عدد..."
+                  className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                />
+
+                {/* <Image
+                  className="w-8 absolute bottom-1/2 translate-y-1/2 left-1 flex items-center pl-3 bg-white"
+                  alt="#"
+                  width={0}
+                  height={0}
+                  src={"/Images/masajed/darkhast/sabt/arrowDown.svg"}
+                /> */}
+                {/* <select
+                  id="options"
+                  name="options"
+                  className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                >
+                  <option value="">لطفا انتخاب کنید </option>
+                  <option value="option1">گزینه ۱</option>
+                  <option value="option2">گزینه ۲</option>
+                  <option value="option3">گزینه ۳</option>
+                </select> */}
+              </div>
+            </div>
+
+            {/* اضافه کردن فیلد هزینه کلی عملیات */}
+            <div className="mb-4">
+              <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                هزینه کلی عملیات
+              </label>
               <input
                 type="number"
-                id="student"
-                value={data?.data?.report?.students}
+                id="cost"
+                value={data?.data?.report?.amount}
                 disabled
-                name="student"
-                placeholder="به عنوان مثال 25 عدد..."
-                className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
-              />
-
-              {/* <Image
-                className="w-8 absolute bottom-1/2 translate-y-1/2 left-1 flex items-center pl-3 bg-white"
-                alt="#"
-                width={0}
-                height={0}
-                src={"/Images/masajed/darkhast/sabt/arrowDown.svg"}
-              /> */}
-              {/* <select
-                id="options"
-                name="options"
+                name="cost"
+                placeholder="از 1،000 تا 10،000،000،000،000"
                 className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
-              >
-                <option value="">لطفا انتخاب کنید </option>
-                <option value="option1">گزینه ۱</option>
-                <option value="option2">گزینه ۲</option>
-                <option value="option3">گزینه ۳</option>
-              </select> */}
-            </div>
-          </div>
-
-          {/* اضافه کردن فیلد هزینه کلی عملیات */}
-          <div className="mb-4">
-            <label htmlFor="hesab" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              هزینه کلی عملیات
-            </label>
-            <input
-              type="number"
-              id="cost"
-              value={data?.data?.report?.amount}
-              disabled
-              name="cost"
-              placeholder="از 1،000 تا 10،000،000،000،000"
-              className="block w-full p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
-            />
-            {data?.data?.report?.amount && (
-              <>
-                <div className="mt-2 text-sm text-gray-600">
-                  <span className="font-medium">مبلغ به عدد: </span>
-                  {formatPrice(data?.data?.report?.amount)}
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-              تاریخ برگزاری{" "}
-            </label>
-            <div className="relative w-full">
-              <input
-                type="text"
-                id="student"
-                value={toPersianDate(data?.data?.report?.date)}
-                disabled
-                name="student"
-                placeholder="به عنوان مثال 25 عدد..."
-                className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
               />
+              {data?.data?.report?.amount && (
+                <>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <span className="font-medium">مبلغ به عدد: </span>
+                    {formatPrice(data?.data?.report?.amount)}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="calendar" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
+                تاریخ برگزاری{" "}
+              </label>
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  id="student"
+                  value={toPersianDate(data?.data?.report?.date)}
+                  disabled
+                  name="student"
+                  placeholder="به عنوان مثال 25 عدد..."
+                  className="block w-full  p-4 border border-[#DFDFDF] rounded-lg text-gray-700"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="mb-4 mt-3">
           <label htmlFor="textarea" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
