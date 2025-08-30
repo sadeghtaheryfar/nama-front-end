@@ -10,8 +10,14 @@ import { toPersianDate  } from "../../../../../components/utils/toPersianDate";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { usePathname } from "next/navigation";
 
 const MainGardeshMoshahede3 = ({ id,data }) => {
+  
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+  
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex items-center justify-between gap-4">
@@ -39,7 +45,7 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
       <div className="grid lg:grid-cols-2 mb-8">
         <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
           <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-            هزینه پیشنهادی معاونت اجرایی:
+            هزینه پیشنهادی {(itemId != 8) ? 'معاونت اجرایی' : 'معاونت داشنجویی' }:
           </h3>
           {data?.data?.single_step ? (
             <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">

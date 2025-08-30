@@ -253,17 +253,17 @@ const MainGardeshJari = ({data}) => {
       </div>
 
       <div className="mb-[1rem] grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <p>سرمربی {data?.data?.item?.title}</p>
+        <p>{(itemId != 8) ? 'سرمربی' : 'مسئول تشکل' } {data?.data?.item?.title}</p>
         <p>
           <p>وابسته به واحد حقوقی  : {data?.data?.unit?.title}</p>
           {data?.data?.unit?.parent?.title && (
             <small>واحد محوری : {data?.data?.unit?.parent?.title}</small>
           )}
         </p>
-        <p>سرمربی : {data?.data?.user?.name}</p>
-        <p>کد ملی سرمربی : {data?.data?.user?.national_id}</p>
+        <p>{(itemId != 8) ? 'سرمربی' : 'مسئول تشکل' } : {data?.data?.user?.name}</p>
+        <p>کد ملی {(itemId != 8) ? 'سرمربی' : 'مسئول تشکل' } : {data?.data?.user?.national_id}</p>
         <p>شهر : {data?.data?.unit?.city?.title ? data?.data?.unit?.city?.title : '------'}</p>
-        <p>شماره تماس سرمربی : {data?.data?.user?.phone}</p>
+        <p>شماره تماس {(itemId != 8) ? 'سرمربی' : 'مسئول تشکل' } : {data?.data?.user?.phone}</p>
         <p>منطقه : {data?.data?.unit?.region?.title ? data?.data?.unit?.region?.title : '------'}</p>
         <p>محله : {data?.data?.unit?.neighborhood?.title ? data?.data?.unit?.neighborhood?.title : '------'}</p>
       </div>
@@ -311,7 +311,7 @@ const MainGardeshJari = ({data}) => {
               </div>
               <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
                 <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-                  لوکیشن برنامه:
+                  محل برگزاری:
                 </h3>
                 <span className="text-base lg:text-lg font-medium">
                   {data?.data?.location}

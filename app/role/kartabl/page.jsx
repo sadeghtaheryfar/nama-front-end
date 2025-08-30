@@ -497,7 +497,16 @@ export default function Kartabl() {
     return buttons;
   };
 
-  const stepTitles = {
+  const stepTitles = item_id == 8
+  ? {
+    'approval_mosque_head_coach': 'در انتظار تایید مسئول تشکل',
+    'approval_mosque_cultural_officer': 'در انتظار تایید رابط دانشگاه',
+    'approval_area_interface': 'در انتظار تایید ناظر',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت دانشجویی',
+    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+    'finish': 'به اتمام رسیده',
+  }
+  : {
     'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
     'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
     'approval_area_interface': 'در انتظار تایید رابط منطقه',
@@ -505,7 +514,6 @@ export default function Kartabl() {
     'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
     'finish': 'به اتمام رسیده',
   };
-
 
   return (
     <>

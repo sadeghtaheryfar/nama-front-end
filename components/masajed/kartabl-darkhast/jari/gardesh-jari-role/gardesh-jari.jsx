@@ -298,34 +298,56 @@ const GardeshJariRole = ({ data }) => {
 	};
 
 	const getStepText = (stepName, associatedRole) => {
-		const status = getStepStatus(stepName, associatedRole);
-		const stepTitles = {
-			'approval_mosque_head_coach': 'تایید سر مربی ',
-			'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی ',
-			'approval_area_interface': 'تایید رابط منطقه',
-			'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی ',
-			'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
-		};
+		let stepTitles;
+		let roleDisplayNames;
 
-		const roleDisplayNames = {
-			'mosque_head_coach': 'سر مربی ',
-			'mosque_cultural_officer': 'مسئول فرهنگی ',
-			'area_interface': 'رابط منطقه',
-			'executive_vice_president_mosques': 'معاونت اجرایی ',
-			'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
-		};
+		if (item_id == 8) {
+			stepTitles = {
+				'approval_mosque_head_coach': 'تایید مسئول تشکل',
+				'approval_mosque_cultural_officer': 'تایید رابط دانشگاه',
+				'approval_area_interface': 'تایید ناظر',
+				'approval_executive_vice_president_mosques': 'تایید معاونت دانشجویی',
+				'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
+			};
+			roleDisplayNames = {
+				'mosque_head_coach': 'مسئول تشکل',
+				'mosque_cultural_officer': 'رابط دانشگاه',
+				'area_interface': 'ناظر',
+				'executive_vice_president_mosques': 'معاونت دانشجویی',
+				'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
+			};
+		} else {
+			stepTitles = {
+				'approval_mosque_head_coach': 'تایید سر مربی مسجد',
+				'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی مسجد',
+				'approval_area_interface': 'تایید رابط منطقه',
+				'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی مساجد',
+				'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
+			};
+			roleDisplayNames = {
+				'mosque_head_coach': 'سر مربی مسجد',
+				'mosque_cultural_officer': 'مسئول فرهنگی مسجد',
+				'area_interface': 'رابط منطقه',
+				'executive_vice_president_mosques': 'معاونت اجرایی مساجد',
+				'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
+			};
+		}
+		
+		const status = getStepStatus(stepName, associatedRole);
 
 		if (status === 'current_in_progress_responsible') {
-			return `${stepTitles[stepName]}`;
+			return stepTitles[stepName];
 		} else if (status === 'current_in_progress_other_viewer') {
 			const displayRoleKey = stepName.replace('approval_', '');
-			return `در انتظار تایید ${roleDisplayNames[displayRoleKey] || ''}`;
+			return `در انتظار ${stepTitles[stepName]}`;
 		} else if (status === 'current_rejected') {
-			return `${stepTitles[stepName]}`;
+			return stepTitles[stepName];
 		} else if (status === 'current_action_needed') {
-			return `${stepTitles[stepName]}`;
+			return stepTitles[stepName];
 		}
-		return stepTitles[stepName]; // For 'done' or future steps
+		
+		// For 'done' or future steps
+		return stepTitles[stepName];
 	};
 
 	const getStepMessageContent = (stepName) => {
@@ -338,13 +360,21 @@ const GardeshJariRole = ({ data }) => {
 		}
 	};
 
-	const stepsConfig = [
-		{ name: 'approval_mosque_head_coach', title: 'تایید سر مربی ', associatedRole: 'mosque_head_coach' },
-		{ name: 'approval_mosque_cultural_officer', title: 'تایید مسئول فرهنگی ', associatedRole: 'mosque_cultural_officer' },
-		{ name: 'approval_area_interface', title: 'تایید رابط منطقه', associatedRole: 'area_interface' },
-		{ name: 'approval_executive_vice_president_mosques', title: 'تایید معاونت اجرایی ', associatedRole: 'executive_vice_president_mosques' },
-		{ name: 'approval_deputy_for_planning_and_programming', title: 'تایید معاونت طرح و برنامه', associatedRole: 'deputy_for_planning_and_programming' },
-	];
+	const stepsConfig = item_id == 8
+    ? [
+        { name: 'approval_mosque_head_coach', title: 'تایید مسئول تشکل', associatedRole: 'mosque_head_coach' },
+        { name: 'approval_mosque_cultural_officer', title: 'تایید رابط دانشگاه', associatedRole: 'mosque_cultural_officer' },
+        { name: 'approval_area_interface', title: 'تایید ناظر', associatedRole: 'area_interface' },
+        { name: 'approval_executive_vice_president_mosques', title: 'تایید معاونت دانشجویی', associatedRole: 'executive_vice_president_mosques' },
+        { name: 'approval_deputy_for_planning_and_programming', title: 'تایید معاونت طرح و برنامه', associatedRole: 'deputy_for_planning_and_programming' },
+    ]
+    : [
+        { name: 'approval_mosque_head_coach', title: 'تایید سر مربی ', associatedRole: 'mosque_head_coach' },
+        { name: 'approval_mosque_cultural_officer', title: 'تایید مسئول فرهنگی ', associatedRole: 'mosque_cultural_officer' },
+        { name: 'approval_area_interface', title: 'تایید رابط منطقه', associatedRole: 'area_interface' },
+        { name: 'approval_executive_vice_president_mosques', title: 'تایید معاونت اجرایی ', associatedRole: 'executive_vice_president_mosques' },
+        { name: 'approval_deputy_for_planning_and_programming', title: 'تایید معاونت طرح و برنامه', associatedRole: 'deputy_for_planning_and_programming' },
+    ];
 
 	return (
 		<div className="flex flex-col gap-4 lg:gap-6 xl:gap-9">

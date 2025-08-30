@@ -55,15 +55,6 @@ const  Header = ({bgBox,bgRole}) => {
         fetching();
     }, [itemId]);
 
-    // Updated role options to use dynamic place text
-    const getRoleOptions = () => [
-        { key: 'mosque_head_coach', label: `سرمربی ${placeText}` },
-        { key: 'mosque_cultural_officer', label: `مسئول فرهنگی ${placeText}` },
-        { key: 'area_interface', label: 'رابط منطقه' },
-        { key: 'executive_vice_president_mosques', label: `معاونت اجرایی ${placeText}` },
-        { key: 'deputy_for_planning_and_programming', label: 'معاونت طرح و برنامه' }
-    ];
-
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (showRoleMenu && !event.target.closest(".role-menu-container")) {
@@ -90,18 +81,35 @@ const  Header = ({bgBox,bgRole}) => {
 
     // Updated translateNama to use dynamic place text
     const translateNama = (role) => {
-        if (role === "mosque_head_coach") {
-            return `سرمربی ${placeText}`;
-        } else if (role === "mosque_cultural_officer") {
-            return `مسئول فرهنگی ${placeText}`;
-        } else if (role === "area_interface") {
-            return "رابط منطقه";
-        } else if (role === "executive_vice_president_mosques") {
-            return `معاونت اجرایی ${placeText}`;
-        } else if (role === "deputy_for_planning_and_programming") {
-            return "معاونت طرح و برنامه";
-        } else {
-            return "نامشخص";
+        if(itemId != 8)
+        {
+            if (role === "mosque_head_coach") {
+                return `سرمربی ${placeText}`;
+            } else if (role === "mosque_cultural_officer") {
+                return `مسئول فرهنگی ${placeText}`;
+            } else if (role === "area_interface") {
+                return "رابط منطقه";
+            } else if (role === "executive_vice_president_mosques") {
+                return `معاونت اجرایی ${placeText}`;
+            } else if (role === "deputy_for_planning_and_programming") {
+                return "معاونت طرح و برنامه";
+            } else {
+                return "نامشخص";
+            }
+        }else{
+            if (role === "mosque_head_coach") {
+                return `مسئول تشکل ${placeText}`;
+            } else if (role === "mosque_cultural_officer") {
+                return `رابط دانشگاه ${placeText}`;
+            } else if (role === "area_interface") {
+                return "ناظر";
+            } else if (role === "executive_vice_president_mosques") {
+                return `معاونت داشنجویی ${placeText}`;
+            } else if (role === "deputy_for_planning_and_programming") {
+                return "معاونت طرح و برنامه";
+            } else {
+                return "نامشخص";
+            }
         }
     };
 
@@ -148,7 +156,7 @@ const  Header = ({bgBox,bgRole}) => {
                                         key={role.role_en}
                                         className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex text-[14px]'
                                     >
-                                        {role.role} {placeText}
+                                        {translateNama(role.role_en)} {placeText}
                                     </a>
                                 ))}
                             </div>

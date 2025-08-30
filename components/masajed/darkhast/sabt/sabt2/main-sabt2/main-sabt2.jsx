@@ -301,7 +301,7 @@ const MainSabt2 = () => {
                         <span className="text-base lg:text-lg font-medium">{formData?.data?.title}</span>
                     </div>
                     <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
-                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">لوکیشن برنامه:</h3>
+                        <h3 className="text-base lg:text-lg text-[#3B3B3B]">محل برگزاری:</h3>
                         <span className="text-base lg:text-lg font-medium">{formData?.data?.location}</span>
                     </div>
                     <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">

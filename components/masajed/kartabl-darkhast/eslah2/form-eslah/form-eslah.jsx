@@ -445,7 +445,7 @@ const FormEslah = ({ data: initialRequestData }) => {
 
   const validateProgramLocation = (value) => {
     if (!value.trim()) {
-      return "لوکیشن برنامه الزامی است";
+      return "محل برگزاری الزامی است";
     }
     return "";
   };
@@ -943,7 +943,7 @@ const FormEslah = ({ data: initialRequestData }) => {
             </div>
             <div className="mb-4">
               <label htmlFor="programLocation" className="block text-base lg:text-lg text-[#3B3B3B] mb-2">
-                لوکیشن برنامه <RequiredStar />
+                محل برگزاری <RequiredStar />
               </label>
               <input
                 type="text"

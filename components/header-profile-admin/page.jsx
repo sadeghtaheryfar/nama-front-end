@@ -53,6 +53,39 @@ const Header = ({ bgBox, bgRole }) => {
         }
     }, [itemIdFromUrl, roleFromUrl, router, roleOptions, loadingProfile]);
 
+    const translateNama = (role) => {
+        if(itemId != 8)
+        {
+            if (role === "mosque_head_coach") {
+                return `سرمربی ${placeText}`;
+            } else if (role === "mosque_cultural_officer") {
+                return `مسئول فرهنگی ${placeText}`;
+            } else if (role === "area_interface") {
+                return "رابط منطقه";
+            } else if (role === "executive_vice_president_mosques") {
+                return `معاونت اجرایی ${placeText}`;
+            } else if (role === "deputy_for_planning_and_programming") {
+                return "معاونت طرح و برنامه";
+            } else {
+                return "نامشخص";
+            }
+        }else{
+            if (role === "mosque_head_coach") {
+                return `مسئول تشکل ${placeText}`;
+            } else if (role === "mosque_cultural_officer") {
+                return `رابط دانشگاه ${placeText}`;
+            } else if (role === "area_interface") {
+                return "ناظر";
+            } else if (role === "executive_vice_president_mosques") {
+                return `معاونت داشنجویی ${placeText}`;
+            } else if (role === "deputy_for_planning_and_programming") {
+                return "معاونت طرح و برنامه";
+            } else {
+                return "نامشخص";
+            }
+        }
+    };
+
     const handleRoleChange = (newRole) => {
         setCurrentRole(newRole);
         setShowRoleMenu(false);
@@ -106,7 +139,7 @@ const Header = ({ bgBox, bgRole }) => {
                         className='px-4 py-2 hover:bg-gray-200 cursor-pointer text-[10px] lg:text-[14px]'
                         onClick={() => handleRoleChange(role.role_en)}
                     >
-                        {role.role} {placeText}
+                        {translateNama(role.role_en)} {placeText}
                     </div>
                 ))}
             </div>,
@@ -147,7 +180,7 @@ const Header = ({ bgBox, bgRole }) => {
                     <img className='w-5' alt='#' width={0} height={0} src={'/Images/home/edit-2.svg'} />
                 </div>
                 <span className='text-[10px] lg:text-sm'>
-                    {roleOptions.find((role) => role.key === currentRole)?.label || 'نامشخص'}
+                    {translateNama(roleOptions.find((role) => role.key === currentRole)?.key) || 'نامشخص'}
                 </span>
             </div>
             <div className='flex flex-col leading-7 whitespace-nowrap'>

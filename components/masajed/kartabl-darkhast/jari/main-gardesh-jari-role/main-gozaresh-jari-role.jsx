@@ -298,18 +298,35 @@ const MainGozareshJariRole = ({data, back_steps}) => {
   };
 
   const translateRole = (role) => {
-    if (role === "mosque_head_coach") {
-        return "سرمربی مسجد";
-    } else if (role === "mosque_cultural_officer") {
-        return " مسئول فرهنگی مسجد";
-    } else if (role === "area_interface") {
-        return "رابط منطقه";
-    } else if (role === "executive_vice_president_mosques") {
-        return "معاونت اجرایی مساجد";
-    } else if (role === "deputy_for_planning_and_programming") {
-        return "معاونت طرح و برنامه";
-    } else {
-        return "نامشخص";
+    if(itemId != 8)
+    {
+        if (role === "mosque_head_coach") {
+            return `سرمربی`;
+        } else if (role === "mosque_cultural_officer") {
+            return `مسئول فرهنگی`;
+        } else if (role === "area_interface") {
+            return "رابط منطقه";
+        } else if (role === "executive_vice_president_mosques") {
+            return `معاونت اجرایی`;
+        } else if (role === "deputy_for_planning_and_programming") {
+            return "معاونت طرح و برنامه";
+        } else {
+            return "نامشخص";
+        }
+    }else{
+        if (role === "mosque_head_coach") {
+            return `مسئول تشکل`;
+        } else if (role === "mosque_cultural_officer") {
+            return `رابط دانشگاه`;
+        } else if (role === "area_interface") {
+            return "ناظر";
+        } else if (role === "executive_vice_president_mosques") {
+            return `معاونت داشنجویی`;
+        } else if (role === "deputy_for_planning_and_programming") {
+            return "معاونت طرح و برنامه";
+        } else {
+            return "نامشخص";
+        }
     }
   };
 
@@ -331,6 +348,21 @@ const MainGozareshJariRole = ({data, back_steps}) => {
   }
 
   const [showRejectConfirmationModal, setShowRejectConfirmationModal] = useState(false);
+
+  const convertRole = (role) => {
+    const roleMapping = {
+        'سرمربی': 'مسئول تشکل',
+        'مسئول فرهنگی': 'رابط دانشگاه',
+        'رابط منطقه': 'ناظر',
+        'معاونت اجرایی': 'معاونت دانشجویی'
+    };
+
+    if (itemId == 8) {
+        return roleMapping[role] || role;
+    }
+
+    return role;
+  };
   
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-[2rem] md:p-9 xl:px-12 xl:py-[53px] w-full">
@@ -389,7 +421,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             <small>واحد محوری : {data?.data?.request?.unit?.parent?.title}</small>
           )}
         </p>
-        <p>سرمربی : {data?.data?.request?.user?.name}</p>
+        <p>{(itemId != 8) ? 'سرمربی' : 'مسئول تشکل' } : {data?.data?.request?.user?.name}</p>
         <p>منطقه : {data?.data?.request?.unit?.region?.title}</p>
         <p>محله : {data?.data?.request?.unit?.neighborhood?.title}</p>
       </div>
@@ -433,7 +465,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
           )}
           <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
             <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-              هزینه پیشنهادی معاونت اجرایی :
+              هزینه پیشنهادی {(itemId != 8) ? 'معاونت اجرایی' : 'معاونت داشنجویی' } :
             </h3>
             {data?.data?.request?.single_step ? (
               <span onClick={(e) => copyText(data?.data?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">{formatPrice(data?.data?.offer_amount ?? 0)}</span>
@@ -726,7 +758,7 @@ const MainGozareshJariRole = ({data, back_steps}) => {
 
           <div className="mt-[1rem]">
             <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
-              نظر {data?.data?.last_updated_by}:
+              نظر {convertRole(data?.data?.last_updated_by)}:
             </h3>
             <span className="text-base lg:text-lg font-medium">{data?.data?.message}</span>
           </div>

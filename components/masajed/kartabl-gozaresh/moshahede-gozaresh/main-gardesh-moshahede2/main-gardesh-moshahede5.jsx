@@ -10,24 +10,47 @@ import { toPersianDate  } from "../../../../../components/utils/toPersianDate";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { usePathname } from "next/navigation";
 
 const MainGardeshMoshahede5 = ({ id,data }) => {
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+  const itemId = pathSegments[1];
+
   const [placeText, setPlaceText] = useState("");
   const translateNama = (role) => {
-      if (role === "approval_mosque_head_coach") {
-          return `سرمربی ${placeText}`;
-      } else if (role === "approval_mosque_cultural_officer") {
-          return `مسئول فرهنگی ${placeText}`;
-      } else if (role === "approval_area_interface") {
-          return "رابط منطقه";
-      } else if (role === "approval_executive_vice_president_mosques") {
-          return `معاونت اجرایی ${placeText}`;
-      } else if (role === "approval_deputy_for_planning_and_programming") {
-          return "معاونت طرح و برنامه";
-      } else {
-          return "نامشخص";
-      }
+    if(itemId != 8)
+    {
+        if (role === "mosque_head_coach") {
+            return `سرمربی ${placeText}`;
+        } else if (role === "mosque_cultural_officer") {
+            return `مسئول فرهنگی ${placeText}`;
+        } else if (role === "area_interface") {
+            return "رابط منطقه";
+        } else if (role === "executive_vice_president_mosques") {
+            return `معاونت اجرایی ${placeText}`;
+        } else if (role === "deputy_for_planning_and_programming") {
+            return "معاونت طرح و برنامه";
+        } else {
+            return "نامشخص";
+        }
+    }else{
+        if (role === "mosque_head_coach") {
+            return `مسئول تشکل ${placeText}`;
+        } else if (role === "mosque_cultural_officer") {
+            return `رابط دانشگاه ${placeText}`;
+        } else if (role === "area_interface") {
+            return "ناظر";
+        } else if (role === "executive_vice_president_mosques") {
+            return `معاونت داشنجویی ${placeText}`;
+        } else if (role === "deputy_for_planning_and_programming") {
+            return "معاونت طرح و برنامه";
+        } else {
+            return "نامشخص";
+        }
+    }
   };
+
   return (
     <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex items-center justify-between gap-4">
@@ -57,7 +80,7 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
       <div className="grid lg:grid-cols-2 mb-8">
         <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
           <h3 className="text-base lg:text-lg text-[#3B3B3B]">
-            هزینه پیشنهادی معاونت اجرایی:
+            هزینه پیشنهادی {(itemId != 8) ? 'معاونت اجرایی' : 'معاونت داشنجویی' }:
           </h3>
           {data?.data?.single_step ? (
             <span onClick={(e) => copyText(data?.data?.report?.offer_amount ?? 0)} className="cursor-pointer text-base lg:text-lg font-medium">
