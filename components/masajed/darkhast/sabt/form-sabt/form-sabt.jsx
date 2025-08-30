@@ -525,7 +525,6 @@ const FormSabt = ({ id, data }) => {
         newErrors = {
             ...newErrors,
             student: validateStudent(student),
-            cost: validateCost(cost),
         };
     }
 
