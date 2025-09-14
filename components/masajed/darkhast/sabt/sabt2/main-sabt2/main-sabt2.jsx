@@ -343,16 +343,78 @@ const MainSabt2 = () => {
                     فایل پیوست نامه {typeField}:
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {formData?.data?.imam_letter?.original && (
-                      <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                        <img src={formData.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
-                      </a>
-                    )}
-                    {formData?.data?.other_imam_letter?.map((file, index) => (
-                      <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                  {formData?.data?.imam_letter?.original && (
+                    <>
+                      {formData.data.imam_letter.original.toLowerCase().endsWith('.pdf') ? (
+                        <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="mb-2"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                            />
+                            <path
+                              d="M8 2H17C19 2 20 3 20 5V6.38"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="mt-1 text-xs">مشاهده PDF</span>
+                        </a>
+                      ) : (
+                        <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                          <img src={formData.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
+                        </a>
+                      )
+                      }
+                    </>
+                  )}
+
+                  {formData?.data?.other_imam_letter?.map((file, index) => (
+                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                      {file.original.toLowerCase().endsWith('.pdf') ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="mb-2"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                            />
+                            <path
+                              d="M8 2H17C19 2 20 3 20 5V6.38"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="mt-1 text-xs">مشاهده PDF</span>
+                        </div>
+                      ) : (
                         <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                      </a>
-                    ))}
+                      )}
+                    </a>
+                  ))}
                   </div>
                 </div>
               )}
@@ -364,16 +426,75 @@ const MainSabt2 = () => {
                     فایل نامه رابط منطقه:
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {formData?.data?.area_interface_letter?.original && (
+                  {formData?.data?.area_interface_letter?.original && (
+                    formData.data.area_interface_letter.original.toLowerCase().endsWith('.pdf') ? (
+                      <a href={formData.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="mb-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                          />
+                          <path
+                            d="M8 2H17C19 2 20 3 20 5V6.38"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="mt-1 text-xs">مشاهده PDF</span>
+                      </a>
+                    ) : (
                       <a href={formData.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                         <img src={formData.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
                       </a>
-                    )}
-                    {formData?.data?.other_area_interface_letter?.map((file, index) => (
-                      <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                    )
+                  )}
+
+                  {formData?.data?.other_area_interface_letter?.map((file, index) => (
+                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                      {file.original.toLowerCase().endsWith('.pdf') ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="mb-2"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                            />
+                            <path
+                              d="M8 2H17C19 2 20 3 20 5V6.38"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="mt-1 text-xs">مشاهده PDF</span>
+                        </div>
+                      ) : (
                         <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
-                      </a>
-                    ))}
+                      )}
+                    </a>
+                  ))}
                   </div>
                 </div>
               )}
@@ -402,11 +523,40 @@ const MainSabt2 = () => {
                     پیوست های بیشتر:
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {formData?.data?.images?.map((file, index) => (
-                      <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                  {formData?.data?.images?.map((file, index) => (
+                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                      {file.original.toLowerCase().endsWith('.pdf') ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="mb-2"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                            />
+                            <path
+                              d="M8 2H17C19 2 20 3 20 5V6.38"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeMiterlimit="10"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="mt-1 text-xs">مشاهده PDF</span>
+                        </div>
+                      ) : (
                         <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                      </a>
-                    ))}
+                      )}
+                    </a>
+                  ))}
                   </div>
                 </div>
               )}

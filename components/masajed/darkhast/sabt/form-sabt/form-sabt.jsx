@@ -1020,14 +1020,59 @@ const FormSabt = ({ id, data }) => {
               <div className="mt-2 flex flex-wrap gap-2">
                 {imamLetters.map((file) => (
                   <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                    <img src={file.preview} alt={`پیش نمایش ${file.file.name}`} className="w-full h-full object-cover" />
+                    {file.file.type === 'application/pdf' ? (
+                      <a
+                        href={file.preview}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="mb-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                          />
+                          <path
+                            d="M8 2H17C19 2 20 3 20 5V6.38"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="mt-1 text-xs">مشاهده PDF</span>
+                      </a>
+                    ) : (
+                      <img
+                        src={file.preview}
+                        alt={`پیش نمایش ${file.file.name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+
                     <button
                       type="button"
                       onClick={() => removeFile(setImamLetters, file.id, "imamLetter")}
                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
                       title="حذف فایل"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
@@ -1092,14 +1137,58 @@ const FormSabt = ({ id, data }) => {
               <div className="mt-2 flex flex-wrap gap-2">
                 {connectionLetters.map((file) => (
                   <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                    <img src={file.preview} alt={`پیش نمایش ${file.file.name}`} className="w-full h-full object-cover" />
+                    {file.file.type === 'application/pdf' ? (
+                      <a
+                        href={file.preview}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="mb-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                          />
+                          <path
+                            d="M8 2H17C19 2 20 3 20 5V6.38"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="mt-1 text-xs">مشاهده PDF</span>
+                      </a>
+                    ) : (
+                      <img
+                        src={file.preview}
+                        alt={`پیش نمایش ${file.file.name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={() => removeFile(setConnectionLetters, file.id, "connectionLetter")}
                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
                       title="حذف فایل"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
@@ -1164,14 +1253,58 @@ const FormSabt = ({ id, data }) => {
               <div className="mt-2 flex flex-wrap gap-2">
                 {additionalAttachments.map((file) => (
                   <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
-                    <img src={file.preview} alt={`پیش نمایش ${file.file.name}`} className="w-full h-full object-cover" />
+                    {file.file.type === 'application/pdf' ? (
+                      <a
+                        href={file.preview}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
+                      >
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="mb-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                          />
+                          <path
+                            d="M8 2H17C19 2 20 3 20 5V6.38"
+                            stroke="#292D32"
+                            strokeWidth="1.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="mt-1 text-xs">مشاهده PDF</span>
+                      </a>
+                    ) : (
+                      <img
+                        src={file.preview}
+                        alt={`پیش نمایش ${file.file.name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={() => removeFile(setAdditionalAttachments, file.id, "additionalAttachments")}
                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs leading-none transition-opacity"
                       title="حذف فایل"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
