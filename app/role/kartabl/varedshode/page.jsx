@@ -35,7 +35,7 @@ export default function Enter() {
                 className="w-[36px] h-[36px] md:w-[130px] md:h-[130px]"
               />
               <div className="text-[#D5B260] text-[12px] md:text-[18px] font-bold md:text-3xl md:my-6 my-3 mx-4">
-                مساجد / کارتابل درخواست ها
+                مسجد / کارتابل درخواست ها
               </div>
             </div>
             <div className="flex">
@@ -170,7 +170,7 @@ export default function Enter() {
 
                 </div>
                 <div className="border-r-2 relative border-dashed border-[#25C7AA] ps-5 pb-5">
-                  <h3 className="text-[#25C7AA] font-bold">تایید معاونت اجرایی مساجد</h3>
+                  <h3 className="text-[#25C7AA] font-bold">تایید معاونت اجرایی مسجد</h3>
                   <p className="text-[12px] md:text-[16px]">
                   لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است 
                   </p>
@@ -214,7 +214,7 @@ export default function Enter() {
                   تاریخ برگزاری: <span className="font-bold">1401.02.13</span>
                 </div>
                 <div className="flex justify-between text-[12px] md:text-[15px] my-2">
-                  هزینه پیشنهادی معاونت مساجد:{" "}
+                  هزینه پیشنهادی معاونت مسجد:{" "}
                   <span className="font-bold text-left">4500000 ریال</span>
                 </div>
               </div>

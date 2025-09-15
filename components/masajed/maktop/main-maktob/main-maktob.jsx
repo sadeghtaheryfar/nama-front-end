@@ -135,7 +135,7 @@ const MainMaktob = ({ token }) => {
 
   const translateRole = (role) => {
     if (role === "executive_vice_president_mosques") {
-        return "معاونت اجرایی مساجد";
+        return "معاونت اجرایی مسجد";
     } else if (role === "deputy_for_planning_and_programming") {
         return "معاونت طرح و برنامه";
     } else if (role === "arman_bus") {
@@ -200,7 +200,7 @@ const MainMaktob = ({ token }) => {
                         className="block w-full p-4 border border-[#DFDFDF] rounded-lg"
                       >
                         <option value="executive_vice_president_mosques">
-                          معاونت اجرایی مساجد
+                          معاونت اجرایی مسجد
                         </option>
                         <option value="deputy_for_planning_and_programming">
                           معاونت طرح و برنامه

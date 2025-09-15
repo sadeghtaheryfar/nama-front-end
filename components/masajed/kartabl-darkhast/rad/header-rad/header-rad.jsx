@@ -19,7 +19,7 @@ const HeaderRad = () => {
             src={"/Images/masajed/mosque.svg"}
           />
           <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-            مساجد
+            مسجد
             <span className="text-xs lg:text-base xl:text-xl 2xl:text-2xl">/ کارتابل درخواست ها  <span className="hidden 2xl:inline w-min-fit"> / مشاهده درخواست</span></span>
           </span>
         </div>

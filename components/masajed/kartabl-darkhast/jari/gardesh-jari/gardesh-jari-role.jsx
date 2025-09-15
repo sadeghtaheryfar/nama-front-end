@@ -309,57 +309,77 @@ const GardeshJariRole = ({data}) => {
   };
 
   const getStepText = (stepName, associatedRole) => {
-		let stepTitles;
-		let roleDisplayNames;
+    let stepTitles;
+    let roleDisplayNames;
 
-		if (item_id == 8) {
-			stepTitles = {
-				'approval_mosque_head_coach': 'تایید مسئول تشکل',
-				'approval_mosque_cultural_officer': 'تایید رابط دانشگاه',
-				'approval_area_interface': 'تایید ناظر',
-				'approval_executive_vice_president_mosques': 'تایید معاونت دانشجویی',
-				'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
-			};
-			roleDisplayNames = {
-				'mosque_head_coach': 'مسئول تشکل',
-				'mosque_cultural_officer': 'رابط دانشگاه',
-				'area_interface': 'ناظر',
-				'executive_vice_president_mosques': 'معاونت دانشجویی',
-				'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
-			};
-		} else {
-			stepTitles = {
-				'approval_mosque_head_coach': 'تایید سر مربی مسجد',
-				'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی مسجد',
-				'approval_area_interface': 'تایید رابط منطقه',
-				'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی مساجد',
-				'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
-			};
-			roleDisplayNames = {
-				'mosque_head_coach': 'سر مربی مسجد',
-				'mosque_cultural_officer': 'مسئول فرهنگی مسجد',
-				'area_interface': 'رابط منطقه',
-				'executive_vice_president_mosques': 'معاونت اجرایی مساجد',
-				'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
-			};
-		}
-		
-		const status = getStepStatus(stepName, associatedRole);
+    const defaultStepTitles = {
+      'approval_mosque_head_coach': 'تایید سر مربی مسجد',
+      'approval_mosque_cultural_officer': 'تایید مسئول فرهنگی مسجد',
+      'approval_area_interface': 'تایید رابط منطقه',
+      'approval_executive_vice_president_mosques': 'تایید معاونت اجرایی مسجد',
+      'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
+    };
 
-		if (status === 'current_in_progress_responsible') {
-			return stepTitles[stepName];
-		} else if (status === 'current_in_progress_other_viewer') {
-			const displayRoleKey = stepName.replace('approval_', '');
-			return `در انتظار ${stepTitles[stepName]}`;
-		} else if (status === 'current_rejected') {
-			return stepTitles[stepName];
-		} else if (status === 'current_action_needed') {
-			return stepTitles[stepName];
-		}
-		
-		// For 'done' or future steps
-		return stepTitles[stepName];
-	};
+    const defaultRoleDisplayNames = {
+      'mosque_head_coach': 'سر مربی مسجد',
+      'mosque_cultural_officer': 'مسئول فرهنگی مسجد',
+      'area_interface': 'رابط منطقه',
+      'executive_vice_president_mosques': 'معاونت اجرایی مسجد',
+      'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
+    };
+
+    if (item_id === "8") {
+      stepTitles = {
+        'approval_mosque_head_coach': 'تایید مسئول تشکل',
+        'approval_mosque_cultural_officer': 'تایید رابط دانشگاه',
+        'approval_area_interface': 'تایید ناظر',
+        'approval_executive_vice_president_mosques': 'تایید معاونت دانشجویی',
+        'approval_deputy_for_planning_and_programming': 'تایید معاونت طرح و برنامه',
+      };
+      roleDisplayNames = {
+        'mosque_head_coach': 'مسئول تشکل',
+        'mosque_cultural_officer': 'رابط دانشگاه',
+        'area_interface': 'ناظر',
+        'executive_vice_president_mosques': 'معاونت دانشجویی',
+        'deputy_for_planning_and_programming': 'معاونت طرح و برنامه',
+      };
+    } else if (item_id === "3") {
+      stepTitles = {};
+      roleDisplayNames = {};
+      for (const key in defaultStepTitles) {
+        stepTitles[key] = defaultStepTitles[key].replace("مسجد", "مدرسه");
+      }
+      for (const key in defaultRoleDisplayNames) {
+        roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "مدرسه");
+      }
+    } else if (item_id === "4") {
+      stepTitles = {};
+      roleDisplayNames = {};
+      for (const key in defaultStepTitles) {
+        stepTitles[key] = defaultStepTitles[key].replace("مسجد", "مرکز تعالی بانوان");
+      }
+      for (const key in defaultRoleDisplayNames) {
+        roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "مرکز تعالی بانوان");
+      }
+    } else {
+      stepTitles = defaultStepTitles;
+      roleDisplayNames = defaultRoleDisplayNames;
+    }
+
+    const status = getStepStatus(stepName, associatedRole);
+
+    if (status === 'current_in_progress_responsible') {
+      return stepTitles[stepName];
+    } else if (status === 'current_in_progress_other_viewer') {
+      return `در انتظار ${stepTitles[stepName]}`;
+    } else if (status === 'current_rejected') {
+      return stepTitles[stepName];
+    } else if (status === 'current_action_needed') {
+      return stepTitles[stepName];
+    }
+
+    return stepTitles[stepName];
+  };
 
   const getStepMessageContent = (stepName) => {
     if (stepName === 'approval_mosque_head_coach') {
@@ -423,7 +443,7 @@ const GardeshJariRole = ({data}) => {
       </div>
 
       {/* Desktop Design - Refactored to use map */}
-      <div className="hidden lg:flex items-end justify-between">
+      <div className="hidden lg:flex items-start justify-between">
         {stepsConfig.map((stepItem, index, array) => (
           <div key={stepItem.name} className={`w-full flex flex-col items-start relative`}>
             <div className={`flex items-center w-full`}>
@@ -448,7 +468,7 @@ const GardeshJariRole = ({data}) => {
       </div>
       
       {/* Desktop Messages - Retained original structure */}
-      <div className="hidden lg:flex items-end justify-between">
+      <div className="hidden lg:flex items-start justify-between">
         {stepsConfig.map((stepItem, index) => (
           <div key={stepItem.name} className={`w-full flex flex-col items-start`}>
             <p>{getStepMessageContent(stepItem.name)}</p>

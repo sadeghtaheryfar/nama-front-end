@@ -45,7 +45,7 @@ const Alert = () => {
 
                     let accessibleParts = [];
                     if (canAccessMosque) {
-                        accessibleParts.push("مساجد");
+                        accessibleParts.push("مسجد");
                     }
                     if (canAccessSchool) {
                         accessibleParts.push("مدارس");
@@ -59,7 +59,7 @@ const Alert = () => {
 
                     let inaccessibleParts = [];
                     if (!canAccessMosque) {
-                        inaccessibleParts.push("مساجد");
+                        inaccessibleParts.push("مسجد");
                     }
                     if (!canAccessSchool) {
                         inaccessibleParts.push("مدارس");

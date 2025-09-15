@@ -19,7 +19,7 @@ const HeaderSabt1 = () => {
             src={"/Images/masajed/mosque.svg"}
           />
           <span className="text-[#D5B260] text-lg font-semibold flex items-center gap-1 md:text-2xl lg:text-3xl lg:pt-3 xl:text-4xl">
-            مساجد
+            مسجد
             <span className="text-xs md:text-sm lg:text-base xl:text-xl 2xl:text-2xl xl:hidden">/ ثبت درخواست</span>
             <span className="hidden xl:block text-xs md:text-sm lg:text-base xl:text-xl 2xl:text-2xl">/ درخواست های فعال / ثبت درخواست</span>
           </span>

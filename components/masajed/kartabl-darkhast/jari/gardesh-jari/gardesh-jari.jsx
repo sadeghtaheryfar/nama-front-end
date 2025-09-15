@@ -516,7 +516,7 @@ const GardeshJari = ({data}) => {
         )}
       </div>
 
-      <div className="hidden lg:flex items-end justify-between">
+      <div className="hidden lg:flex items-start justify-between">
         {/* تایید سر مربی  */}
         {data?.data?.step == 'approval_mosque_head_coach' ? (
           <div className="w-full flex flex-col items-start">
@@ -933,7 +933,7 @@ const GardeshJari = ({data}) => {
         )}
       </div>
       
-      <div className="hidden lg:flex items-end justify-between">
+      <div className="hidden lg:flex items-start justify-between">
         <div className="w-full flex flex-col items-start">
           <p>{data?.data?.data?.body}</p>
         </div>

@@ -98,7 +98,7 @@ const GardeshRad = () => {
           <div className="w-0.5 h-[18px] border-r border-dashed border-[#DFDFDF]"></div>
           <div className="absolute top-1 right-full mr-4 w-max">
             <span className="text-sm text-[#959595]">
-              تایید معاونت اجرایی مساجد
+              تایید معاونت اجرایی مسجد
             </span>
           </div>
         </div>
@@ -119,7 +119,7 @@ const GardeshRad = () => {
           </div>
         </div>
       </div>
-      <div className="hidden lg:flex items-end justify-between">
+      <div className="hidden lg:flex items-start justify-between">
         <div className="w-full flex flex-col items-start">
           <div className="flex items-center w-full">
             <div className="flex items-center justify-center ">
@@ -185,7 +185,7 @@ const GardeshRad = () => {
             <div className="w-full h-[2px] border-b border-dashed border-[#DFDFDF]"></div>
           </div>
           <span className="text-sm text-[#959595] mt-4 xl:mt-6 xl:text-lg 2xl:mt-8 2xl:text-[22px]  min-w-fit mr-[-28px] 2xl:mr-[-48px]">
-            تایید معاونت اجرایی مساجد
+            تایید معاونت اجرایی مسجد
           </span>
         </div>
 

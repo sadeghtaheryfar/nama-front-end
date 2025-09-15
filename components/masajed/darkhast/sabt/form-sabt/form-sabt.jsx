@@ -68,7 +68,7 @@ const FormSabt = ({ id, data }) => {
       try {
         const response = await axios.get(`/api/show-item-dashboard?item_id=${currentItemId}&role=mosque_head_coach`);
         if (response.data) {
-          if (response?.data?.data?.title === "مساجد") {
+          if (response?.data?.data?.title === "مسجد") {
             setTypeField('امام جماعت');
           } else if (response?.data?.data?.title === "مدارس") {
             setTypeField('مدیر');

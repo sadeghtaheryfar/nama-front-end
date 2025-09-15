@@ -20,7 +20,7 @@ const  Header = ({bgBox,bgRole}) => {
     useEffect(() => {
         // Set the place text based on itemId
         if (itemId === "2") {
-            setPlaceText("مساجد");
+            setPlaceText("مسجد");
         } else if (itemId === "3") {
             setPlaceText("مدارس");
         } else if (itemId === "4") {

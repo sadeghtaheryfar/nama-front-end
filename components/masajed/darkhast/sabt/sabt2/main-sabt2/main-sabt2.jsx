@@ -83,7 +83,7 @@ const MainSabt2 = () => {
       try {
         const response = await axios.get(`/api/show-item-dashboard?item_id=${itemId}&role=mosque_head_coach`);
         if (response.data) {
-          if(response?.data?.data?.title == "مساجد")
+          if(response?.data?.data?.title == "مسجد")
           {
             setTypeField('امام جماعت')
           }else if(response?.data?.data?.title == "مدارس")

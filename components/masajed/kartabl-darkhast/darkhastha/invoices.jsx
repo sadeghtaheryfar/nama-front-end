@@ -282,7 +282,7 @@ const Darkhastha = () => {
     'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
     'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
     'approval_area_interface': 'در انتظار تایید رابط منطقه',
-    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مساجد',
+    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مسجد',
     'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
     'finish': 'به اتمام رسیده',
   };

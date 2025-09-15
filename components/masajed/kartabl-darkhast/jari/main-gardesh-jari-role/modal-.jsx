@@ -17,7 +17,7 @@ const Modal = ({ showModal, setShowModal, hnadleForm, selectedReason , setSelect
                 <option value="approval_mosque_head_coach">تایید سر مربی مسجد</option>
                 <option value="approval_mosque_cultural_officer">تایید مسئول فرهنگی مسجد</option>
                 <option value="approval_area_interface">تایید  رابط منطقه</option>
-                <option value="approval_executive_vice_president_mosques">تایید معاونت اجرایی مساجد</option>
+                <option value="approval_executive_vice_president_mosques">تایید معاونت اجرایی مسجد</option>
                 <option value="approval_deputy_for_planning_and_programming">تایید معاونت طرح و برنامه</option>
             </select>
 

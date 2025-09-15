@@ -20,7 +20,7 @@ const Header = ({ bgBox, bgRole }) => {
     const [currentRole, setCurrentRole] = useState(roleFromUrl);
 
     useEffect(() => {
-        if (itemId === '2') setPlaceText('مساجد');
+        if (itemId === '2') setPlaceText('مسجد');
         else if (itemId === '3') setPlaceText('مدارس');
         else if (itemId === '4') setPlaceText('مراکز تعالی');
         else setPlaceText('');
