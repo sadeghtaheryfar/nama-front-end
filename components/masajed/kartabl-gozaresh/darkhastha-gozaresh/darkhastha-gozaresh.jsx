@@ -443,7 +443,14 @@ const DarkhasthaGozaresh = () => {
               <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
                 <span className="text-xs text-[#959595]">تاریخ ایجاد</span>
                 <span className="text-sm text-[#202020]">
-                  {request?.date ? toPersianDate(request?.date) : '-'}
+                  {request?.created_at ? toPersianDate(request?.created_at) : '-'}
+                </span>
+              </div>
+
+              <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                <span className="text-xs text-[#959595]">تاریخ بروزرسانی</span>
+                <span className="text-sm text-[#202020]">
+                  {request?.created_at ? toPersianDate(request?.updated_at) : '-'}
                 </span>
               </div>
 
@@ -466,6 +473,9 @@ const DarkhasthaGozaresh = () => {
                 <th className="border border-gray-300 px-7 py-5 text-lg">شماره </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">
                   تاریخ ایجاد
+                </th>
+                <th className="border border-gray-300 px-7 py-5 text-lg">
+                  تاریخ بروزرسانی
                 </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
@@ -500,7 +510,10 @@ const DarkhasthaGozaresh = () => {
                     {request.id}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
-                    {request?.date ? toPersianDate(request?.date) : '-'}
+                    {request?.created_at ? toPersianDate(request?.created_at) : '-'}
+                  </td>
+                  <td className="border border-gray-300 px-7 py-5 text-base text-center">
+                    {request?.updated_at ? toPersianDate(request?.updated_at) : '-'}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request?.request?.user?.name}

@@ -893,6 +893,13 @@ export default function KartablGozaresh() {
                       </span>
                     </div>
 
+                    <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                      <span className="text-xs text-[#959595]">تاریخ بروزرسانی</span>
+                      <span className="text-sm text-[#202020]">
+                        {new Date(report.updated_at).toLocaleDateString("fa-IR")}
+                      </span>
+                    </div>
+
                     {/* لینک برای مشاهده جزئیات گزارش */}
                     <Link
                       href={`/role/kartabl-gozaresh/darkhast?id=` + report.id + `&role=${role}&item_id=${item_id}`}
@@ -915,6 +922,9 @@ export default function KartablGozaresh() {
                       <th className="border border-gray-300 px-7 py-5 text-lg">شماره </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">
                         تاریخ ایجاد
+                      </th>
+                      <th className="border border-gray-300 px-7 py-5 text-lg">
+                        تاریخ بروزرسانی
                       </th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                       <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
@@ -949,6 +959,9 @@ export default function KartablGozaresh() {
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {new Date(report.created_at).toLocaleDateString("fa-IR")}
+                        </td>
+                        <td className="border border-gray-300 px-7 py-5 text-base text-center">
+                          {new Date(report.updated_at).toLocaleDateString("fa-IR")}
                         </td>
                         <td className="border border-gray-300 px-7 py-5 text-base text-center">
                           {report?.request?.user?.name}
