@@ -379,7 +379,7 @@ const MainGardeshJari = ({data}) => {
                             ((file) => {
                                 const isPdf = file.original.toLowerCase().endsWith('.pdf');
                                 return (
-                                    <a href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                    <a href={file.original}  rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
                                         {isPdf ? (
                                             <>
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -401,7 +401,7 @@ const MainGardeshJari = ({data}) => {
                         {data.data.other_imam_letter?.map((file, index) => {
                             const isPdf = file.original.toLowerCase().endsWith('.pdf');
                             return (
-                                <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                <a key={index} href={file.original}  rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
                                     {isPdf ? (
                                         <>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -433,7 +433,7 @@ const MainGardeshJari = ({data}) => {
                             ((file) => {
                                 const isPdf = file.original.toLowerCase().endsWith('.pdf');
                                 return (
-                                    <a href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                    <a href={file.original}  rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
                                         {isPdf ? (
                                             <>
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -455,7 +455,7 @@ const MainGardeshJari = ({data}) => {
                         {data.data.other_area_interface_letter?.map((file, index) => {
                             const isPdf = file.original.toLowerCase().endsWith('.pdf');
                             return (
-                                <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
+                                <a key={index} href={file.original}  rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
                                     {isPdf ? (
                                         <>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -489,7 +489,7 @@ const MainGardeshJari = ({data}) => {
                               <a
                                   key={index}
                                   href={file.original}
-                                  target="_blank"
+                                  
                                   rel="noopener noreferrer"
                                   className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group" // اضافه کردن relative و group برای استایل هاور
                               >

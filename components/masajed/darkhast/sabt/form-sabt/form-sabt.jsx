@@ -1023,7 +1023,7 @@ const FormSabt = ({ id, data }) => {
                     {file.file.type === 'application/pdf' ? (
                       <a
                         href={file.preview}
-                        target="_blank"
+                        
                         rel="noopener noreferrer"
                         className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
                       >
@@ -1140,7 +1140,7 @@ const FormSabt = ({ id, data }) => {
                     {file.file.type === 'application/pdf' ? (
                       <a
                         href={file.preview}
-                        target="_blank"
+                        
                         rel="noopener noreferrer"
                         className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
                       >
@@ -1256,7 +1256,7 @@ const FormSabt = ({ id, data }) => {
                     {file.file.type === 'application/pdf' ? (
                       <a
                         href={file.preview}
-                        target="_blank"
+                        
                         rel="noopener noreferrer"
                         className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors"
                       >

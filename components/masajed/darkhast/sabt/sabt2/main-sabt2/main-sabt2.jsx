@@ -346,7 +346,7 @@ const MainSabt2 = () => {
                   {formData?.data?.imam_letter?.original && (
                     <>
                       {formData.data.imam_letter.original.toLowerCase().endsWith('.pdf') ? (
-                        <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                        <a href={formData.data.imam_letter.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
                             width="24"
                             height="24"
@@ -373,7 +373,7 @@ const MainSabt2 = () => {
                           <span className="mt-1 text-xs">مشاهده PDF</span>
                         </a>
                       ) : (
-                        <a href={formData.data.imam_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                        <a href={formData.data.imam_letter.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                           <img src={formData.data.imam_letter.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
                         </a>
                       )
@@ -382,7 +382,7 @@ const MainSabt2 = () => {
                   )}
 
                   {formData?.data?.other_imam_letter?.map((file, index) => (
-                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                    <a key={index} href={file.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                       {file.original.toLowerCase().endsWith('.pdf') ? (
                         <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
@@ -428,7 +428,7 @@ const MainSabt2 = () => {
                   <div className="flex flex-wrap gap-2">
                   {formData?.data?.area_interface_letter?.original && (
                     formData.data.area_interface_letter.original.toLowerCase().endsWith('.pdf') ? (
-                      <a href={formData.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                      <a href={formData.data.area_interface_letter.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                         <svg
                           width="24"
                           height="24"
@@ -455,14 +455,14 @@ const MainSabt2 = () => {
                         <span className="mt-1 text-xs">مشاهده PDF</span>
                       </a>
                     ) : (
-                      <a href={formData.data.area_interface_letter.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                      <a href={formData.data.area_interface_letter.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                         <img src={formData.data.area_interface_letter.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
                       </a>
                     )
                   )}
 
                   {formData?.data?.other_area_interface_letter?.map((file, index) => (
-                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                    <a key={index} href={file.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                       {file.original.toLowerCase().endsWith('.pdf') ? (
                         <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
@@ -524,7 +524,7 @@ const MainSabt2 = () => {
                   </h3>
                   <div className="flex flex-wrap gap-2">
                   {formData?.data?.images?.map((file, index) => (
-                    <a key={index} href={file.original} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                    <a key={index} href={file.original}  rel="noopener noreferrer" className="block w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
                       {file.original.toLowerCase().endsWith('.pdf') ? (
                         <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
