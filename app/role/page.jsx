@@ -51,6 +51,8 @@ export default function Role() {
     }
   }, [router, searchParams]);
 
+  console.log('>>>>>>>>>>>', role)
+
 
   const [show, setShow] = useState(false);
   const pathname = usePathname();
@@ -115,7 +117,7 @@ export default function Role() {
       }
     };
     fetching();
-  }, [item_id]);
+  }, [item_id,role]);
 
   const goBack = (e) => {
     if(e)

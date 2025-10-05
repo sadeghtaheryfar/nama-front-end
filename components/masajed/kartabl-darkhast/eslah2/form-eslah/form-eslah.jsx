@@ -1257,7 +1257,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                   return (
                     <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
                       {isPdf ? (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
                             width="24"
                             height="24"
@@ -1284,7 +1284,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                           <span className="mt-1 text-xs">مشاهده PDF</span>
                         </a>
                       ) : (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full">
                           <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
                         </a>
                       )}
@@ -1362,7 +1362,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                   return (
                     <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
                       {isPdf ? (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
                             width="24"
                             height="24"
@@ -1389,7 +1389,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                           <span className="mt-1 text-xs">مشاهده PDF</span>
                         </a>
                       ) : (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full">
                           <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
                         </a>
                       )}
@@ -1467,7 +1467,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                   return (
                     <div key={file.id} className="relative w-24 h-24 border border-gray-300 rounded-lg overflow-hidden group">
                       {isPdf ? (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full flex flex-col items-center justify-center text-center text-gray-500 hover:text-blue-600 transition-colors">
                           <svg
                             width="24"
                             height="24"
@@ -1494,7 +1494,7 @@ const FormEslah = ({ data: initialRequestData }) => {
                           <span className="mt-1 text-xs">مشاهده PDF</span>
                         </a>
                       ) : (
-                        <a href={file.preview} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                        <a href={file.preview}  rel="noopener noreferrer" className="block w-full h-full">
                           <img src={file.preview} alt={`پیش نمایش ${file.isExisting ? 'فایل موجود' : file.file?.name}`} className="w-full h-full object-cover" />
                         </a>
                       )}

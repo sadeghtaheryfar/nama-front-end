@@ -440,6 +440,13 @@ const Darkhastha = () => {
                 </span>
               </div>
 
+              <div className="bg-[#F6F6F6] rounded-lg flex items-center justify-between p-2">
+                <span className="text-xs text-[#959595]">تاریخ بروزرسانی</span>
+                <span className="text-sm text-[#202020]">
+                  {new Date(request.updated_at).toLocaleDateString("fa-IR",options)}
+                </span>
+              </div>
+
               <Link href={`/${itemId}/kartabl-darkhast/darkhast?id=` + request.id}>
                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-[10px] w-full h-12 flex justify-center items-center mb-2">
                   مشاهده درخواست
@@ -459,6 +466,9 @@ const Darkhastha = () => {
                 <th className="border border-gray-300 px-7 py-5 text-lg">شماره </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">
                   تاریخ ایجاد
+                </th>
+                <th className="border border-gray-300 px-7 py-5 text-lg">
+                  تاریخ بروزرسانی
                 </th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">سر مربی</th>
                 <th className="border border-gray-300 px-7 py-5 text-lg">واحد حقوقی</th>
@@ -493,6 +503,9 @@ const Darkhastha = () => {
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {new Date(request.created_at).toLocaleDateString("fa-IR",options)}
+                  </td>
+                  <td className="border border-gray-300 px-7 py-5 text-base text-center">
+                    {new Date(request.updated_at).toLocaleDateString("fa-IR",options)}
                   </td>
                   <td className="border border-gray-300 px-7 py-5 text-base text-center">
                     {request?.user?.name}

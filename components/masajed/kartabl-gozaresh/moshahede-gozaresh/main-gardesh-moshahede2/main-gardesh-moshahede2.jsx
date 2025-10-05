@@ -598,6 +598,8 @@ const MainGardeshMoshahede2 = ({ id, data }) => {
             otherVideos: backendErrors.otherVideos?.join(', ') || '',
             moreImages: backendErrors.images2?.join(', ') || '',
         }));
+        toast.error('خطا');
+        
         // Mark fields as touched if backend returns errors for them
         setTouched(prevTouched => ({
             ...prevTouched,

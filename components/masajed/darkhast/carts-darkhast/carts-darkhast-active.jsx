@@ -115,7 +115,7 @@ const CartsDarkhastActive = ({ item }) => {
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
-            {remainingRequests === 0 ? (
+            {remainingRequests <= 0 ? (
               <span className="font-bold">در خواستی باقی نمانده.</span>
             ) : (
               <span>
