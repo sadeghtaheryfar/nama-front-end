@@ -104,7 +104,7 @@ const FormSabt1 = ({ data }) => {
               className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
             >
               <div className="flex items-center gap-3 border border-[#39A894] rounded-lg px-5 py-0.5 bg-[#39A894]/10">
-                <a target="_blank" href={data?.imamLetter}>
+                <a href={data?.imamLetter}>
                   <span className="text-sm text-[#39A894] leading-7">برای مشاهده کلیک کنید</span>
                 </a>
                 <Image
@@ -132,7 +132,7 @@ const FormSabt1 = ({ data }) => {
               className="flex items-center justify-between w-full h-14 p-4 border border-gray-300 rounded-lg cursor-pointer"
             >
               <div className="flex items-center gap-3 border border-[#39A894] rounded-lg px-5 py-0.5 bg-[#39A894]/10">
-                <a target="_blank" href={data?.area_interface_letter?.original}>
+                <a href={data?.area_interface_letter?.original}>
                   <span className="text-sm text-[#39A894] leading-7">برای مشاهده کلیک کنید</span>
                 </a>
                 <Image

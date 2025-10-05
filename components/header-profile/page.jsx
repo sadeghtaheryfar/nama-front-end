@@ -151,13 +151,13 @@ const  Header = ({bgBox,bgRole}) => {
                         {(showRoleMenu && itemId) && (
                             <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
                                 {profile?.data?.roles?.map((role) => (
-                                    <a
+                                    <Link
                                         href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
                                         key={role.role_en}
                                         className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex text-[14px]'
                                     >
                                         {translateNama(role.role_en)} {placeText}
-                                    </a>
+                                    </Link>
                                 ))}
                             </div>
                         )}
@@ -165,7 +165,7 @@ const  Header = ({bgBox,bgRole}) => {
                 )}
 
                 <div className="flex flex-col leading-7">
-                <span className="text-xs lg:text-base font-medium">سطح دسترسی</span>
+                {/* <span className="text-xs lg:text-base font-medium">سطح دسترسی</span> */}
                 <span className="text-[10px] lg:text-sm flex">{translateRole(profile?.data?.arman_role)}</span>
             </div>
         </>
