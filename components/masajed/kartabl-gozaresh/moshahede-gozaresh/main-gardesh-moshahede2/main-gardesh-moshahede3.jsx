@@ -58,6 +58,17 @@ const MainGardeshMoshahede3 = ({ id,data }) => {
           )}
         </div>
 
+        {data?.data?.final_amount !== null && data?.data?.final_amount !== undefined && (
+          <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
+            <h3 className="text-base lg:text-lg text-[#3B3B3B]">
+              هزینه پیشنهادی معاونت طرح و برنامه:
+            </h3>
+            <span onClick={(e) => copyText(data?.data?.final_amount)} className="cursor-pointer text-base lg:text-lg font-medium">
+              {(data?.data?.final_amount != null) ? formatPrice(data?.data?.final_amount) : 'وارد نشده است'}
+            </span>
+          </div>
+        )}
+
         <div className="flex items-center justify-between md:justify-start md:gap-5 lg:gap-8 2xl:gap-14">
           <h3 className="text-base min-w-fit lg:text-lg text-[#3B3B3B]">
             هزینه پرداختی توسط آرمان:
