@@ -141,7 +141,7 @@ const MainGardeshJari = ({data}) => {
   }, []);
   
   return (
-    <div className="relative z-30 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
+    <div className="relative z-10 rounded-[20px] bg-white drop-shadow-3xl p-6 mb-16 lg:mt-2 container mx-auto md:p-9 xl:px-12 xl:py-[53px]">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between items-center">
         <h2 className="text-base font-bold md:text-lg xl:text-2xl flex justify-center items-center gap-[0.5rem]">
           {data?.data?.request_plan?.title || "بدون نام"}
@@ -178,7 +178,7 @@ const MainGardeshJari = ({data}) => {
                   </p>
                 </div>
               </div>
-              <p className="text-xs leading-5 xl:text-base 2xl:hidden">
+              <p className="text-xs leading-5 xl:text-base">
                 {data?.data?.message}
               </p>
             </div>

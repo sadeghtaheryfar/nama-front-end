@@ -136,7 +136,7 @@ const  Header = ({bgBox,bgRole}) => {
                 </div>
 
                 {pathname != '/' && (
-                    <div style={{ backgroundColor: bgRole }} className='hover:scale-[1.03] active:scale-[1] transition-[0.9s] relative z-[12] px-2 py-1 rounded-xl cursor-pointer' onClick={() => setShowRoleMenu(!showRoleMenu)}>
+                    <div style={{ backgroundColor: bgRole }} className='hover:scale-[1.03] active:scale-[1] transition-[0.9s] relative z-[50] px-2 py-1 rounded-xl cursor-pointer' onClick={() => setShowRoleMenu(!showRoleMenu)}>
                         <div>
                             <div className='flex justify-between items-center gap-6 sm:gap-8 lg:gap-16 cursor-pointer'>
                                 <span className='text-xs lg:text-base font-medium'>نقش</span>
@@ -149,7 +149,7 @@ const  Header = ({bgBox,bgRole}) => {
                             </span>
                         </div>
                         {(showRoleMenu && itemId) && (
-                            <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-10 overflow-hidden text-black'>
+                            <div style={{ backgroundColor: '#fff' }} className='absolute top-full right-0 mt-2 w-full rounded-xl shadow-lg z-[999] overflow-hidden text-black'>
                                 {profile?.data?.roles?.map((role) => (
                                     <Link
                                         href={(role.role_en == 'mosque_head_coach') ? `/${itemId}` : `/role?role=${role.role_en}&item_id=${itemId}`}
