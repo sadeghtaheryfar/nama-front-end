@@ -1,4 +1,3 @@
-// app/role/kartabl/page.jsx
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +8,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-// وارد کردن Redux hooks و actions
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setRequestDashboardFilters,
@@ -18,9 +16,9 @@ import {
   setHeaderData,
   setGlobalDashboardParams,
   resetRequestDashboardFilters,
-  setUnitFilterSearch, // اضافه شده
-  setUnitFilterCurrentPage, // اضافه شده
-  setUnitFilterTotalPages, // اضافه شده
+  setUnitFilterSearch,
+  setUnitFilterCurrentPage,
+  setUnitFilterTotalPages,
 } from './../../../redux/features/dashboards/dashboardSlice';
 
 import useDebounce from './../../../components/utils/useDebounce';
@@ -30,7 +28,6 @@ export default function Kartabl() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // استفاده از Redux hooks
   const dispatch = useDispatch();
   const {
     item_id,
@@ -41,17 +38,16 @@ export default function Kartabl() {
     status,
     plan_id,
     unit_id,
-    currentPage, // currentPage برای درخواست‌های اصلی داشبورد
-    totalPages, // totalPages برای درخواست‌های اصلی داشبورد
+    currentPage,
+    totalPages,
     school_coach_type,
     sub_type,
   } = useSelector(state => state.dashboards.requestDashboard);
 
-  // State های جدید برای فیلتر واحد سازمانی از Redux (اضافه شده)
   const {
-    search: unitFilterSearch, // نامگذاری متفاوت برای جلوگیری از تداخل
-    currentPage: unitFilterCurrentPage, // currentPage برای فیلتر واحدها
-    totalPages: unitFilterTotalPages,  // totalPages برای فیلتر واحدها
+    search: unitFilterSearch,
+    currentPage: unitFilterCurrentPage,
+    totalPages: unitFilterTotalPages,
   } = useSelector(state => state.dashboards.unitFilter);
 
 
@@ -67,7 +63,6 @@ export default function Kartabl() {
   const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
   const debouncedSearchTerm = useDebounce(localSearchInput, 500);
 
-  // State محلی برای ورودی جستجوی واحد و Debounce (اضافه شده)
   const [localUnitSearchInput, setLocalUnitSearchInput] = useState(unitFilterSearch);
   const debouncedUnitSearchTerm = useDebounce(localUnitSearchInput, 500);
 
@@ -85,11 +80,10 @@ export default function Kartabl() {
     }
   }, [debouncedSearchTerm, dispatch, reduxSearch]);
 
-  // Effect برای Debounce جستجوی فیلتر واحد (اضافه شده)
   useEffect(() => {
     if (debouncedUnitSearchTerm !== unitFilterSearch) {
         dispatch(setUnitFilterSearch(debouncedUnitSearchTerm));
-        dispatch(setUnitFilterCurrentPage(1)); // با تغییر جستجو، صفحه واحد را به 1 ریست کنید
+        dispatch(setUnitFilterCurrentPage(1));
     }
   }, [debouncedUnitSearchTerm, dispatch, unitFilterSearch]);
 
@@ -97,10 +91,8 @@ export default function Kartabl() {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
 
-    // فقط item_id و role را به Redux ارسال می کنیم
     dispatch(setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }));
 
-    // اگر پارامترهای ضروری وجود ندارند، به صفحه اصلی هدایت کنید
     if (!roleParam || !itemIdParam) {
       router.push("/");
       return;
@@ -122,7 +114,6 @@ export default function Kartabl() {
   }, [router, searchParams, dispatch]);
 
 
-  // useEffect برای واکشی اطلاعات هدر (که اکنون در Redux ذخیره می‌شود)
   useEffect(() => {
     if (!item_id) return;
 
@@ -164,7 +155,6 @@ export default function Kartabl() {
   }, [item_id, role]);
 
 
-  // منطق بستن دراپ‌دان‌ها
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -187,9 +177,8 @@ export default function Kartabl() {
   const [loading, setLoading] = useState(false);
 
   const itemsPerPage = 10;
-  const unitsPerPage = 10; // اضافه شده: تعداد آیتم‌ها در هر صفحه برای واحدها
+  const unitsPerPage = 10;
 
-  // تابع به روز رسانی URL: فقط item_id و role را در URL نگه می‌دارد
   const updateURLParams = () => {
     const params = new URLSearchParams();
     if (item_id) params.set("item_id", item_id);
@@ -198,41 +187,39 @@ export default function Kartabl() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false, shallow: true });
   };
 
-  // useEffect برای همگام‌سازی URL با item_id و role از Redux
   useEffect(() => {
     updateURLParams();
   }, [item_id, role, pathname, router]);
 
 
   const [units, setUnits] = useState([]);
-  const [loadingUnits, setLoadingUnits] = useState(false); // اضافه شده: وضعیت لودینگ برای واحدها
+  const [loadingUnits, setLoadingUnits] = useState(false);
 
   useEffect(() => {
-    if(!item_id || !role) return; // اطمینان از وجود item_id و role
+    if(!item_id || !role) return;
 
-    const fetchUnits = async () => { // تغییر نام تابع
-      setLoadingUnits(true); // شروع لودینگ
+    const fetchUnits = async () => {
+      setLoadingUnits(true);
       try {
-        const response = await axios.get( // تغییر یافته
+        const response = await axios.get(
           `/api/unit?item_id=${item_id}&role=${role}&page=${unitFilterCurrentPage}&per_page=${unitsPerPage}&q=${unitFilterSearch}`
         );
-        if (response.data && response.data.data) { // فرض بر این است که پاسخ شامل data و meta است
+        if (response.data && response.data.data) {
           setUnits(response.data.data);
-          if (response.data.meta && response.data.meta.total) { // فرض بر این است که API اطلاعات meta را برمی‌گرداند
-            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.meta.total / unitsPerPage))); // تنظیم totalPages برای واحدها
+          if (response.data.meta && response.data.meta.total) {
+            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.meta.total / unitsPerPage)));
           } else {
-             // Fallback اگر meta وجود نداشت، بر اساس طول داده‌های دریافت شده (کمتر دقیق برای داده‌های جزئی)
             dispatch(setUnitFilterTotalPages(Math.ceil(response.data.data.length / unitsPerPage) || 1));
           }
         }
       } catch (error) {
         console.log("Error fetching units:", error);
       } finally {
-        setLoadingUnits(false); // پایان لودینگ
+        setLoadingUnits(false);
       }
     };
     fetchUnits();
-  }, [item_id, role, unitFilterCurrentPage, unitFilterSearch, dispatch, unitsPerPage]); // اضافه شدن dependencies جدید
+  }, [item_id, role, unitFilterCurrentPage, unitFilterSearch, dispatch, unitsPerPage]);
 
 
   const [plans, setPlans] = useState([]);
@@ -241,7 +228,7 @@ export default function Kartabl() {
     const fetchFutureCarts = async () => {
       try {
         const carts = await axios.get(
-          `/api/plans?item_id=${item_id}`
+          `/api/plans/list?item_id=${item_id}&role=${role}`
         );
         if (carts.data) {
           setPlans(carts.data.data);
@@ -253,32 +240,27 @@ export default function Kartabl() {
     fetchFutureCarts();
   }, [item_id]);
 
-  // تابع برای تغییر فیلترها (به جای setFilters محلی)
   const handleFilterChange = (newFilterState) => {
-    dispatch(setRequestDashboardFilters(newFilterState)); // فیلترها را به Redux ارسال کنید
-    dispatch(setRequestDashboardCurrentPage(1)); // با تغییر فیلتر، صفحه را به 1 برگردانید
+    dispatch(setRequestDashboardFilters(newFilterState));
+    dispatch(setRequestDashboardCurrentPage(1));
   };
 
-  // تابع برای ریست کردن فیلترها
   const handleResetFilters = () => {
     dispatch(resetRequestDashboardFilters());
     dispatch(setRequestDashboardCurrentPage(1));
     setLocalSearchInput('');
     setPlanSearch('');
-    // ریست کردن state های فیلتر واحد (اضافه شده)
     dispatch(setUnitFilterSearch(''));
     dispatch(setUnitFilterCurrentPage(1));
-    setLocalUnitSearchInput(''); // ریست کردن فیلد ورودی محلی
+    setLocalUnitSearchInput('');
     setIsFilterOpen(false);
   };
 
-  // useEffect برای واکشی درخواست‌ها
   useEffect(() => {
     if (!item_id || !role) return;
 
     setLoading(true);
     try {
-      // فیلترها را مستقیماً از Redux می‌خوانیم
       const params = {
         q: reduxSearch,
         sort,
@@ -287,7 +269,7 @@ export default function Kartabl() {
         plan_id,
         unit_id,
         per_page: itemsPerPage,
-        page: currentPage, // currentPage برای درخواست‌های اصلی
+        page: currentPage,
         itemId: item_id,
         role,
         school_coach_type,
@@ -305,7 +287,7 @@ export default function Kartabl() {
           setSubTypesData(response.data.sub_types);
         }
         if (response.data.meta && response.data.meta.total) {
-          dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage))); // totalPages برای درخواست‌های اصلی
+          dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage)));
         } else {
           dispatch(setRequestDashboardTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1));
         }
@@ -338,18 +320,15 @@ export default function Kartabl() {
     }
   };
 
-  // تابع برای تغییر صفحه (به جای setCurrentPage محلی) برای درخواست‌های اصلی
   const handlePageChange = (page) => {
-    dispatch(setRequestDashboardCurrentPage(page)); // صفحه را به Redux ارسال کنید
+    dispatch(setRequestDashboardCurrentPage(page));
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
-  // تابع برای تغییر صفحه واحدها (اضافه شده)
   const handleUnitPageChange = (page) => {
-    dispatch(setUnitFilterCurrentPage(page)); // صفحه را به Redux برای واحدها ارسال کنید
+    dispatch(setUnitFilterCurrentPage(page));
   };
 
-  // رندر دکمه‌های Pagination برای درخواست‌های اصلی
   const renderPaginationButtons = () => {
     const buttons = [];
     buttons.push(
@@ -442,7 +421,6 @@ export default function Kartabl() {
     return buttons;
   };
 
-  // رندر دکمه‌های Pagination برای واحدها (اضافه شده)
   const renderUnitPaginationButtons = () => {
     const buttons = [];
     buttons.push(
@@ -742,22 +720,21 @@ export default function Kartabl() {
                                   type="text"
                                   placeholder="جستجوی واحد سازمانی..."
                                   className="w-full p-2 border rounded mb-2"
-                                  value={localUnitSearchInput} // مقدار ورودی از state محلی
-                                  onChange={(e) => setLocalUnitSearchInput(e.target.value)} // به‌روزرسانی state محلی
+                                  value={localUnitSearchInput}
+                                  onChange={(e) => setLocalUnitSearchInput(e.target.value)}
                                 />
-                                {loadingUnits && ( // نمایش spinner هنگام لودینگ واحدها
+                                {loadingUnits && (
                                   <div className="flex justify-center items-center py-2">
                                     <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                   </div>
                                 )}
-                                {/* نمایش واحدهای paginated به جای select */}
                                 <div className="max-h-40 overflow-y-auto border rounded">
                                   {units.length > 0 ? (
                                     units.map(unit => (
                                       <div
                                         key={unit.id}
                                         className={`p-2 cursor-pointer hover:bg-gray-100 ${unit_id === unit.id ? 'bg-[#D9EFFE] text-[#258CC7]' : ''}`}
-                                        onClick={() => handleFilterChange({ unit_id: unit.id })} // تنظیم unit_id در فیلتر اصلی
+                                        onClick={() => handleFilterChange({ unit_id: unit.id })}
                                       >
                                         {unit.title}
                                       </div>
@@ -766,10 +743,9 @@ export default function Kartabl() {
                                     !loadingUnits && <div className="p-2 text-gray-500">یافت نشد</div>
                                   )}
                                 </div>
-                                {/* کنترل‌های Pagination برای واحدها */}
                                 {unitFilterTotalPages > 1 && (
                                   <div className="flex justify-center items-center mt-2 gap-1 text-xs">
-                                    {renderUnitPaginationButtons()} {/* رندر دکمه‌های pagination واحدها */}
+                                    {renderUnitPaginationButtons()}
                                   </div>
                                 )}
                               </div>
@@ -980,7 +956,6 @@ export default function Kartabl() {
                   </tbody>
                 </table>
               </div>
-              {/* Pagination برای درخواست‌های اصلی */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center mb-4 gap-2 text-sm">
                   {renderPaginationButtons()}

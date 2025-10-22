@@ -1,4 +1,3 @@
-// app/role/kartabl-gozaresh/page.jsx
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +8,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-// وارد کردن Redux hooks و actions
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setReportDashboardFilters,
@@ -17,13 +15,11 @@ import {
   setReportDashboardTotalPages,
   setHeaderData,
   setGlobalDashboardParams,
-  setUnitFilterSearch, // اضافه شده
-  setUnitFilterCurrentPage, // اضافه شده
-  setUnitFilterTotalPages, // اضافه شده
+  setUnitFilterSearch,
+  setUnitFilterCurrentPage,
+  setUnitFilterTotalPages,
   resetReportDashboardFilters,
-  // setReportDashboardSubType,
-  // setReportDashboardSchoolCoachType,
-} from './../../../redux/features/dashboards/dashboardSlice'; // مسیر را بررسی کنید
+} from './../../../redux/features/dashboards/dashboardSlice';
 
 import useDebounce from './../../../components/utils/useDebounce';
 
@@ -32,9 +28,7 @@ export default function KartablGozaresh() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // استفاده از Redux hooks
   const dispatch = useDispatch();
-  // خواندن تمام فیلترها و وضعیت صفحه از Redux برای داشبورد گزارش‌ها
   const {
     item_id,
     role,
@@ -46,14 +40,14 @@ export default function KartablGozaresh() {
     unit_id,
     currentPage,
     totalPages,
-    sub_type, // Added for 'نوع مربی'
-    school_coach_type, // Added for 'نوع مربی در مدارس'
-  } = useSelector(state => state.dashboards.reportDashboard); // *** استفاده از reportDashboard ***
+    sub_type,
+    school_coach_type,
+  } = useSelector(state => state.dashboards.reportDashboard);
 
   const {
-    search: unitFilterSearch, // نامگذاری متفاوت برای جلوگیری از تداخل
-    currentPage: unitFilterCurrentPage, // currentPage برای فیلتر واحدها
-    totalPages: unitFilterTotalPages,  // totalPages برای فیلتر واحدها
+    search: unitFilterSearch,
+    currentPage: unitFilterCurrentPage,
+    totalPages: unitFilterTotalPages,
   } = useSelector(state => state.dashboards.unitFilter);
 
   const header = useSelector(state => state.dashboards.headerData);
@@ -70,7 +64,6 @@ export default function KartablGozaresh() {
   const [localSearchInput, setLocalSearchInput] = useState(reduxSearch);
   const debouncedSearchTerm = useDebounce(localSearchInput, 500);
 
-  // Added states for select options
   const [subTypesData, setSubTypesData] = useState({});
   const [schoolCoachTypes, setSchoolCoachTypes] = useState({});
 
@@ -91,7 +84,7 @@ export default function KartablGozaresh() {
   useEffect(() => {
     if (debouncedUnitSearchTerm !== unitFilterSearch) {
         dispatch(setUnitFilterSearch(debouncedUnitSearchTerm));
-        dispatch(setUnitFilterCurrentPage(1)); // با تغییر جستجو، صفحه واحد را به 1 ریست کنید
+        dispatch(setUnitFilterCurrentPage(1));
     }
   }, [debouncedUnitSearchTerm, dispatch, unitFilterSearch]);
 
@@ -99,10 +92,8 @@ export default function KartablGozaresh() {
     const roleParam = searchParams.get("role");
     const itemIdParam = searchParams.get("item_id");
 
-    // فقط item_id و role را به Redux ارسال می کنیم
     dispatch(setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }));
 
-    // اگر پارامترهای ضروری وجود ندارند، به صفحه اصلی هدایت کنید
     if (!roleParam || !itemIdParam) {
       router.push("/");
       return;
@@ -123,8 +114,6 @@ export default function KartablGozaresh() {
     }
   }, [router, searchParams, dispatch]);
 
-
-  // useEffect برای واکشی اطلاعات هدر (که اکنون در Redux ذخیره می‌شود)
   useEffect(() => {
     if (!item_id) return;
 
@@ -166,7 +155,6 @@ export default function KartablGozaresh() {
   }, [item_id, role]);
 
 
-  // منطق بستن دراپ‌دان‌ها
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -185,14 +173,12 @@ export default function KartablGozaresh() {
   }, []);
 
 
-  const [reports, setReports] = useState([]); // تغییر نام از requests به reports
+  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const itemsPerPage = 10;
   const unitsPerPage = 10; 
 
-  // تابع به روز رسانی URL: فقط item_id و role را در URL نگه می‌دارد
-  // این تابع هیچ وابستگی به فیلترها یا صفحه ندارد.
   const updateURLParams = () => {
     const params = new URLSearchParams();
     if (item_id) params.set("item_id", item_id);
@@ -201,8 +187,6 @@ export default function KartablGozaresh() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false, shallow: true });
   };
 
-  // useEffect برای همگام‌سازی URL با item_id و role از Redux
-  // این useEffect فقط زمانی که item_id یا role در Redux تغییر کنند، URL را به روز می‌کند.
   useEffect(() => {
     updateURLParams();
   }, [item_id, role, pathname, router]);
@@ -210,39 +194,38 @@ export default function KartablGozaresh() {
 
   const [units, setUnits] = useState([]);
   useEffect(() => {
-    if(!item_id || !role) return; // اطمینان از وجود item_id و role
+    if(!item_id || !role) return;
 
-    const fetchUnits = async () => { // تغییر نام تابع
-      setLoadingUnits(true); // شروع لودینگ
+    const fetchUnits = async () => {
+      setLoadingUnits(true);
       try {
-        const response = await axios.get( // تغییر یافته
+        const response = await axios.get(
           `/api/unit?item_id=${item_id}&role=${role}&page=${unitFilterCurrentPage}&per_page=${unitsPerPage}&q=${unitFilterSearch}`
         );
-        if (response.data && response.data.data) { // فرض بر این است که پاسخ شامل data و meta است
+        if (response.data && response.data.data) {
           setUnits(response.data.data);
-          if (response.data.meta && response.data.meta.total) { // فرض بر این است که API اطلاعات meta را برمی‌گرداند
-            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.meta.total / unitsPerPage))); // تنظیم totalPages برای واحدها
+          if (response.data.meta && response.data.meta.total) {
+            dispatch(setUnitFilterTotalPages(Math.ceil(response.data.meta.total / unitsPerPage)));
           } else {
-             // Fallback اگر meta وجود نداشت، بر اساس طول داده‌های دریافت شده (کمتر دقیق برای داده‌های جزئی)
             dispatch(setUnitFilterTotalPages(Math.ceil(response.data.data.length / unitsPerPage) || 1));
           }
         }
       } catch (error) {
         console.log("Error fetching units:", error);
       } finally {
-        setLoadingUnits(false); // پایان لودینگ
+        setLoadingUnits(false);
       }
     };
     fetchUnits();
-  }, [item_id, role, unitFilterCurrentPage, unitFilterSearch, dispatch, unitsPerPage]); // اضافه شدن dependencies جدید
+  }, [item_id, role, unitFilterCurrentPage, unitFilterSearch, dispatch, unitsPerPage]);
 
   const [plans, setPlans] = useState([]);
   useEffect(() => {
     if(!item_id) return;
-    const fetchPlans = async () => { // تغییر نام تابع
+    const fetchPlans = async () => {
       try {
         const response = await axios.get(
-          `/api/plans?item_id=${item_id}`
+          `/api/plans/list?item_id=${item_id}&role=${role}`
         );
         if (response.data) {
           setPlans(response.data.data);
@@ -255,7 +238,6 @@ export default function KartablGozaresh() {
   }, [item_id]);
 
 
-  // Options for sub_type based on item_id
   const getSubTypeOptions = () => {
     if (!item_id || !subTypesData) return [];
 
@@ -272,7 +254,6 @@ export default function KartablGozaresh() {
     return [{ value: "", label: "همه" }, ...options];
   };
 
-  // Options for school_coach_type
   const getSchoolCoachTypeOptions = () => {
     if (!schoolCoachTypes) return [];
     const options = Object.entries(schoolCoachTypes).map(([value, text]) => ({ value, label: text }));
@@ -280,13 +261,11 @@ export default function KartablGozaresh() {
   };
 
 
-  // تابع برای تغییر فیلترها (ارسال به Redux)
   const handleFilterChange = (newFilterState) => {
-    dispatch(setReportDashboardFilters(newFilterState)); // *** استفاده از setReportDashboardFilters ***
-    dispatch(setReportDashboardCurrentPage(1)); // با تغییر فیلتر، صفحه را به 1 برگردانید
+    dispatch(setReportDashboardFilters(newFilterState));
+    dispatch(setReportDashboardCurrentPage(1));
   };
 
-  // تابع برای ریست کردن فیلترها
   const handleResetFilters = () => {
     dispatch(resetReportDashboardFilters());
     dispatch(setReportDashboardCurrentPage(1));
@@ -297,13 +276,11 @@ export default function KartablGozaresh() {
     setIsFilterOpen(false);
   };
 
-  // useEffect برای واکشی گزارش‌ها
   useEffect(() => {
     if (!item_id || !role) return;
 
     setLoading(true);
     try {
-      // فیلترها را مستقیماً از Redux می‌خوانیم
       const params = {
         q: reduxSearch,
         sort,
@@ -315,21 +292,20 @@ export default function KartablGozaresh() {
         page: currentPage,
         itemId: item_id,
         role,
-        sub_type, // Added to API params
-        school_coach_type, // Added to API params
+        sub_type,
+        school_coach_type,
       };
 
-      const fetchReports = async () => { // تغییر نام تابع
-        const response = await axios.get(`/api/darkhast-reports`, { params }); // *** API مربوط به گزارش‌ها ***
+      const fetchReports = async () => {
+        const response = await axios.get(`/api/darkhast-reports`, { params });
 
         setSubTypesData(response?.data?.sub_types || {});
         setSchoolCoachTypes(response?.data?.school_coach_type || {});
-        setReports(response.data); // تغییر نام از setRequests به setReports
+        setReports(response.data);
         if (response.data.meta && response.data.meta.total) {
-          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage))); // *** استفاده از setReportDashboardTotalPages ***
+          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.meta.total / itemsPerPage)));
         } else {
-          // اگر meta.total وجود نداشت، از طول آرایه data استفاده کنید
-          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1)); // *** استفاده از setReportDashboardTotalPages ***
+          dispatch(setReportDashboardTotalPages(Math.ceil(response.data.data.length / itemsPerPage) || 1));
         }
       };
       fetchReports();
@@ -339,7 +315,7 @@ export default function KartablGozaresh() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, sub_type, school_coach_type, itemsPerPage, dispatch]); // Added sub_type, school_coach_type to dependencies
+  }, [currentPage, item_id, role, reduxSearch, sort, direction, status, plan_id, unit_id, sub_type, school_coach_type, itemsPerPage, dispatch]);
 
 
   const goBack = () => {
@@ -357,12 +333,12 @@ export default function KartablGozaresh() {
   };
 
   const handlePageChange = (page) => {
-    dispatch(setReportDashboardCurrentPage(page)); // *** استفاده از setReportDashboardCurrentPage ***
+    dispatch(setReportDashboardCurrentPage(page));
     document.getElementById("future-carts-section").scrollIntoView({ behavior: "smooth" });
   };
 
   const handleUnitPageChange = (page) => {
-    dispatch(setUnitFilterCurrentPage(page)); // صفحه را به Redux برای واحدها ارسال کنید
+    dispatch(setUnitFilterCurrentPage(page));
   };
 
   const renderPaginationButtons = () => {
@@ -660,7 +636,6 @@ export default function KartablGozaresh() {
                             </div>
                           </div>
                           
-                          {/* New Filter: نوع مربی (sub_type) */}
                           {item_id && (
                             <div className="p-2 border-b">
                               <div className="font-bold mb-2">نوع واحد حقوقی</div>
@@ -690,7 +665,6 @@ export default function KartablGozaresh() {
                             </div>
                           )}
 
-                          {/* New Filter: نوع مربی در مدارس (school_coach_type) - Conditional */}
                           {item_id === '3' && (
                             <div className="p-2 border-b">
                               <div className="font-bold mb-2">نوع مربی در مدارس</div>
@@ -752,22 +726,21 @@ export default function KartablGozaresh() {
                                   type="text"
                                   placeholder="جستجوی واحد سازمانی..."
                                   className="w-full p-2 border rounded mb-2"
-                                  value={localUnitSearchInput} // مقدار ورودی از state محلی
-                                  onChange={(e) => setLocalUnitSearchInput(e.target.value)} // به‌روزرسانی state محلی
+                                  value={localUnitSearchInput}
+                                  onChange={(e) => setLocalUnitSearchInput(e.target.value)}
                                 />
-                                {loadingUnits && ( // نمایش spinner هنگام لودینگ واحدها
+                                {loadingUnits && (
                                   <div className="flex justify-center items-center py-2">
                                     <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                   </div>
                                 )}
-                                {/* نمایش واحدهای paginated به جای select */}
                                 <div className="max-h-40 overflow-y-auto border rounded">
                                   {units.length > 0 ? (
                                     units.map(unit => (
                                       <div
                                         key={unit.id}
                                         className={`p-2 cursor-pointer hover:bg-gray-100 ${unit_id === unit.id ? 'bg-[#D9EFFE] text-[#258CC7]' : ''}`}
-                                        onClick={() => handleFilterChange({ unit_id: unit.id })} // تنظیم unit_id در فیلتر اصلی
+                                        onClick={() => handleFilterChange({ unit_id: unit.id })}
                                       >
                                         {unit.title}
                                       </div>
@@ -776,10 +749,9 @@ export default function KartablGozaresh() {
                                     !loadingUnits && <div className="p-2 text-gray-500">یافت نشد</div>
                                   )}
                                 </div>
-                                {/* کنترل‌های Pagination برای واحدها */}
                                 {unitFilterTotalPages > 1 && (
                                   <div className="flex justify-center items-center mt-2 gap-1 text-xs">
-                                    {renderUnitPaginationButtons()} {/* رندر دکمه‌های pagination واحدها */}
+                                    {renderUnitPaginationButtons()}
                                   </div>
                                 )}
                               </div>
@@ -900,7 +872,6 @@ export default function KartablGozaresh() {
                       </span>
                     </div>
 
-                    {/* لینک برای مشاهده جزئیات گزارش */}
                     <Link
                       href={`/role/kartabl-gozaresh/darkhast?id=` + report.id + `&role=${role}&item_id=${item_id}`}
                     >
@@ -998,7 +969,6 @@ export default function KartablGozaresh() {
                   </tbody>
                 </table>
               </div>
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center mb-4 gap-2 text-sm">
                   {renderPaginationButtons()}
