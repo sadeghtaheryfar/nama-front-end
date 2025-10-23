@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import Modal from "./modal";
 import toast from "react-hot-toast";
 import RejectConfirmationModal from './RejectConfirmationModal';
+import FileDisplayWithModal from "../../../../utils/FileDisplayWithModal";
 
 const MainGardeshJariRole = ({data,back_steps}) => {
   function formatNumber(num) {
@@ -474,46 +475,22 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                     <div className="flex flex-wrap gap-2">
                         {data.data.imam_letter?.original && (
                             ((file) => {
-                                const isPdf = file.original.toLowerCase().endsWith('.pdf');
                                 return (
-                                    <a href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                                        {isPdf ? (
-                                            <>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                                کلیک کنید
-                                            </p>
-                                        </>
-                                        ) : (
-                                            <img src={file.original} alt="نامه امام جماعت" className="w-full h-full object-cover" />
-                                        )}
-                                    </a>
+                                    <FileDisplayWithModal 
+                                      key={0} 
+                                      file={file} 
+                                      index={0} 
+                                    />
                                 );
                             })(data.data.imam_letter)
                         )}
                         {data.data.other_imam_letter?.map((file, index) => {
-                            const isPdf = file.original.toLowerCase().endsWith('.pdf');
                             return (
-                                <a key={index} href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                                    {isPdf ? (
-                                        <>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                                کلیک کنید
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                                    )}
-                                </a>
+                                <FileDisplayWithModal
+                                  key={index} 
+                                  file={file} 
+                                  index={index} 
+                                />
                             );
                         })}
                     </div>
@@ -528,46 +505,22 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                     <div className="flex flex-wrap gap-2">
                         {data.data.area_interface_letter?.original && (
                             ((file) => {
-                                const isPdf = file.original.toLowerCase().endsWith('.pdf');
                                 return (
-                                    <a href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                                        {isPdf ? (
-                                            <>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                                کلیک کنید
-                                            </p>
-                                        </>
-                                        ) : (
-                                            <img src={file.original} alt="نامه رابط منطقه" className="w-full h-full object-cover" />
-                                        )}
-                                    </a>
+                                    <FileDisplayWithModal
+                                      key={0} 
+                                      file={file} 
+                                      index={0} 
+                                    />
                                 );
                             })(data.data.area_interface_letter)
                         )}
                         {data.data.other_area_interface_letter?.map((file, index) => {
-                            const isPdf = file.original.toLowerCase().endsWith('.pdf');
                             return (
-                                <a key={index} href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                                    {isPdf ? (
-                                        <>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                                کلیک کنید
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <img src={file.original} alt={`نامه رابط منطقه ${index + 2}`} className="w-full h-full object-cover" />
-                                    )}
-                                </a>
+                                <FileDisplayWithModal
+                                  key={index} 
+                                  file={file} 
+                                  index={index} 
+                                />
                             );
                         })}
                     </div>
@@ -583,22 +536,11 @@ const MainGardeshJariRole = ({data,back_steps}) => {
                         {data.data.images?.map((file, index) => {
                             const isPdf = file.original.toLowerCase().endsWith('.pdf');
                             return (
-                                <a key={index} href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                                    {isPdf ? (
-                                        <>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                            <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                                کلیک کنید
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <img src={file.original} alt={`پیوست ${index + 1}`} className="w-full h-full object-cover" />
-                                    )}
-                                </a>
+                                <FileDisplayWithModal
+                                  key={index} 
+                                  file={file} 
+                                  index={index} 
+                                />
                             );
                         })}
                     </div>

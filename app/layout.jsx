@@ -98,7 +98,7 @@ export default function RootLayout({ children }) {
       <body style={{ position:relative }}>
         <Provider store={store}>
           {showGlobalLoading && (
-            <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 text-white loading-container-main">
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-[9999] text-white loading-container-main">
               <p className="text-lg">لطفاً صبر کنید ...</p>
             </div>
           )}

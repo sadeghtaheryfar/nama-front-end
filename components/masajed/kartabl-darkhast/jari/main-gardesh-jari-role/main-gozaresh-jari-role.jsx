@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import Modal from "./modal";
 import toast from "react-hot-toast";
 import RejectConfirmationModal from './RejectConfirmationModal';
+import FileDisplayWithModal from "../../../../utils/FileDisplayWithModal";
 
 const MainGozareshJariRole = ({data, back_steps}) => {
   function formatNumber(num) {
@@ -500,24 +501,12 @@ const MainGozareshJariRole = ({data, back_steps}) => {
             
             <div className="flex flex-wrap w-full gap-[1rem]">
               {data?.data?.images?.map((file, index) => {
-                const isPdf = file.original.toLowerCase().endsWith('.pdf');
                 return (
-                    <a key={index} href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                        {isPdf ? (
-                            <>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-
-                                <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                    کلیک کنید
-                                </p>
-                            </>
-                        ) : (
-                            <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                        )}
-                    </a>
+                    <FileDisplayWithModal
+                      key={index} 
+                      file={file} 
+                      index={index} 
+                    />
                   );
               })}
             </div>
@@ -532,12 +521,11 @@ const MainGozareshJariRole = ({data, back_steps}) => {
               <div className="flex flex-wrap w-full gap-[1rem]">
                 {/* Display primary video */}
                 {data?.data?.video?.original && (
-                  <div key={data.data.video.id || "main-video"} className="relative w-full md:w-64 aspect-video border border-gray-300 rounded-lg overflow-hidden">
-                    <video controls className="w-full h-full object-cover">
-                      <source src={data.data.video.original} type={data.data.video.mime_type || 'video/mp4'} />
-                      مرورگر شما از تگ ویدئو پشتیبانی نمی‌کند.
-                    </video>
-                  </div>
+                  <FileDisplayWithModal
+                    key={0} 
+                    file={data?.data?.video} 
+                    index={0} 
+                  />
                 )}
               </div>
             </div>
@@ -553,12 +541,11 @@ const MainGozareshJariRole = ({data, back_steps}) => {
                 {/* Display other videos */}
                 {data?.data?.other_videos && data.data.other_videos.length > 0 && (
                   data.data.other_videos.map((videoItem, index) => (
-                    <div key={videoItem.id || `other-video-${index}`} className="relative w-full md:w-64 aspect-video border border-gray-300 rounded-lg overflow-hidden">
-                      <video controls className="w-full h-full object-cover">
-                        <source src={videoItem.original} type={videoItem.mime_type || 'video/mp4'} />
-                        مرورگر شما از تگ ویدئو پشتیبانی نمی‌کند.
-                      </video>
-                    </div>
+                    <FileDisplayWithModal
+                      key={index} 
+                      file={videoItem} 
+                      index={index} 
+                    />
                   ))
                 )}
               </div>
@@ -572,24 +559,12 @@ const MainGozareshJariRole = ({data, back_steps}) => {
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {data?.data?.images2?.map((file, index) => {
-                    const isPdf = file.original.toLowerCase().endsWith('.pdf');
                     return (
-                        <a key={index} href={file.original} rel="noopener noreferrer" className="w-24 h-24 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center flex-col relative group">
-                            {isPdf ? (
-                                <>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                    <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-
-                                    <p className="text-xs text-gray-700 mt-2 transition-opacity duration-200">
-                                        کلیک کنید
-                                    </p>
-                                </>
-                            ) : (
-                                <img src={file.original} alt={`نامه امام جماعت ${index + 2}`} className="w-full h-full object-cover" />
-                            )}
-                        </a>
+                        <FileDisplayWithModal
+                          key={index} 
+                          file={file} 
+                          index={index} 
+                        />
                       );
                   })}
                 </div>

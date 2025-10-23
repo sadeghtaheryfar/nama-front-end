@@ -220,7 +220,7 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
             <div className="mt-2 grid grid-cols-3 gap-2">
               {data?.data?.report?.images?.map((image, index) => (
                 <div key={index} className="relative w-24 h-24">
-                  <a href={image?.original} target="_blank" rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
+                  <a href={image?.original} rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
                     <img src={image?.original} alt={`تصویر ${index + 1}`} className="w-full h-full object-cover rounded-lg" /> {/* MODIFIED: Added alt text */}
                   </a>
                 </div>
@@ -260,7 +260,7 @@ const MainGardeshMoshahede5 = ({ id,data }) => {
             <div className="mt-2 grid grid-cols-3 gap-2">
               {data?.data?.report?.images2?.map((image, index) => (
                 <div key={index} className="relative w-24 h-24">
-                  <a href={image?.original} target="_blank" rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
+                  <a href={image?.original} rel="noopener noreferrer"> {/* ADDED: Anchor tag for new page link */}
                     <img src={image?.original} alt={`تصویر ${index + 1}`} className="w-full h-full object-cover rounded-lg" /> {/* MODIFIED: Added alt text */}
                   </a>
                 </div>
