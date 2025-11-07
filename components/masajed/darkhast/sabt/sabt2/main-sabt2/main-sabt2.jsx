@@ -433,6 +433,7 @@ const MainSabt2 = () => {
             <div className="flex justify-center items-center">
               <button 
                 onClick={() => confirm()}
+                disabled={loading}
                 className="flex justify-center items-center w-full h-12 text-base md:max-w-[214px] font-medium text-white bg-[#39A894] rounded-[10px]"
               >
                 {loading ? 'صبر کنید ...' : 'تایید نهایی'}

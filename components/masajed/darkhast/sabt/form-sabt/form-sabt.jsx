@@ -1338,6 +1338,7 @@ const FormSabt = ({ id, data }) => {
       <div className="flex justify-center w-full flex-col items-center">
         <button
           onClick={() => hnadleForm()}
+          disabled={loading}
           className="w-full h-12 text-white bg-[#39A894] text-base font-medium rounded-[10px] hover:border border-[#39A894] hover:text-[#39A894] hover:bg-white md:max-w-[214px]"
         >
           {loading ? "صبر کنید ..." : "تایید و ثبت اطلاعات"}
