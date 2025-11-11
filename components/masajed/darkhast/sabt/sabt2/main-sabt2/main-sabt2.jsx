@@ -266,6 +266,14 @@ const MainSabt2 = () => {
               </ul>
             </div>
           </div>
+          {requestData?.body && (
+            <div className="flex flex-col items-start bg-[#D5B260]/10 rounded-lg p-3 mb-6 md:p-5 lg:p-6 md:mb-8 xl:mb-10 xl:flex-row xl:gap-6 2xl:gap-10">
+              <h2 className="text-base font-semibold text-[#D5B260] md:text-lg xl:text-xl xl:min-w-fit">
+                توضیحات
+              </h2>
+              <p>{requestData?.body}</p>
+            </div>
+          )}
           <hr className="hidden md:block h-2 mb-10" />
           <div className="flex flex-col justify-center gap-6 lg:gap-8 2xl:gap-10">
             <div className="flex flex-col gap-6 md:gap-x-8 md:flex-row flex-wrap lg:gap-x-11 xl:gap-x-24 2xl:gap-x-32">

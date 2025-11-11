@@ -758,7 +758,7 @@ const MainGardeshJariRole = ({data,back_steps}) => {
         </div>
       )}
 
-      <RejectConfirmationModal
+      <RejectConfirmationModal 
         show={showRejectConfirmationModal}
         onClose={() => setShowRejectConfirmationModal(false)}
         onConfirm={() => {
