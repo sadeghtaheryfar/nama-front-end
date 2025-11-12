@@ -66,7 +66,7 @@ const FormDetailPage = () => {
           `/api/forms/show?item_id=${itemId}&role=mosque_head_coach&id=${formId}`
         );
 
-        if (request.data && request.data.data) {
+        if (request.data && request.data.data && request.data.data?.report?.status != 'pending') {
           const fetchedFormData = request.data.data;
           setFormData(fetchedFormData);
 
@@ -76,7 +76,6 @@ const FormDetailPage = () => {
               const reportItem = fetchedFormData.report.reports[fieldId];
               const fieldTitle = reportItem.form?.title;
               if (fieldTitle && reportItem.value !== undefined) {
-                // فیلدهای file و date را در نظر نمی‌گیریم
                 if (reportItem.form.type === 'file' || reportItem.form.type === 'date') {
                   return;
                 }
@@ -118,6 +117,10 @@ const FormDetailPage = () => {
           }
           reset(defaultValues);
         } else {
+          toast.error("اطلاعات فرم یافت نشد.");
+          setTimeout(() => {
+            window.location = `/${itemId}/`
+          }, 3000);
           setError("اطلاعات فرم یافت نشد.");
         }
       } catch (err) {
@@ -388,6 +391,15 @@ const FormDetailPage = () => {
                   </span>
                 )}
               </h2>
+
+              {formData?.body && (
+                <div className="flex flex-col items-start bg-[#D5B260]/10 rounded-lg p-3 mb-6 md:p-5 lg:p-6 md:mb-8 xl:mb-10 xl:flex-row xl:gap-6 2xl:gap-10">
+                  <h2 className="text-base font-semibold text-[#D5B260] md:text-lg xl:text-xl xl:min-w-fit">
+                    توضیحات
+                  </h2>
+                  <p>{formData?.body}</p>
+                </div>
+              )}
 
               {formData.report && (
                 <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
