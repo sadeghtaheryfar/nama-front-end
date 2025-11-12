@@ -24,18 +24,19 @@ const  Forms = () => {
                 );
 
                 if (request.data) {
-                    const formsData = request.data.data;
+                    const formsData = request?.data?.data;
                     setData(formsData);
 
                     const hasMandatoryForm = formsData.some((form) => form.required);
                     const hasReportForm = formsData.some((form) => form.report);
                     const skipForms = localStorage.getItem("skip");
+
+                    const shouldRedirect =
+                        hasMandatoryForm ||
+                        hasReportForm ||
+                        (!hasMandatoryForm && formsData.length > 0 && !skipForms);
                     
-                    if (hasMandatoryForm) {
-                        router.push(`/${itemId}/forms`);
-                    }else if (hasReportForm) {
-                        router.push(`/${itemId}/forms`);
-                    }else if (!hasMandatoryForm && formsData.length > 0 && !skipForms) {
+                    if (shouldRedirect && !pathname.startsWith(`/${itemId}/forms`)) {
                         router.push(`/${itemId}/forms`);
                     }
                 }

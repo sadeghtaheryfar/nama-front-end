@@ -61,8 +61,6 @@ const Carts = () => {
     
     return '/default-link';
   };
-
-  console.log(profile?.data?.roles?.some(role => role.ring == true));
   
 
   return (
