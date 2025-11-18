@@ -5,6 +5,18 @@ import ButtonSabt from "../button-sabt/button-sabt";
 import { usePathname } from "next/navigation";
 import RequirementsPopup from "./requirements-popup";
 
+const toPersianDate = (date) => {
+  return new Date(date).toLocaleString("fa-IR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
+
+
 function numberToPersianWords(num) {
   const ones = [
     "", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه",
@@ -111,7 +123,7 @@ const CartsDarkhastActive = ({ item }) => {
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
             {item.expires_at === null
               ? "فاقد محدودیت زمانی"
-              : `محدود مهلت زمانی انتخاب این درخواست تا تاریخ ${item.expires_at} میباشد.`}
+              : `محدود مهلت زمانی انتخاب این درخواست تا تاریخ ${toPersianDate(item.expires_at)} میباشد.`}
           </li>
           <li className="text-xs text-[#808393] leading-5 flex items-center gap-2 lg:text-sm">
             <div className="w-1 h-1 bg-[#808393] rounded-full p-1"></div>
