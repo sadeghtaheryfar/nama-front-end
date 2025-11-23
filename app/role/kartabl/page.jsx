@@ -23,6 +23,30 @@ import {
 
 import useDebounce from './../../../components/utils/useDebounce';
 
+const ENTITY_CONFIG = {
+  '2': { label: 'مسجد', titleContext: 'مسجد' },
+  '3': { label: 'مدارس', titleContext: 'مدرسه' },
+  '4': { label: 'مراکز تعالی', titleContext: 'مرکز تعالی' },
+};
+
+const UNIVERSITY_TITLES = {
+  'approval_mosque_head_coach': 'در انتظار تایید مسئول تشکل',
+  'approval_mosque_cultural_officer': 'در انتظار تایید رابط دانشگاه',
+  'approval_area_interface': 'در انتظار تایید ناظر',
+  'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت دانشجویی',
+  'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+  'finish': 'به اتمام رسیده',
+};
+
+const generateGeneralTitles = (placeName) => ({
+  'approval_mosque_head_coach': `در انتظار تایید سر مربی ${placeName}`,
+  'approval_mosque_cultural_officer': `در انتظار تایید مسئول فرهنگی ${placeName}`,
+  'approval_area_interface': 'در انتظار تایید رابط منطقه',
+  'approval_executive_vice_president_mosques': `در انتظار تایید معاونت اجرایی ${placeName}`,
+  'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
+  'finish': 'به اتمام رسیده',
+});
+
 export default function Kartabl() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -475,23 +499,30 @@ export default function Kartabl() {
     return buttons;
   };
 
-  const stepTitles = item_id == 8
-  ? {
-    'approval_mosque_head_coach': 'در انتظار تایید مسئول تشکل',
-    'approval_mosque_cultural_officer': 'در انتظار تایید رابط دانشگاه',
-    'approval_area_interface': 'در انتظار تایید ناظر',
-    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت دانشجویی',
-    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
-    'finish': 'به اتمام رسیده',
-  }
-  : {
-    'approval_mosque_head_coach': 'در انتظار تایید سر مربی مسجد',
-    'approval_mosque_cultural_officer': 'در انتظار تایید مسئول فرهنگی مسجد',
-    'approval_area_interface': 'در انتظار تایید رابط منطقه',
-    'approval_executive_vice_president_mosques': 'در انتظار تایید معاونت اجرایی مسجد',
-    'approval_deputy_for_planning_and_programming': 'در انتظار تایید معاونت طرح و برنامه',
-    'finish': 'به اتمام رسیده',
-  };
+  const [placeText, setPlaceText] = useState('');
+  const [stepTitles, setStepTitles] = useState({});
+
+  useEffect(() => {
+    if(!item_id) return;
+    const id = String(item_id);
+    
+    if (id === '8') {
+      setPlaceText('');
+      setStepTitles(UNIVERSITY_TITLES);
+      return;
+    }
+
+    const config = ENTITY_CONFIG[id];
+    
+    if (config) {
+      setPlaceText(config.label);
+      setStepTitles(generateGeneralTitles(config.titleContext));
+    } else {
+      setPlaceText('');
+      setStepTitles(generateGeneralTitles('مسجد')); 
+    }
+
+  }, [item_id]);
 
   return (
     <>
