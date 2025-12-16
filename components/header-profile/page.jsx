@@ -26,6 +26,20 @@ const  Header = ({bgBox,bgRole}) => {
             setPlaceText("مدارس");
         } else if (itemId === "4") {
             setPlaceText("مراکز تعالی");
+        } else if (itemId === "9") {
+            setPlaceText("بوستان");
+        } else if (itemId === "10") {
+            setPlaceText("سرا");
+        } else if (itemId === "11") {
+            setPlaceText("ورزشگاه");
+        } else if (itemId === "12") {
+            setPlaceText("دارالقرآن");
+        } else if (itemId === "13") {
+            setPlaceText("موسسه فرهنگی");
+        } else if (itemId === "14") {
+            setPlaceText("حوزه علمیه");
+        } else if (itemId === "15") {
+            setPlaceText("مرکز قرآنی");
         } else {
             setPlaceText("");
         }
@@ -42,7 +56,7 @@ const  Header = ({bgBox,bgRole}) => {
                 );
 
                 if (!hasHeadCoachRole) {
-                    if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4") {
+                    if (pathname !== "/2" || pathname !== "/3" || pathname !== "/4" || pathname !== "/9" || pathname !== "/10" || pathname !== "/11" || pathname !== "/12" || pathname !== "/13" || pathname !== "/14" || pathname !== "/15") {
                         router.push("/" + itemId);
                     }
                 }
@@ -156,7 +170,7 @@ const  Header = ({bgBox,bgRole}) => {
                                         key={role.role_en}
                                         className='!px-4 !py-2 hover:bg-gray-200 cursor-pointer !w-full flex text-[14px]'
                                     >
-                                        {translateNama(role.role_en)} {placeText}
+                                        {translateNama(role.role_en)}
                                     </Link>
                                 ))}
                             </div>

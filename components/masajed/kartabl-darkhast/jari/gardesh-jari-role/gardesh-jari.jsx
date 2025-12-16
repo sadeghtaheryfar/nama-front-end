@@ -350,6 +350,69 @@ const GardeshJariRole = ({ data }) => {
 			for (const key in defaultRoleDisplayNames) {
 				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "مرکز تعالی بانوان");
 			}
+		} else if (item_id === "9") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "بوستان");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "بوستان");
+			}
+		} else if (item_id === "10") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "سرا");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "سرا");
+			}
+		} else if (item_id === "11") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "ورزشگاه");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "ورزشگاه");
+			}
+		} else if (item_id === "12") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "دارالقرآن");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "دارالقرآن");
+			}
+		} else if (item_id === "13") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "موسسه فرهنگی");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "موسسه فرهنگی");
+			}
+		} else if (item_id === "14") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "حوزه علمیه");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "حوزه علمیه");
+			}
+		} else if (item_id === "15") {
+			stepTitles = {};
+			roleDisplayNames = {};
+			for (const key in defaultStepTitles) {
+				stepTitles[key] = defaultStepTitles[key].replace("مسجد", "مرکز قرآنی");
+			}
+			for (const key in defaultRoleDisplayNames) {
+				roleDisplayNames[key] = defaultRoleDisplayNames[key].replace("مسجد", "مرکز قرآنی");
+			}
 		} else {
 			stepTitles = defaultStepTitles;
 			roleDisplayNames = defaultRoleDisplayNames;

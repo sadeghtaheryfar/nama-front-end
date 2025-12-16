@@ -12,3 +12,4 @@ const Masajed = () => {
 };
 
 export default Masajed;
+ 

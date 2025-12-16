@@ -27,6 +27,13 @@ const ENTITY_CONFIG = {
   '2': { label: 'مسجد', titleContext: 'مسجد' },
   '3': { label: 'مدارس', titleContext: 'مدرسه' },
   '4': { label: 'مراکز تعالی', titleContext: 'مرکز تعالی' },
+  '9': { label: 'بوستان', titleContext: 'بوستان' },
+  '10': { label: 'سرا', titleContext: 'سرا' },
+  '11': { label: 'ورزشگاه', titleContext: 'ورزشگاه' },
+  '12': { label: 'دارالقرآن', titleContext: 'دارالقرآن' },
+  '13': { label: 'موسسه فرهنگی', titleContext: 'موسسه فرهنگی' },
+  '14': { label: 'حوزه علمیه', titleContext: 'حوزه علمیه' },
+  '15': { label: 'مرکز قرآنی', titleContext: 'مرکز قرآنی' },
 };
 
 const UNIVERSITY_TITLES = {
@@ -131,7 +138,7 @@ export default function KartablGozaresh() {
       "deputy_for_planning_and_programming"
     ];
 
-    const validItemIds = ["1", "2", "3", "4","8"];
+    const validItemIds = ["1", "2", "3", "4","8","9","10","11","12","13","14","15"];
 
     if (!validRoles.includes(roleParam) || !validItemIds.includes(itemIdParam)) {
       router.push("/");

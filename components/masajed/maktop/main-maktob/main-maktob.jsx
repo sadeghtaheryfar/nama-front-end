@@ -2,9 +2,23 @@
 import Image from "next/image";
 import HeaderMaktob from "../header-maktob/header-maktob";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePathname } from "next/navigation";
+
+const ENTITY_CONFIG = {
+  '2': { label: 'مسجد', titleContext: 'مسجد' },
+  '3': { label: 'مدارس', titleContext: 'مدرسه' },
+  '4': { label: 'مراکز تعالی', titleContext: 'مرکز تعالی' },
+  '8': { label: 'دانشگاه', titleContext: 'دانشگاه' },
+  '9': { label: 'بوستان', titleContext: 'بوستان' },
+  '10': { label: 'سرا', titleContext: 'سرا' },
+  '11': { label: 'ورزشگاه', titleContext: 'ورزشگاه' },
+  '12': { label: 'دارالقرآن', titleContext: 'دارالقرآن' },
+  '13': { label: 'موسسه فرهنگی', titleContext: 'موسسه فرهنگی' },
+  '14': { label: 'حوزه علمیه', titleContext: 'حوزه علمیه' },
+  '15': { label: 'مرکز قرآنی', titleContext: 'مرکز قرآنی' },
+};
 
 const MainMaktob = ({ token }) => {
   const pathname = usePathname();
@@ -24,6 +38,21 @@ const MainMaktob = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [touched, setTouched] = useState({});
+  const [placeText, setPlaceText] = useState('');
+
+
+  useEffect(() => {
+    const id = String(itemId);
+
+    const config = ENTITY_CONFIG[id];
+    
+    if (config) {
+      setPlaceText(config.label);
+    } else {
+      setPlaceText('مسجد');
+    }
+
+  }, [itemId]);
 
   const [fileNames, setFileNames] = useState({
     letter: "برای آپلود فایل کلیک کنید",
@@ -135,7 +164,7 @@ const MainMaktob = ({ token }) => {
 
   const translateRole = (role) => {
     if (role === "executive_vice_president_mosques") {
-        return "معاونت اجرایی مسجد";
+        return `معاونت اجرایی ${placeText}`;
     } else if (role === "deputy_for_planning_and_programming") {
         return "معاونت طرح و برنامه";
     } else if (role === "arman_bus") {
@@ -200,7 +229,7 @@ const MainMaktob = ({ token }) => {
                         className="block w-full p-4 border border-[#DFDFDF] rounded-lg"
                       >
                         <option value="executive_vice_president_mosques">
-                          معاونت اجرایی مسجد
+                          معاونت اجرایی {placeText}
                         </option>
                         <option value="deputy_for_planning_and_programming">
                           معاونت طرح و برنامه

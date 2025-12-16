@@ -45,7 +45,7 @@ const Header = ({ bgBox, bgRole }) => {
 
     useEffect(() => {
         if (loadingProfile) return;
-        const validItemIds = ["1", "2", "3", "4","8"];
+        const validItemIds = ["1", "2", "3", "4","8","9","10","11","12","13","14","15"];
         const validRoles = roleOptions.map(role => role.key);
 
         if (!itemIdFromUrl || !validItemIds.includes(itemIdFromUrl) || !roleFromUrl || !validRoles.includes(roleFromUrl)) {

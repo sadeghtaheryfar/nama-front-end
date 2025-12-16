@@ -97,7 +97,7 @@ const HeaderMaktob = () => {
     <header className="container mx-auto">
     <div className="grid grid-cols-3 items-center md:grid-cols-8 pt-10">
       <div className="flex items-end gap-3 leading-5 col-span-2 md:col-span-3 md:items-start md:translate-y-5 xl:col-span-4 lg:translate-y-9 xl:translate-y-5 lg:gap-6 xl:gap-10 2xl:gap-12">
-        <Image
+        <img
           className="w-10 md:w-16 lg:w-24 xl:w-32"
           alt="#"
           width={0}
