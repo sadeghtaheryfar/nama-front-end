@@ -4,13 +4,21 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export const GET = async (req) => {
-  const token = (await cookies()).get("token")?.value;
+  const token = cookies().get("token")?.value;
   const { searchParams } = new URL(req.url);
   const itemId = searchParams.get("item_id");
   const role = searchParams.get("role");
+  const page = searchParams.get("page") || 1;
+  const perPage = searchParams.get("per_page") || 10;
+  const q = searchParams.get("q") || "";
 
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/info?item_id=${itemId}${role ? `&role=${role}` : ''}`, {
+    let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request-plans/list?item_id=${itemId}&role=${role}&per_page=${perPage}&page=${page}&q=${q}&ignore_requirements=1`;
+    if (itemId) {
+      apiUrl += `?item_id=${itemId}`;
+    }
+
+    const response = await axios.get(apiUrl, {
       headers: {
         Accept: "application/json",
         Authorization: `bearer ${token}`,
@@ -20,6 +28,6 @@ export const GET = async (req) => {
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     console.error("Error fetching banners:", error);
-    throw error;
+    return NextResponse.json({ error: "Failed to fetch banners" }, { status: 500 });
   }
 };

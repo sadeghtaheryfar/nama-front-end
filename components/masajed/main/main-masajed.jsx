@@ -181,23 +181,23 @@ const MainMasajed = () => {
                   <div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                      <span className="text-base">{info?.requests?.done}</span>
+                      <span className="text-base">{info?.requests?.done ?? "0"}</span>
                       <span className="text-xs text-[#808393]">تایید شده</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                      <span className="text-base">{info?.requests?.rejected}</span>
+                      <span className="text-base">{info?.requests?.rejected ?? "0"}</span>
                       <span className="text-xs text-[#808393]"> رد شده</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                      <span className="text-base">{info?.requests?.in_progress}</span>
+                      <span className="text-base">{info?.requests?.in_progress ?? "0"}</span>
                       <span className="text-xs text-[#808393]"> جاری</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                      <span className="text-base">{info?.requests?.action_needed}</span>
+                      <span className="text-base">{info?.requests?.action_needed ?? "0"}</span>
                       <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
                     </div>
                   </div>
@@ -225,30 +225,30 @@ const MainMasajed = () => {
                   <div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#25C7AA] rounded-sm"></div>
-                      <span className="text-base">{info?.reports?.done}</span>
+                      <span className="text-base">{info?.reports?.done ?? "0"}</span>
                       <span className="text-xs text-[#808393]">تایید شده</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#D32F2F] rounded-sm"></div>
-                      <span className="text-base">{info?.reports?.rejected}</span>
+                      <span className="text-base">{info?.reports?.rejected ?? "0"}</span>
                       <span className="text-xs text-[#808393]"> رد شده</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#e22afc] rounded-sm"></div>
-                      <span className="text-base">{info?.reports?.pending}</span>
+                      <span className="text-base">{info?.reports?.pending ?? "0"}</span>
                       <span className="text-xs text-[#808393]">باز</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#258CC7] rounded-sm"></div>
-                      <span className="text-base">{info?.reports?.in_progress}</span>
+                      <span className="text-base">{info?.reports?.in_progress ?? "0"}</span>
                       <span className="text-xs text-[#808393]">جاری</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-[10px] h-[10px] bg-[#FFD140] rounded-sm"></div>
-                      <span className="text-base">{info?.reports?.action_needed}</span>
+                      <span className="text-base">{info?.reports?.action_needed ?? "0"}</span>
                       <span className="text-xs text-[#808393]">نیازمند اصلاح</span>
                     </div>
                   </div>

@@ -3,9 +3,13 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../redux/userSlice";
 
 export default function AuthGuard({ children }) {
     const params = useSearchParams();
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const [isChecking, setIsChecking] = useState(true);
     const [axiosActiveRequests, setAxiosActiveRequests] = useState(0);
 
@@ -60,26 +64,33 @@ export default function AuthGuard({ children }) {
                 } catch (error) {
                     setIsChecking(false);
                 }
-            } else {
+                return;
+            }
+
+            if (user && Object.keys(user).length > 0) {
+                setIsChecking(false);
+                return;
+            }
+
+            try {
+                const { data } = await axios.get(`/api/profile`);
+                dispatch(setUser(data));
+                setIsChecking(false);
+            } catch (error) {
+                Cookies.remove("token");
                 try {
-                    await axios.get(`/api/profile`);
-                    setIsChecking(false);
-                } catch (error) {
-                    Cookies.remove("token");
-                    try {
-                        const { data } = await axios.get("/api/url");
-                        if (data?.verify_url) {
-                            window.location.href = data.verify_url;
-                        }
-                    } catch (urlError) {
-                        setIsChecking(false);
+                    const { data } = await axios.get("/api/url");
+                    if (data?.verify_url) {
+                        window.location.href = data.verify_url;
                     }
+                } catch (urlError) {
+                    setIsChecking(false);
                 }
             }
         };
 
         validateAuth();
-    }, []);
+    }, [user, dispatch, params]);
 
     const showLoading = isChecking || axiosActiveRequests > 0;
 

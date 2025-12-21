@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import { Toaster } from "react-hot-toast";
 import AuthGuard from "../components/AuthGuard";
+import { Suspense } from "react";
 
 export default function RootLayout({ children }) {
     return (
@@ -18,10 +19,12 @@ export default function RootLayout({ children }) {
             </head>
             <body style={{ position: "relative" }}>
                 <Provider store={store}>
-                    <AuthGuard>
-                        <Toaster />
-                        {children}
-                    </AuthGuard>
+                    <Suspense fallback={null}>
+                        <AuthGuard>
+                            <Toaster />
+                            {children}
+                        </AuthGuard>
+                    </Suspense>
                 </Provider>
             </body>
         </html>
