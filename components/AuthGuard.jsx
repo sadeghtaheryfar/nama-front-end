@@ -1,107 +1,77 @@
 "use client";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/userSlice";
 
 export default function AuthGuard({ children }) {
-    const params = useSearchParams();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
-    const [isChecking, setIsChecking] = useState(true);
-    const [axiosActiveRequests, setAxiosActiveRequests] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const requestInterceptor = axios.interceptors.request.use((config) => {
-            setAxiosActiveRequests((prev) => prev + 1);
-            const token = Cookies.get("token");
+        const token = Cookies.get("token");
+
+        const reqInterceptor = axios.interceptors.request.use((config) => {
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
             return config;
         });
 
-        const responseInterceptor = axios.interceptors.response.use(
-            (response) => {
-                setAxiosActiveRequests((prev) => prev - 1);
-                return response;
-            },
+        const resInterceptor = axios.interceptors.response.use(
+            (response) => response,
             (error) => {
-                setAxiosActiveRequests((prev) => prev - 1);
+                if (error?.response?.status === 401) {
+                    Cookies.remove("token");
+                    window.location.reload();
+                }
                 return Promise.reject(error);
             }
         );
 
         return () => {
-            axios.interceptors.request.eject(requestInterceptor);
-            axios.interceptors.response.eject(responseInterceptor);
+            axios.interceptors.request.eject(reqInterceptor);
+            axios.interceptors.response.eject(resInterceptor);
         };
     }, []);
 
     useEffect(() => {
         const validateAuth = async () => {
-            const tokenFromParams = params.get("jwt");
-
-            if (tokenFromParams) {
-                Cookies.set("token", tokenFromParams);
-                const newUrl = new URL(window.location.href);
-                newUrl.searchParams.delete("jwt");
-                window.history.replaceState(null, "", newUrl.toString());
-                setIsChecking(false);
-                return;
-            }
-
-            const accessToken = Cookies.get("token");
-
-            if (!accessToken) {
-                try {
-                    const { data } = await axios.get("/api/url");
-                    if (data?.verify_url) {
-                        window.location.href = data.verify_url;
-                    }
-                } catch (error) {
-                    setIsChecking(false);
-                }
-                return;
-            }
-
             if (user && Object.keys(user).length > 0) {
-                setIsChecking(false);
+                setIsLoading(false);
                 return;
             }
 
             try {
                 const { data } = await axios.get(`/api/profile`);
                 dispatch(setUser(data));
-                setIsChecking(false);
+                setIsLoading(false);
             } catch (error) {
-                Cookies.remove("token");
-                try {
-                    const { data } = await axios.get("/api/url");
-                    if (data?.verify_url) {
-                        window.location.href = data.verify_url;
-                    }
-                } catch (urlError) {
-                    setIsChecking(false);
+                if (
+                    error?.response?.status === 401 ||
+                    error?.response?.status === 403 || 
+                    error?.response?.status === 500
+                ) {
+                    Cookies.remove("token");
+                    window.location.reload();
+                } else {
+                    setIsLoading(false);
                 }
             }
         };
 
         validateAuth();
-    }, [user, dispatch, params]);
+    }, [user, dispatch]);
 
-    const showLoading = isChecking || axiosActiveRequests > 0;
+    if (isLoading) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-[9999] text-white">
+                <p className="text-lg">در حال اعتبارسنجی...</p>
+            </div>
+        );
+    }
 
-    return (
-        <>
-            {showLoading && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-[9999] text-white loading-container-main">
-                    <p className="text-lg">لطفاً صبر کنید ...</p>
-                </div>
-            )}
-            {children}
-        </>
-    );
+    return <>{children}</>;
 }
