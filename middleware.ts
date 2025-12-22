@@ -8,10 +8,12 @@ export async function middleware(request) {
         const url = new URL(nextUrl.pathname, request.url);
         const response = NextResponse.redirect(url);
 
-        response.cookies.set("token", jwtParam, {
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
-        });
+        response.headers.append(
+            "Set-Cookie",
+            `token=${jwtParam}; Path=/; Max-Age=${
+                60 * 60 * 24 * 7
+            }; SameSite=Lax`
+        );
 
         return response;
     }

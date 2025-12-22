@@ -12,7 +12,7 @@ export const POST = async (req, res) => {
 
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}/confirm${role ? `?role=${role}` : ''}${itemId ? `?item_id=${itemId}` : ''}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests/${id}/confirm${role ? `?role=${role}` : ''}${itemId ? `&item_id=${itemId}` : ''}`,
       {},
       {
         headers: {
