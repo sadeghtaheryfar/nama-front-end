@@ -11,7 +11,10 @@ const DataLoop = () => {
     const user = useSelector((state) => state.user);
     const [type, setType] = useState("all");
 
-    const roleIds = user?.data?.roles?.map((role) => role.item_id?.id) || [];
+    const roleIds =
+        user?.data?.roles
+            ?.filter((role) => role.ring == true)
+            ?.map((role) => role.item_id?.id) || [];
 
     const hasMosque = roleIds.includes(2);
     const hasSchool = roleIds.includes(3);

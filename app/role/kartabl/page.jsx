@@ -518,13 +518,13 @@ export default function Kartabl() {
                         {[
                             {
                                 key: "in_progress",
-                                color: "#25C7AA",
+                                color: "#77B7DC",
                                 label: "جاری",
                                 action: "برای مشاهده جاری کلیک کنید",
                             },
                             {
                                 key: "done_temp",
-                                color: "#77B7DC",
+                                color: "#25C7AA",
                                 label: "تایید و ارسال",
                                 action: "برای مشاهده تایید و ارسال کلیک کنید",
                             },

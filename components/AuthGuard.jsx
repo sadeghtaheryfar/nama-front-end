@@ -4,11 +4,27 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/userSlice";
+import SystemError from "./SystemError";
 
 export default function AuthGuard({ children }) {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     const [isLoading, setIsLoading] = useState(true);
+    const [hasCriticalError, setHasCriticalError] = useState(false);
+
+    const handleAuthFailure = async () => {
+        Cookies.remove("token");
+        try {
+            const { data } = await axios.get("/api/url");
+            if (data?.verify_url) {
+                window.location.href = data.verify_url;
+            } else {
+                setHasCriticalError(true);
+            }
+        } catch (error) {
+            setHasCriticalError(true);
+        }
+    };
 
     useEffect(() => {
         const token = Cookies.get("token");
@@ -22,10 +38,9 @@ export default function AuthGuard({ children }) {
 
         const resInterceptor = axios.interceptors.response.use(
             (response) => response,
-            (error) => {
+            async (error) => {
                 if (error?.response?.status === 401) {
-                    Cookies.remove("token");
-                    window.location.reload();
+                    await handleAuthFailure();
                 }
                 return Promise.reject(error);
             }
@@ -54,8 +69,7 @@ export default function AuthGuard({ children }) {
                     error?.response?.status === 403 ||
                     error?.response?.status === 500
                 ) {
-                    Cookies.remove("token");
-                    window.location.reload();
+                    await handleAuthFailure();
                 } else {
                     setIsLoading(false);
                 }
@@ -64,6 +78,10 @@ export default function AuthGuard({ children }) {
 
         validateAuth();
     }, [user, dispatch]);
+
+    if (hasCriticalError) {
+        return <SystemError />;
+    }
 
     if (isLoading) {
         return (

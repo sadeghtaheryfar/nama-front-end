@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 
 const schools = () => {
+    const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState();
     const [data, setData] = useState();
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,11 +18,13 @@ const schools = () => {
     const itemId = 2;
     const searchParams = useSearchParams();
 
+    const roleEn = user?.data?.roles?.find((r) => (r.item_id?.id == itemId && r.ring == true))?.role_en;
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const data = await axios.get(`/api/loop/index?item_id=${itemId}&role=mosque_head_coach&page=${currentPage}&per_page=${itemsPerPage}`);
+                const data = await axios.get(`/api/loop/index?item_id=${itemId}&role=${roleEn}&page=${currentPage}&per_page=${itemsPerPage}`);
                 if (data.data) {
                     setData(data.data);
                     

@@ -381,6 +381,103 @@ export default function KartablGozaresh() {
         </div>
     );
 
+    const renderPaginationButtons = () => {
+        const buttons = [];
+        buttons.push(
+            <button
+                key="prev"
+                onClick={() =>
+                    currentPage > 1 && handlePageChange(currentPage - 1)
+                }
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-md ${
+                    currentPage === 1
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-[#39A894] hover:bg-gray-100"
+                }`}
+            >
+                قبلی
+            </button>
+        );
+
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+            buttons.push(
+                <button
+                    key={1}
+                    onClick={() => handlePageChange(1)}
+                    className="px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                    1
+                </button>
+            );
+            if (startPage > 2) {
+                buttons.push(
+                    <span key="ellipsis1" className="px-2">
+                        ...
+                    </span>
+                );
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`px-3 py-1 rounded-md ${
+                        currentPage === i
+                            ? "bg-[#39A894] text-white"
+                            : "hover:bg-gray-100"
+                    }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                buttons.push(
+                    <span key="ellipsis2" className="px-2">
+                        ...
+                    </span>
+                );
+            }
+            buttons.push(
+                <button
+                    key={totalPages}
+                    onClick={() => handlePageChange(totalPages)}
+                    className="px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
+        buttons.push(
+            <button
+                key="next"
+                onClick={() =>
+                    currentPage < totalPages &&
+                    handlePageChange(currentPage + 1)
+                }
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md ${
+                    currentPage === totalPages
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-[#39A894] hover:bg-gray-100"
+                }`}
+            >
+                بعدی
+            </button>
+        );
+
+        return buttons;
+    };
+
     return (
         <div className="h-screen relative bg-gray-50/50">
             <div className="bg-[#002a4fd5] vector-nama2 h-[15rem] lg:h-[20rem] bg-linear-to-r md:pt-7 from-[#002A4F] to-[#003854]  relative overflow-hidden">
@@ -435,13 +532,13 @@ export default function KartablGozaresh() {
                         {[
                             {
                                 key: "in_progress",
-                                color: "#25C7AA",
+                                color: "#77B7DC",
                                 label: "جاری",
                                 action: "برای مشاهده جاری کلیک کنید",
                             },
                             {
                                 key: "done_temp",
-                                color: "#77B7DC",
+                                color: "#25C7AA",
                                 label: "تایید و ارسال",
                                 action: "برای مشاهده تایید و ارسال کلیک کنید",
                             },
@@ -857,36 +954,8 @@ export default function KartablGozaresh() {
                             </div>
 
                             {totalPages > 1 && (
-                                <div className="mt-8 flex justify-center">
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() =>
-                                                handlePageChange(
-                                                    currentPage - 1
-                                                )
-                                            }
-                                            disabled={currentPage === 1}
-                                            className="px-4 py-2 bg-white border rounded hover:bg-gray-50 disabled:opacity-50 text-sm"
-                                        >
-                                            قبلی
-                                        </button>
-                                        <span className="px-4 py-2 bg-[#39A894] text-white rounded text-sm">
-                                            {currentPage}
-                                        </span>
-                                        <button
-                                            onClick={() =>
-                                                handlePageChange(
-                                                    currentPage + 1
-                                                )
-                                            }
-                                            disabled={
-                                                currentPage === totalPages
-                                            }
-                                            className="px-4 py-2 bg-white border rounded hover:bg-gray-50 disabled:opacity-50 text-sm"
-                                        >
-                                            بعدی
-                                        </button>
-                                    </div>
+                                <div className="flex justify-center items-center my-4 gap-2 text-sm">
+                                    {renderPaginationButtons()}
                                 </div>
                             )}
                         </>
