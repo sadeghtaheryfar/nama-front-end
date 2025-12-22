@@ -8,7 +8,7 @@ export const POST = async (req, res) => {
   const token = (await cookies()).get("token")?.value;
   const { searchParams } = new URL(req.url);
   const role = searchParams.get("role");
-  const itemId = searchParams.get("itemId");
+  const itemId = searchParams.get("item_id");
 
   try {
     const response = await axios.post(
