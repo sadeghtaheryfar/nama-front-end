@@ -484,7 +484,7 @@ export default function Kartabl() {
                             className="w-[36px] h-[36px] md:w-[130px] md:h-[130px]"
                         />
                         <div className="text-[#D5B260] text-[12px] md:text-[18px] font-bold md:text-3xl md:my-6 my-3 mx-4">
-                            {header?.data?.title} / کارتابل گزارش ها
+                            {header?.data?.title} / کارتابل درخواست ها
                         </div>
                     </div>
                     <div className="flex">
