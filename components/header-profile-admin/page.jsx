@@ -145,15 +145,17 @@ const Header = ({ bgBox, bgRole }) => {
                           width: menuPosition?.width,
                       }}
                   >
-                      {user?.data?.roles?.map((role) => (
-                          <div
-                              key={role.role_en}
-                              className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-[10px] lg:text-[14px]"
-                              onClick={() => handleRoleChange(role.role_en)}
-                          >
-                              {translateNama(role.role_en)} {placeText}
-                          </div>
-                      ))}
+                      {user?.data?.roles
+                          ?.filter((role) => role?.item_id?.id == itemId)
+                          .map((role) => (
+                              <div
+                                  key={role.role_en}
+                                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-[10px] lg:text-[14px]"
+                                  onClick={() => handleRoleChange(role.role_en)}
+                              >
+                                  {translateNama(role.role_en)} {placeText}
+                              </div>
+                          ))}
                   </div>,
                   document.body
               )
@@ -209,7 +211,7 @@ const Header = ({ bgBox, bgRole }) => {
                     ) || "نامشخص"}
                 </span>
             </div>
-            <div className="flex flex-col leading-7 whitespace-nowrap">
+            <div className="flex flex-col leading-7 whitespace-nowrap max-lg:hidden">
                 <span className="text-xs lg:text-base font-medium">
                     سطح دسترسی
                 </span>

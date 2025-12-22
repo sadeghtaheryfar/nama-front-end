@@ -13,7 +13,7 @@ const GozareshKartablGozaresh = () => {
   const [loadingInfo, setLoadingInfo] = useState(true);
 
   useEffect(() => {
-    if (!pathname) return;
+    if (!pathname || !itemId) return;
 
     const fetching = async () => {
       try {

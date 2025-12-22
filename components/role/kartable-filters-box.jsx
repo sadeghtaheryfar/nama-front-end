@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import useDebounce from "./../../components/utils/useDebounce";
@@ -22,6 +22,9 @@ export default function FilterBox({
     setIsFilterOpen,
 }) {
     const dispatch = useDispatch();
+    const boxRef = useRef(null);
+    const [positionClass, setPositionClass] = useState("");
+
     const { status, plan_id, unit_id, school_coach_type, sub_type } =
         useSelector((state) => state.dashboards.requestDashboard);
 
@@ -46,6 +49,15 @@ export default function FilterBox({
     const [planCurrentPage, setPlanCurrentPage] = useState(1);
     const [planTotalPages, setPlanTotalPages] = useState(1);
     const plansPerPage = 10;
+
+    useLayoutEffect(() => {
+        if (boxRef.current) {
+            const rect = boxRef.current.getBoundingClientRect();
+            if (rect.left < 10) {
+                setPositionClass("left-0");
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (debouncedUnitSearchTerm !== unitFilterSearch) {
@@ -142,8 +154,13 @@ export default function FilterBox({
 
     const handleResetFilters = () => {
         dispatch(resetRequestDashboardFilters());
+        dispatch(setRequestDashboardFilters({ search: "" }));
         dispatch(setRequestDashboardCurrentPage(1));
-        setLocalSearchInput("");
+
+        if (setLocalSearchInput) {
+            setLocalSearchInput("");
+        }
+
         setPlanSearch("");
         dispatch(setUnitFilterSearch(""));
         dispatch(setUnitFilterCurrentPage(1));
@@ -283,7 +300,10 @@ export default function FilterBox({
     };
 
     return (
-        <div className="absolute z-10 mt-2 w-72 bg-white border rounded-[8px] shadow">
+        <div
+            ref={boxRef}
+            className={`absolute z-10 mt-2 w-72 bg-white border rounded-[8px] shadow ${positionClass}`}
+        >
             <div className="p-2 border-b">
                 <div className="font-bold mb-2">وضعیت</div>
                 <div className="px-2">

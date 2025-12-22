@@ -11,7 +11,7 @@ const GozareshKartabl = () => {
   const itemId = pathSegments[1];
 
   useEffect(() => {
-    if (!pathname) return;
+    if (!pathname || !itemId) return;
 
     const fetching = async () => {
       try {
