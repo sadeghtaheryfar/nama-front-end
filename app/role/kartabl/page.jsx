@@ -726,9 +726,10 @@ export default function Kartabl() {
                                             className="flex flex-col border rounded-lg p-4 gap-3 bg-white shadow-sm hover:shadow-md transition"
                                         >
                                             <div className="flex justify-between items-start">
-                                                <h2 className="text-sm font-bold text-black line-clamp-2">
-                                                    {request?.request_plan
-                                                        ?.title || "بدون عنوان"}
+                                                <h2 className="text-sm font-bold text-gray-800 line-clamp-2">
+                                                    {request
+                                                        ?.request_plan?.title ||
+                                                        "بدون عنوان"}
                                                 </h2>
                                                 {request?.request_plan
                                                     ?.single_step && (
@@ -739,13 +740,13 @@ export default function Kartabl() {
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-2 text-xs">
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
                                                         شماره:
                                                     </span>
                                                     <span>{request.id}</span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
                                                         وضعیت:
                                                     </span>
@@ -757,9 +758,31 @@ export default function Kartabl() {
                                                 </div>
                                                 <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
+                                                        سر مربی:
+                                                    </span>
+                                                    <span>
+                                                        {
+                                                            request
+                                                                ?.user?.name
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between flex-col gap-2 col-span-2">
+                                                    <span className="text-black">
+                                                        واحد حقوقی :
+                                                    </span>
+                                                    <span>
+                                                        {
+                                                            request
+                                                                ?.unit?.title
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between flex-col col-span-2">
+                                                    <span className="text-black">
                                                         مرحله:
                                                     </span>
-                                                    <span className="truncate max-w-[150px]">
+                                                    <span>
                                                         {
                                                             stepTitles[
                                                                 request?.step
@@ -767,13 +790,25 @@ export default function Kartabl() {
                                                         }
                                                     </span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
-                                                        تاریخ:
+                                                        تاریخ ایجاد :
                                                     </span>
                                                     <span>
                                                         {new Date(
                                                             request.created_at
+                                                        ).toLocaleDateString(
+                                                            "fa-IR"
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
+                                                    <span className="text-black">
+                                                        تاریخ بروزرسانی :
+                                                    </span>
+                                                    <span>
+                                                        {new Date(
+                                                            request.updated_at
                                                         ).toLocaleDateString(
                                                             "fa-IR"
                                                         )}
@@ -786,7 +821,7 @@ export default function Kartabl() {
                                                 className="mt-2"
                                             >
                                                 <button className="text-sm text-[#39A894] font-medium border border-[#39A894] rounded-lg w-full h-10 hover:bg-[#39A894] hover:text-white transition">
-                                                    مشاهده درخواست
+                                                    مشاهده گزارش
                                                 </button>
                                             </Link>
                                         </div>

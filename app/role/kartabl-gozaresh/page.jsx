@@ -760,13 +760,13 @@ export default function KartablGozaresh() {
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-2 text-xs">
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
                                                         شماره:
                                                     </span>
                                                     <span>{report.id}</span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
                                                         وضعیت:
                                                     </span>
@@ -776,7 +776,7 @@ export default function KartablGozaresh() {
                                                         {badge.text}
                                                     </span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
                                                         سر مربی:
                                                     </span>
@@ -787,11 +787,22 @@ export default function KartablGozaresh() {
                                                         }
                                                     </span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between flex-col gap-2 col-span-2">
+                                                    <span className="text-black">
+                                                        واحد حقوقی :
+                                                    </span>
+                                                    <span>
+                                                        {
+                                                            report?.request
+                                                                ?.unit?.title
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between flex-col col-span-2">
                                                     <span className="text-black">
                                                         مرحله:
                                                     </span>
-                                                    <span className="truncate max-w-[150px]">
+                                                    <span>
                                                         {
                                                             stepTitles[
                                                                 report?.step
@@ -799,13 +810,25 @@ export default function KartablGozaresh() {
                                                         }
                                                     </span>
                                                 </div>
-                                                <div className="bg-gray-50 p-2 rounded flex justify-between">
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
                                                     <span className="text-black">
-                                                        تاریخ:
+                                                        تاریخ ایجاد :
                                                     </span>
                                                     <span>
                                                         {new Date(
                                                             report.created_at
+                                                        ).toLocaleDateString(
+                                                            "fa-IR"
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-50 p-2 rounded flex justify-between col-span-2">
+                                                    <span className="text-black">
+                                                        تاریخ بروزرسانی :
+                                                    </span>
+                                                    <span>
+                                                        {new Date(
+                                                            report.updated_at
                                                         ).toLocaleDateString(
                                                             "fa-IR"
                                                         )}
