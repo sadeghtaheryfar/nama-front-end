@@ -12,6 +12,29 @@ export default function AuthGuard({ children }) {
     const [isLoading, setIsLoading] = useState(true);
     const [hasCriticalError, setHasCriticalError] = useState(false);
 
+    const sendClientLog = async (errorContext) => {
+        try {
+            const token = Cookies.get("token");
+            const formdata = new FormData();
+            formdata.append("context", JSON.stringify(errorContext));
+            formdata.append("client_version", "1.0.0");
+            formdata.append("platform", "web");
+
+            await axios.post(
+                "http://arman.armaniran.org/api/v1/client-log",
+                formdata,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        } catch (err) {
+            console.error("Logging failed:", err);
+        }
+    };
+
     const handleAuthFailure = async () => {
         Cookies.remove("token");
         try {
@@ -29,6 +52,29 @@ export default function AuthGuard({ children }) {
     useEffect(() => {
         const token = Cookies.get("token");
 
+        const handleGlobalError = (event) => {
+            sendClientLog({
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                source: "WindowError",
+            });
+            setHasCriticalError(true);
+        };
+
+        const handlePromiseRejection = (event) => {
+            sendClientLog({
+                message: event.reason?.message || "Unhandled Promise Rejection",
+                stack: event.reason?.stack,
+                source: "UnhandledRejection",
+            });
+            setHasCriticalError(true);
+        };
+
+        window.addEventListener("error", handleGlobalError);
+        window.addEventListener("unhandledrejection", handlePromiseRejection);
+
         const reqInterceptor = axios.interceptors.request.use((config) => {
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
@@ -39,8 +85,21 @@ export default function AuthGuard({ children }) {
         const resInterceptor = axios.interceptors.response.use(
             (response) => response,
             async (error) => {
+                if (error?.config?.url?.includes("client-log")) {
+                    return Promise.reject(error);
+                }
+
                 if (error?.response?.status === 401) {
                     await handleAuthFailure();
+                } else {
+                    await sendClientLog({
+                        message: error.message,
+                        url: error?.config?.url,
+                        status: error?.response?.status,
+                        data: error?.response?.data,
+                        source: "AxiosInterceptor",
+                    });
+                    setHasCriticalError(true);
                 }
                 return Promise.reject(error);
             }
@@ -49,6 +108,11 @@ export default function AuthGuard({ children }) {
         return () => {
             axios.interceptors.request.eject(reqInterceptor);
             axios.interceptors.response.eject(resInterceptor);
+            window.removeEventListener("error", handleGlobalError);
+            window.removeEventListener(
+                "unhandledrejection",
+                handlePromiseRejection
+            );
         };
     }, []);
 
