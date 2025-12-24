@@ -84,7 +84,6 @@ export default function AuthGuard({ children }) {
         const resInterceptor = axios.interceptors.response.use(
             (response) => response,
             async (error) => {
-                // شرط عدم لاگ کردن برای روت پروفایل و خودِ لاگ
                 if (
                     error?.config?.url?.includes("client-log") ||
                     error?.config?.url?.includes("/api/profile")

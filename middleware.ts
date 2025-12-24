@@ -11,7 +11,7 @@ export async function middleware(request) {
         response.headers.append(
             "Set-Cookie",
             `token=${jwtParam}; Path=/; Max-Age=${
-                60 * 60 * 24 * 7
+                60 * 60 * 24 * 365
             }; SameSite=Lax`
         );
 

@@ -50,7 +50,6 @@ export default class GlobalErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError) {
-            // جلوگیری از رندر مجدد کامپوننت خراب برای پیشگیری از حلقه بی‌نهایت
             return null;
         }
 
