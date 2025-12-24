@@ -2,6 +2,7 @@ export const revalidate = 0;
 import axios from "axios";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+export const dynamic = "force-dynamic";
 export const GET = async (req) => {
     const token = (await cookies()).get("token")?.value;
     const { searchParams } = new URL(req.url);

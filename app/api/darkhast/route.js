@@ -2,6 +2,7 @@ export const revalidate = 0;
 import axios from "axios";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+export const dynamic = "force-dynamic";
 
 export const GET = async (req) => {
     const token = cookies().get("token")?.value;
@@ -21,7 +22,7 @@ export const GET = async (req) => {
         const unit_id = parseInt(searchParams.get("unit_id") || undefined);
 
         const params = { item_id, per_page, page, sort, direction, q };
-        
+
         if (role) params.role = role;
         if (status) params.status = status;
         if (plan_id) params.plan_id = plan_id;
@@ -29,13 +30,16 @@ export const GET = async (req) => {
         if (sub_type) params.sub_type = sub_type;
         if (school_coach_type) params.school_coach_type = school_coach_type;
 
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`, {
-            params,
-            headers: {
-                Accept: "application/json",
-                Authorization: `bearer ${token}`,
-            },
-        });
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`,
+            {
+                params,
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `bearer ${token}`,
+                },
+            }
+        );
 
         return NextResponse.json(response.data, { status: response.status });
     } catch (error) {

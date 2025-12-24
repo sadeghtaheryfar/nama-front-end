@@ -3,6 +3,7 @@ export const revalidate = 0;
 import axios from "axios";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+export const dynamic = "force-dynamic";
 
 export const GET = async (req) => {
     const token = cookies().get("token")?.value;
@@ -45,13 +46,16 @@ export const GET = async (req) => {
         if (from_date) params.from_date = from_date;
         if (to_date) params.to_date = to_date;
 
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`, {
-            params,
-            headers: {
-                Accept: "application/json",
-                Authorization: `bearer ${token}`,
-            },
-        });
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/requests`,
+            {
+                params,
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `bearer ${token}`,
+                },
+            }
+        );
 
         return NextResponse.json(response.data, { status: response.status });
     } catch (error) {

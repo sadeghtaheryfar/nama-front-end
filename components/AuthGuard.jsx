@@ -4,24 +4,53 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/userSlice";
+import { useSearchParams } from "next/navigation";
 
 export default function AuthGuard({ children }) {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
-    const [hasCriticalError, setHasCriticalError] = useState(false);
 
-    const sendClientLog = async (errorContext) => {
+    useEffect(() => {
+        checkAuthentication();
+    }, []);
+
+    const checkAuthentication = async () => {
         try {
-            const token = Cookies.get("token");
-            const formdata = new FormData();
-            formdata.append("context", JSON.stringify(errorContext));
-            formdata.append("client_version", "1.0.0");
-            formdata.append("platform", "web");
+            const urlToken =
+                searchParams.get("jwt") || searchParams.get("token");
+            let token = Cookies.get("token");
 
-            await axios.post(
-                "http://arman.armaniran.org/api/v1/client-log",
-                formdata,
+            if (urlToken) {
+                token = urlToken;
+                Cookies.set("token", token, { expires: 365, path: "/" });
+                window.history.replaceState(
+                    {},
+                    document.title,
+                    window.location.pathname
+                );
+            }
+
+            if (!token) {
+                return redirectToLogin();
+            }
+
+            if (!user || Object.keys(user).length === 0) {
+                await fetchUserProfile(token);
+            } else {
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.error("Auth Check Failed:", error);
+            redirectToLogin();
+        }
+    };
+
+    const fetchUserProfile = async (token) => {
+        try {
+            const { data } = await axios.get(
+                `/api/profile`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -29,126 +58,32 @@ export default function AuthGuard({ children }) {
                     },
                 }
             );
-        } catch (err) {
-            console.error("Logging failed:", err);
+            dispatch(setUser(data));
+            setIsLoading(false);
+        } catch (error) {
+            Cookies.remove("token");
+            redirectToLogin();
         }
     };
 
-    const handleAuthFailure = async () => {
-        Cookies.remove("token");
+    const redirectToLogin = async () => {
         try {
-            const { data } = await axios.get("/api/url");
+            const { data } = await axios.get(
+                `/api/url`,
+            );
             if (data?.verify_url) {
                 window.location.href = data.verify_url;
-            } else {
-                setHasCriticalError(true);
             }
         } catch (error) {
-            setHasCriticalError(true);
+            console.error("Redirect Error:", error);
         }
     };
-
-    useEffect(() => {
-        const token = Cookies.get("token");
-
-        const handleGlobalError = (event) => {
-            sendClientLog({
-                message: event.message,
-                filename: event.filename,
-                lineno: event.lineno,
-                colno: event.colno,
-                source: "WindowError",
-            });
-            setHasCriticalError(true);
-        };
-
-        const handlePromiseRejection = (event) => {
-            sendClientLog({
-                message: event.reason?.message || "Unhandled Promise Rejection",
-                stack: event.reason?.stack,
-                source: "UnhandledRejection",
-            });
-            setHasCriticalError(true);
-        };
-
-        window.addEventListener("error", handleGlobalError);
-        window.addEventListener("unhandledrejection", handlePromiseRejection);
-
-        const reqInterceptor = axios.interceptors.request.use((config) => {
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        });
-
-        const resInterceptor = axios.interceptors.response.use(
-            (response) => response,
-            async (error) => {
-                if (
-                    error?.config?.url?.includes("client-log") ||
-                    error?.config?.url?.includes("/api/profile")
-                ) {
-                    return Promise.reject(error);
-                }
-
-                if (error?.response?.status === 401) {
-                    await handleAuthFailure();
-                } else {
-                    await sendClientLog({
-                        message: error.message,
-                        url: error?.config?.url,
-                        status: error?.response?.status,
-                        data: error?.response?.data,
-                        source: "AxiosInterceptor",
-                    });
-                    setHasCriticalError(true);
-                }
-                return Promise.reject(error);
-            }
-        );
-
-        return () => {
-            axios.interceptors.request.eject(reqInterceptor);
-            axios.interceptors.response.eject(resInterceptor);
-            window.removeEventListener("error", handleGlobalError);
-            window.removeEventListener(
-                "unhandledrejection",
-                handlePromiseRejection
-            );
-        };
-    }, []);
-
-    useEffect(() => {
-        const validateAuth = async () => {
-            if (user && Object.keys(user).length > 0) {
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const { data } = await axios.get(`/api/profile`);
-                dispatch(setUser(data));
-                setIsLoading(false);
-            } catch (error) {
-                if (
-                    error?.response?.status === 401 ||
-                    error?.response?.status === 403 ||
-                    error?.response?.status === 500
-                ) {
-                    await handleAuthFailure();
-                } else {
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        validateAuth();
-    }, [user, dispatch]);
 
     if (isLoading) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-[9999] text-white">
-                <p className="text-lg">در حال اعتبارسنجی...</p>
+            <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-[9999] text-white">
+                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-lg font-bold">در حال اعتبارسنجی...</p>
             </div>
         );
     }
