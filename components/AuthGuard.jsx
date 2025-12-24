@@ -4,7 +4,6 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/userSlice";
-import SystemError from "./SystemError";
 
 export default function AuthGuard({ children }) {
     const dispatch = useDispatch();
@@ -85,7 +84,11 @@ export default function AuthGuard({ children }) {
         const resInterceptor = axios.interceptors.response.use(
             (response) => response,
             async (error) => {
-                if (error?.config?.url?.includes("client-log")) {
+                // شرط عدم لاگ کردن برای روت پروفایل و خودِ لاگ
+                if (
+                    error?.config?.url?.includes("client-log") ||
+                    error?.config?.url?.includes("/api/profile")
+                ) {
                     return Promise.reject(error);
                 }
 
@@ -142,10 +145,6 @@ export default function AuthGuard({ children }) {
 
         validateAuth();
     }, [user, dispatch]);
-
-    if (hasCriticalError) {
-        return <SystemError />;
-    }
 
     if (isLoading) {
         return (

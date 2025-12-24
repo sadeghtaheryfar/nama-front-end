@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import axios from "axios";
-import SystemError from "./SystemError";
 import Cookies from "js-cookie";
 
 export default class GlobalErrorBoundary extends React.Component {
@@ -51,7 +50,8 @@ export default class GlobalErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError) {
-            return <SystemError />;
+            // جلوگیری از رندر مجدد کامپوننت خراب برای پیشگیری از حلقه بی‌نهایت
+            return null;
         }
 
         return this.props.children;
