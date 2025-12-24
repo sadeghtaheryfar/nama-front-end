@@ -98,7 +98,6 @@ export default class GlobalErrorBoundary extends React.Component {
         );
     };
 
-    // --- تابع اصلی ارسال لاگ به سرور ---
     logError = async (errorContext) => {
         try {
             const LOG_API_URL = "http://arman.armaniran.org/api/v1/client-log";
@@ -109,7 +108,6 @@ export default class GlobalErrorBoundary extends React.Component {
             formdata.append("client_version", "1.0.0");
             formdata.append("platform", "web");
 
-            // ارسال بدون انتظار (Fire & Forget) برای جلوگیری از کندی
             axios
                 .post(LOG_API_URL, formdata, {
                     headers: {
@@ -125,7 +123,6 @@ export default class GlobalErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError) {
-            // میتوانید یک کامپوننت گرافیکی برای خطای مرگبار اینجا برگردانید
             return null;
         }
         return this.props.children;
