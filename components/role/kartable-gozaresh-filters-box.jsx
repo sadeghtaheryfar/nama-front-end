@@ -324,12 +324,14 @@ export default function KartableReportFilterBox({
                             value={planSearch}
                             onChange={(e) => setPlanSearch(e.target.value)}
                         />
-                        {loadingPlans && (
-                            <div className="flex justify-center items-center py-2">
-                                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                        )}
-                        <div className="max-h-40 overflow-y-auto border rounded">
+
+                        <div className="max-h-40 overflow-y-auto border rounded relative">
+                            {loadingPlans && (
+                                <div className="flex justify-center items-center py-2 w-full h-full absolute bg-[#a9a9a961]">
+                                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            )}
+
                             {plans.length > 0
                                 ? plans.map((plan) => (
                                       <div
@@ -379,12 +381,14 @@ export default function KartableReportFilterBox({
                             value={unitSearch}
                             onChange={(e) => setUnitSearch(e.target.value)}
                         />
-                        {loadingUnits && (
-                            <div className="flex justify-center items-center py-2">
-                                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                        )}
-                        <div className="max-h-40 overflow-y-auto border rounded">
+
+                        <div className="max-h-40 overflow-y-auto border rounded relative">
+                            {loadingUnits && (
+                                <div className="flex justify-center items-center py-2 w-full h-full absolute bg-[#a9a9a961]">
+                                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            )}
+
                             {units.length > 0
                                 ? units.map((unit) => (
                                       <div
