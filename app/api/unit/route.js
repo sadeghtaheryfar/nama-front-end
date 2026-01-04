@@ -4,30 +4,45 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export const GET = async (req) => {
-  const { searchParams } = new URL(req.url);
-  const token = cookies().get("token")?.value;
-  const itemId = searchParams.get("item_id");
-  const role = searchParams.get("role");
-  const page = searchParams.get("page") || 1;
-  const perPage = searchParams.get("per_page") || 10;
-  const q = searchParams.get("q") || "";
+    const { searchParams } = new URL(req.url);
+    const token = cookies().get("token")?.value;
+    const itemId = searchParams.get("item_id");
+    const role = searchParams.get("role");
+    const page = searchParams.get("page") || 1;
+    const perPage = searchParams.get("per_page") || 10;
+    const q = searchParams.get("q") || "";
 
-  try {
-    let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/units?per_page=${perPage}&page=${page}&role=${role}&q=${q}`;
-    if (itemId) {
-      apiUrl += `&item_id=${itemId}`;
+    try {
+        let apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/units?per_page=${perPage}&page=${page}&role=${role}&q=${q}`;
+        if (itemId) {
+            apiUrl += `&item_id=${itemId}`;
+        }
+
+        const response = await axios.get(apiUrl, {
+            headers: {
+                Accept: "application/json",
+                Authorization: `bearer ${token}`,
+            },
+        });
+
+        return NextResponse.json(response.data, { status: response.status });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+
+        if (error.response) {
+            return NextResponse.json(error.response.data, {
+                status: error.response.status,
+            });
+        } else if (error.request) {
+            return NextResponse.json(
+                { message: "پاسخی از سرور دریافت نشد." },
+                { status: 502 }
+            );
+        } else {
+            return NextResponse.json(
+                { message: "مشکلی در ارسال درخواست وجود دارد." },
+                { status: 500 }
+            );
+        }
     }
-
-    const response = await axios.get(apiUrl, {
-      headers: {
-        Accept: "application/json",
-        Authorization: `bearer ${token}`,
-      },
-    });
-
-    return NextResponse.json(response.data, { status: response.status });
-  } catch (error) {
-    console.error("Error fetching banners:", error);
-    return NextResponse.json({ error: "Failed to fetch banners" }, { status: 500 });
-  }
 };

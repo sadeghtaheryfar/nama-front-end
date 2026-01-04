@@ -23,7 +23,6 @@ export const GET = async (req) => {
         const unit_id = parseInt(searchParams.get("unit_id") || undefined);
         const invoice = 1;
 
-        // New filter parameters
         const version = searchParams.get("version");
         const single_request = searchParams.get("single_request");
         const normal_request = searchParams.get("normal_request");
@@ -39,7 +38,6 @@ export const GET = async (req) => {
         if (sub_type) params.sub_type = sub_type;
         if (school_coach_type) params.school_coach_type = school_coach_type;
 
-        // Add new filters to params if they exist
         if (version) params.version = version;
         if (single_request) params.single_request = single_request;
         if (normal_request) params.normal_request = normal_request;
@@ -59,7 +57,22 @@ export const GET = async (req) => {
 
         return NextResponse.json(response.data, { status: response.status });
     } catch (error) {
-        console.error("Error fetching banners:", error);
-        throw error;
+        console.error("Error fetching data:", error);
+
+        if (error.response) {
+            return NextResponse.json(error.response.data, {
+                status: error.response.status,
+            });
+        } else if (error.request) {
+            return NextResponse.json(
+                { message: "پاسخی از سرور دریافت نشد." },
+                { status: 502 }
+            );
+        } else {
+            return NextResponse.json(
+                { message: "مشکلی در ارسال درخواست وجود دارد." },
+                { status: 500 }
+            );
+        }
     }
 };
