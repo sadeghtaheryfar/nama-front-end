@@ -19,6 +19,7 @@ export const GET = async (req) => {
         const page = parseInt(searchParams.get("page") || "1");
         const per_page = parseInt(searchParams.get("per_page") || "10");
         const plan_id = parseInt(searchParams.get("plan_id") || undefined);
+        const region_id = parseInt(searchParams.get("region_id") || undefined);
         const unit_id = parseInt(searchParams.get("unit_id") || undefined);
 
         const params = { item_id, per_page, page, sort, direction, q };
@@ -26,6 +27,7 @@ export const GET = async (req) => {
         if (role) params.role = role;
         if (status) params.status = status;
         if (plan_id) params.plan_id = plan_id;
+        if (region_id) params.region_id = region_id;
         if (unit_id) params.unit_id = unit_id;
         if (sub_type) params.sub_type = sub_type;
         if (school_coach_type) params.school_coach_type = school_coach_type;
@@ -38,7 +40,7 @@ export const GET = async (req) => {
                     Accept: "application/json",
                     Authorization: `bearer ${token}`,
                 },
-            }
+            },
         );
 
         return NextResponse.json(response.data, { status: response.status });
@@ -52,12 +54,12 @@ export const GET = async (req) => {
         } else if (error.request) {
             return NextResponse.json(
                 { message: "پاسخی از سرور دریافت نشد." },
-                { status: 502 }
+                { status: 502 },
             );
         } else {
             return NextResponse.json(
                 { message: "مشکلی در ارسال درخواست وجود دارد." },
-                { status: 500 }
+                { status: 500 },
             );
         }
     }

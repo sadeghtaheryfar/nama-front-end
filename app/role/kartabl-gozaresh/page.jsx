@@ -86,6 +86,7 @@ export default function KartablGozaresh() {
         direction,
         status,
         plan_id,
+        region_id,
         unit_id,
         currentPage,
         totalPages,
@@ -121,7 +122,7 @@ export default function KartablGozaresh() {
     useEffect(() => {
         if (debouncedSearchTerm !== reduxSearch) {
             dispatch(
-                setReportDashboardFilters({ search: debouncedSearchTerm })
+                setReportDashboardFilters({ search: debouncedSearchTerm }),
             );
             dispatch(setReportDashboardCurrentPage(1));
         }
@@ -132,7 +133,7 @@ export default function KartablGozaresh() {
         const itemIdParam = searchParams.get("item_id");
 
         dispatch(
-            setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam })
+            setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }),
         );
 
         if (!roleParam || !itemIdParam) {
@@ -192,7 +193,7 @@ export default function KartablGozaresh() {
         const fetching = async () => {
             try {
                 const response = await axios.get(
-                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`
+                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`,
                 );
                 if (response.data) {
                     dispatch(setHeaderData(response.data));
@@ -212,7 +213,7 @@ export default function KartablGozaresh() {
         const fetching = async () => {
             try {
                 const response = await axios.get(
-                    `/api/info?item_id=${item_id}&role=${role}`
+                    `/api/info?item_id=${item_id}&role=${role}`,
                 );
                 if (response.data) {
                     setInfo(response.data);
@@ -247,6 +248,7 @@ export default function KartablGozaresh() {
                     direction,
                     status,
                     plan_id,
+                    region_id,
                     unit_id,
                     per_page: itemsPerPage,
                     page: currentPage,
@@ -269,8 +271,8 @@ export default function KartablGozaresh() {
                     0;
                 dispatch(
                     setReportDashboardTotalPages(
-                        Math.ceil(total / itemsPerPage) || 1
-                    )
+                        Math.ceil(total / itemsPerPage) || 1,
+                    ),
                 );
             } catch (error) {
                 console.error(error);
@@ -288,6 +290,7 @@ export default function KartablGozaresh() {
         direction,
         status,
         plan_id,
+        region_id,
         unit_id,
         sub_type,
         school_coach_type,
@@ -320,10 +323,11 @@ export default function KartablGozaresh() {
                 sort: "",
                 direction: "",
                 plan_id: "",
+                region_id: "",
                 unit_id: "",
                 school_coach_type: "",
                 sub_type: "",
-            })
+            }),
         );
         dispatch(setReportDashboardCurrentPage(1));
     };
@@ -397,7 +401,7 @@ export default function KartablGozaresh() {
                 }`}
             >
                 قبلی
-            </button>
+            </button>,
         );
 
         const startPage = Math.max(1, currentPage - 2);
@@ -411,13 +415,13 @@ export default function KartablGozaresh() {
                     className="px-3 py-1 rounded-md hover:bg-gray-100"
                 >
                     1
-                </button>
+                </button>,
             );
             if (startPage > 2) {
                 buttons.push(
                     <span key="ellipsis1" className="px-2">
                         ...
-                    </span>
+                    </span>,
                 );
             }
         }
@@ -434,7 +438,7 @@ export default function KartablGozaresh() {
                     }`}
                 >
                     {i}
-                </button>
+                </button>,
             );
         }
 
@@ -443,7 +447,7 @@ export default function KartablGozaresh() {
                 buttons.push(
                     <span key="ellipsis2" className="px-2">
                         ...
-                    </span>
+                    </span>,
                 );
             }
             buttons.push(
@@ -453,7 +457,7 @@ export default function KartablGozaresh() {
                     className="px-3 py-1 rounded-md hover:bg-gray-100"
                 >
                     {totalPages}
-                </button>
+                </button>,
             );
         }
 
@@ -472,7 +476,7 @@ export default function KartablGozaresh() {
                 }`}
             >
                 بعدی
-            </button>
+            </button>,
         );
 
         return buttons;
@@ -678,8 +682,8 @@ export default function KartablGozaresh() {
                                             {direction === "desc"
                                                 ? "جدید ترین"
                                                 : direction === "asc"
-                                                ? "قدیمی ترین"
-                                                : "مرتب سازی"}
+                                                  ? "قدیمی ترین"
+                                                  : "مرتب سازی"}
                                         </span>
                                     </button>
                                     {isSortOpen && (
@@ -738,7 +742,7 @@ export default function KartablGozaresh() {
                                 {reports.data.map((report) => {
                                     const badge = getStatusBadge(
                                         report.status,
-                                        report.step
+                                        report.step,
                                     );
                                     return (
                                         <div
@@ -816,9 +820,9 @@ export default function KartablGozaresh() {
                                                     </span>
                                                     <span>
                                                         {new Date(
-                                                            report.created_at
+                                                            report.created_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </span>
                                                 </div>
@@ -828,9 +832,9 @@ export default function KartablGozaresh() {
                                                     </span>
                                                     <span>
                                                         {new Date(
-                                                            report.updated_at
+                                                            report.updated_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </span>
                                                 </div>
@@ -884,7 +888,7 @@ export default function KartablGozaresh() {
                                         {reports.data.map((report) => {
                                             const badge = getStatusBadge(
                                                 report.status,
-                                                report.step
+                                                report.step,
                                             );
                                             return (
                                                 <tr
@@ -913,16 +917,16 @@ export default function KartablGozaresh() {
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
                                                         {new Date(
-                                                            report.created_at
+                                                            report.created_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
                                                         {new Date(
-                                                            report.updated_at
+                                                            report.updated_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
