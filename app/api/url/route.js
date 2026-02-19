@@ -5,14 +5,19 @@ import axios from "axios";
 export const dynamic = "force-dynamic";
 
 export const GET = async (req, res) => {
+    const { searchParams } = new URL(req.url);
+    const redirect_url = searchParams.get("redirect_url");
+
     try {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_AUTH}/oauth/create?token=1234&callback=${process.env.NEXT_PUBLIC_CB_URL}`,
+        const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/send-request`,{
+                "callback" : redirect_url ?? process.env.NEXT_PUBLIC_CB_URL
+            },
             {
                 headers: {
                     "Content-Type": `application/json`,
                 },
-            }
+            },
         );
 
         return NextResponse.json(response.data, { status: response.status });
@@ -26,12 +31,12 @@ export const GET = async (req, res) => {
         } else if (error.request) {
             return NextResponse.json(
                 { message: "پاسخی از سرور دریافت نشد." },
-                { status: 502 }
+                { status: 502 },
             );
         } else {
             return NextResponse.json(
                 { message: "مشکلی در ارسال درخواست وجود دارد." },
-                { status: 500 }
+                { status: 500 },
             );
         }
     }

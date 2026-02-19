@@ -101,15 +101,15 @@ const Header = ({ bgBox, bgRole }) => {
             const currentPathname = window.location.pathname;
             if (currentPathname.includes("kartabl-gozaresh")) {
                 router.push(
-                    `/role/kartabl-gozaresh?item_id=${itemIdFromUrl}&role=${newRole}`
+                    `/role/kartabl-gozaresh?item_id=${itemIdFromUrl}&role=${newRole}`,
                 );
             } else if (currentPathname.includes("kartabl")) {
                 router.push(
-                    `/role/kartabl?role=${newRole}&item_id=${itemIdFromUrl}`
+                    `/role/kartabl?role=${newRole}&item_id=${itemIdFromUrl}`,
                 );
             } else {
                 router.push(
-                    `?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`
+                    `?id=${idFromUrl}&role=${newRole}&item_id=${itemIdFromUrl}`,
                 );
             }
         }
@@ -157,7 +157,7 @@ const Header = ({ bgBox, bgRole }) => {
                               </div>
                           ))}
                   </div>,
-                  document.body
+                  document.body,
               )
             : null;
 
@@ -207,7 +207,7 @@ const Header = ({ bgBox, bgRole }) => {
                 <span className="text-[10px] lg:text-sm">
                     {translateNama(
                         roleOptions.find((role) => role.key === currentRole)
-                            ?.key
+                            ?.key,
                     ) || "نامشخص"}
                 </span>
             </div>

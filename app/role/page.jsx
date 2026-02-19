@@ -87,11 +87,11 @@ export default function Role() {
             setLoadingBanners(true);
             try {
                 const response = await axios.get(
-                    `/api/banners?item_id=${item_id}`
+                    `/api/banners?item_id=${item_id}`,
                 );
                 if (response.data) {
                     dispatch(
-                        setBanners({ data: response.data, itemId: item_id })
+                        setBanners({ data: response.data, itemId: item_id }),
                     );
                 }
             } catch (error) {
@@ -114,7 +114,7 @@ export default function Role() {
         const fetching = async () => {
             try {
                 const response = await axios.get(
-                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`
+                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`,
                 );
                 if (response.data) {
                     dispatch(setHeaderData(response.data));
@@ -134,7 +134,7 @@ export default function Role() {
         const fetching = async () => {
             try {
                 const response = await axios.get(
-                    `/api/info?item_id=${item_id}&role=${role}`
+                    `/api/info?item_id=${item_id}&role=${role}`,
                 );
                 if (response.data) {
                     setInfo(response.data);

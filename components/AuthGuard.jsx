@@ -29,7 +29,7 @@ export default function AuthGuard({ children }) {
                 window.history.replaceState(
                     {},
                     document.title,
-                    window.location.pathname
+                    window.location.pathname,
                 );
             }
 
@@ -85,7 +85,8 @@ export default function AuthGuard({ children }) {
 
     const redirectToLogin = async () => {
         try {
-            const { data } = await axios.get(`/api/url`);
+            const currentPath = window.location.href;
+            const { data } = await axios.get(`/api/url?redirect_url=${encodeURIComponent(currentPath)}`);
             if (data?.verify_url) {
                 window.location.href = data.verify_url;
             }

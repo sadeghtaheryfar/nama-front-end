@@ -28,7 +28,7 @@ export default class GlobalErrorBoundary extends React.Component {
         window.addEventListener("error", this.handleWindowError);
         window.addEventListener(
             "unhandledrejection",
-            this.handlePromiseRejection
+            this.handlePromiseRejection,
         );
 
         this.setupAxiosInterceptors();
@@ -38,7 +38,7 @@ export default class GlobalErrorBoundary extends React.Component {
         window.removeEventListener("error", this.handleWindowError);
         window.removeEventListener(
             "unhandledrejection",
-            this.handlePromiseRejection
+            this.handlePromiseRejection,
         );
 
         if (this.reqInterceptor !== null)
@@ -77,6 +77,19 @@ export default class GlobalErrorBoundary extends React.Component {
             async (error) => {
                 const url = error?.config?.url || "";
 
+                if (error?.response?.status === 401) {
+                    if (
+                        !url.includes("/api/profile") &&
+                        !url.includes("/api/url")
+                    ) {
+                        Cookies.remove("token");
+                        sessionStorage.removeItem("auth_retrying");
+
+                        window.location.reload();
+                        return Promise.reject(error);
+                    }
+                }
+
                 if (
                     url.includes("client-log") ||
                     url.includes("/api/profile")
@@ -94,7 +107,7 @@ export default class GlobalErrorBoundary extends React.Component {
                     });
                 }
                 return Promise.reject(error);
-            }
+            },
         );
     };
 

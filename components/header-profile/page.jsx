@@ -44,7 +44,7 @@ const Header = ({ bgBox, bgRole }) => {
 
         if (user && user.data) {
             const hasHeadCoachRole = user.data.roles?.some(
-                (role) => role.role_en === "mosque_head_coach"
+                (role) => role.role_en === "mosque_head_coach",
             );
 
             if (!hasHeadCoachRole) {
@@ -173,8 +173,8 @@ const Header = ({ bgBox, bgRole }) => {
                             {translateNama(
                                 user?.data?.roles?.find(
                                     (role) =>
-                                        role.role_en === "mosque_head_coach"
-                                )?.role_en
+                                        role.role_en === "mosque_head_coach",
+                                )?.role_en,
                             )}
                         </span>
                     </div>
