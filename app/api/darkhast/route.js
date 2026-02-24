@@ -8,7 +8,7 @@ export const GET = async (req) => {
     const token = cookies().get("token")?.value;
     try {
         const { searchParams } = new URL(req.url);
-        const sort = searchParams.get("sort") || "created_at";
+        const sort = searchParams.get("sort") || "updated_at";
         const direction = searchParams.get("direction") || "desc";
         const status = searchParams.get("status");
         const q = searchParams.get("q") || "";

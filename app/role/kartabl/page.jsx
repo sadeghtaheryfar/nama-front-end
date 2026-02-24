@@ -141,7 +141,7 @@ export default function Kartabl() {
     useEffect(() => {
         if (debouncedSearchTerm !== reduxSearch) {
             dispatch(
-                setRequestDashboardFilters({ search: debouncedSearchTerm })
+                setRequestDashboardFilters({ search: debouncedSearchTerm }),
             );
             dispatch(setRequestDashboardCurrentPage(1));
         }
@@ -152,7 +152,7 @@ export default function Kartabl() {
         const itemIdParam = searchParams.get("item_id");
 
         dispatch(
-            setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam })
+            setGlobalDashboardParams({ item_id: itemIdParam, role: roleParam }),
         );
 
         if (!roleParam || !itemIdParam) {
@@ -179,14 +179,14 @@ export default function Kartabl() {
             setStepTitles(
                 config
                     ? generateGeneralTitles(config.titleContext)
-                    : generateGeneralTitles("مسجد")
+                    : generateGeneralTitles("مسجد"),
             );
         }
 
         const fetchHeader = async () => {
             try {
                 const response = await axios.get(
-                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`
+                    `/api/show-item-dashboard?item_id=${item_id}&role=mosque_head_coach`,
                 );
                 if (response.data) dispatch(setHeaderData(response.data));
             } catch (error) {
@@ -201,7 +201,7 @@ export default function Kartabl() {
         const fetchInfo = async () => {
             try {
                 const response = await axios.get(
-                    `/api/info?item_id=${item_id}&role=${role}`
+                    `/api/info?item_id=${item_id}&role=${role}`,
                 );
                 if (response.data) setInfo(response.data);
             } catch (error) {
@@ -255,8 +255,8 @@ export default function Kartabl() {
                 response.data.meta?.total || response.data.data?.length || 0;
             dispatch(
                 setRequestDashboardTotalPages(
-                    Math.ceil(total / itemsPerPage) || 1
-                )
+                    Math.ceil(total / itemsPerPage) || 1,
+                ),
             );
         } catch (error) {
             console.error(error);
@@ -308,11 +308,11 @@ export default function Kartabl() {
                 sort: "",
                 direction: "",
                 plan_id: "",
-                region_id : "",
+                region_id: "",
                 unit_id: "",
                 school_coach_type: "",
                 sub_type: "",
-            })
+            }),
         );
         setLocalSearchInput("");
         dispatch(setRequestDashboardCurrentPage(1));
@@ -387,7 +387,7 @@ export default function Kartabl() {
                 }`}
             >
                 قبلی
-            </button>
+            </button>,
         );
 
         const startPage = Math.max(1, currentPage - 2);
@@ -401,13 +401,13 @@ export default function Kartabl() {
                     className="px-3 py-1 rounded-md hover:bg-gray-100"
                 >
                     1
-                </button>
+                </button>,
             );
             if (startPage > 2) {
                 buttons.push(
                     <span key="ellipsis1" className="px-2">
                         ...
-                    </span>
+                    </span>,
                 );
             }
         }
@@ -424,7 +424,7 @@ export default function Kartabl() {
                     }`}
                 >
                     {i}
-                </button>
+                </button>,
             );
         }
 
@@ -433,7 +433,7 @@ export default function Kartabl() {
                 buttons.push(
                     <span key="ellipsis2" className="px-2">
                         ...
-                    </span>
+                    </span>,
                 );
             }
             buttons.push(
@@ -443,7 +443,7 @@ export default function Kartabl() {
                     className="px-3 py-1 rounded-md hover:bg-gray-100"
                 >
                     {totalPages}
-                </button>
+                </button>,
             );
         }
 
@@ -462,7 +462,7 @@ export default function Kartabl() {
                 }`}
             >
                 بعدی
-            </button>
+            </button>,
         );
 
         return buttons;
@@ -662,8 +662,8 @@ export default function Kartabl() {
                                             {direction === "desc"
                                                 ? "جدید ترین"
                                                 : direction === "asc"
-                                                ? "قدیمی ترین"
-                                                : "مرتب سازی"}
+                                                  ? "قدیمی ترین"
+                                                  : "مرتب سازی"}
                                         </span>
                                     </button>
                                     {isSortOpen && (
@@ -722,7 +722,7 @@ export default function Kartabl() {
                                 {requests.data.map((request) => {
                                     const badge = getStatusBadge(
                                         request.status,
-                                        request.step
+                                        request.step,
                                     );
                                     return (
                                         <div
@@ -731,9 +731,8 @@ export default function Kartabl() {
                                         >
                                             <div className="flex justify-between items-start">
                                                 <h2 className="text-sm font-bold text-gray-800 line-clamp-2">
-                                                    {request
-                                                        ?.request_plan?.title ||
-                                                        "بدون عنوان"}
+                                                    {request?.request_plan
+                                                        ?.title || "بدون عنوان"}
                                                 </h2>
                                                 {request?.request_plan
                                                     ?.single_step && (
@@ -765,10 +764,7 @@ export default function Kartabl() {
                                                         سر مربی:
                                                     </span>
                                                     <span>
-                                                        {
-                                                            request
-                                                                ?.user?.name
-                                                        }
+                                                        {request?.user?.name}
                                                     </span>
                                                 </div>
                                                 <div className="bg-gray-50 p-2 rounded flex justify-between flex-col gap-2 col-span-2">
@@ -776,10 +772,7 @@ export default function Kartabl() {
                                                         واحد حقوقی :
                                                     </span>
                                                     <span>
-                                                        {
-                                                            request
-                                                                ?.unit?.title
-                                                        }
+                                                        {request?.unit?.title}
                                                     </span>
                                                 </div>
                                                 <div className="bg-gray-50 p-2 rounded flex justify-between flex-col col-span-2">
@@ -800,9 +793,9 @@ export default function Kartabl() {
                                                     </span>
                                                     <span>
                                                         {new Date(
-                                                            request.created_at
+                                                            request.created_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </span>
                                                 </div>
@@ -812,9 +805,9 @@ export default function Kartabl() {
                                                     </span>
                                                     <span>
                                                         {new Date(
-                                                            request.updated_at
+                                                            request.updated_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </span>
                                                 </div>
@@ -868,7 +861,7 @@ export default function Kartabl() {
                                         {requests.data.map((request) => {
                                             const badge = getStatusBadge(
                                                 request.status,
-                                                request.step
+                                                request.step,
                                             );
                                             return (
                                                 <tr
@@ -897,16 +890,16 @@ export default function Kartabl() {
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
                                                         {new Date(
-                                                            request.created_at
+                                                            request.created_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
                                                         {new Date(
-                                                            request.updated_at
+                                                            request.updated_at,
                                                         ).toLocaleDateString(
-                                                            "fa-IR"
+                                                            "fa-IR",
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-center text-black">
