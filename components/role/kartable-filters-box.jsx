@@ -93,12 +93,29 @@ export default function FilterBox({
     }, [debouncedRegionSearchTerm]);
 
     useLayoutEffect(() => {
-        if (boxRef.current) {
-            const rect = boxRef.current.getBoundingClientRect();
-            if (rect.left < 10) {
-                setPositionClass("left-0");
+        const handlePosition = () => {
+            if (boxRef.current) {
+                const rect = boxRef.current.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+
+                let newPosition = "";
+
+                if (rect.right > viewportWidth) {
+                    newPosition = "right-0 left-auto";
+                } else if (rect.left < 0) {
+                    newPosition = "left-0 right-auto";
+                }
+
+                setPositionClass(newPosition);
             }
-        }
+        };
+
+        handlePosition();
+        window.addEventListener("resize", handlePosition);
+
+        return () => {
+            window.removeEventListener("resize", handlePosition);
+        };
     }, []);
 
     useEffect(() => {
@@ -416,297 +433,324 @@ export default function FilterBox({
     };
 
     return (
-        <div
-            ref={boxRef}
-            className={`absolute z-10 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden ${positionClass}`}
-        >
-            <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
-                {/* بخش فیلترهای انتخابی سریع */}
-                <div className="p-3 grid grid-cols-1 gap-3 border-b bg-gray-50/50">
-                    <div>
-                        <div className="text-xs font-bold mb-1.5 text-gray-600">
-                            وضعیت
-                        </div>
-                        <select
-                            className="w-full p-2 text-sm border rounded-lg bg-white focus:ring-2 focus:ring-[#39A894]/20 outline-none"
-                            value={status || ""}
-                            onChange={(e) =>
-                                handleFilterChange({ status: e.target.value })
-                            }
-                        >
-                            <option value="">همه وضعیت‌ها</option>
-                            <option value="rejected">رد شده</option>
-                            <option value="in_progress">جاری</option>
-                            <option value="action_needed">نیازمند اصلاح</option>
-                            <option value="done_temp">تایید و ارسال</option>
-                            <option value="done">تایید شده</option>
-                        </select>
-                    </div>
+        <>
+            <div
+                className="fixed inset-0 bg-black/50 z-[90] md:hidden backdrop-blur-sm transition-opacity"
+                onClick={() => {
+                    if (typeof onClose === "function") onClose(false);
+                    if (typeof setIsFilterOpen === "function")
+                        setIsFilterOpen(false);
+                }}
+            />
 
-                    {item_id && (
+            <div
+                ref={boxRef}
+                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[380px] max-h-[90vh] z-[100] md:absolute md:top-[calc(100%+8px)] md:left-0 md:right-auto md:transform-none md:w-80 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden flex flex-col"
+            >
+                <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
+                    {/* بخش فیلترهای انتخابی سریع */}
+                    <div className="p-3 grid grid-cols-1 gap-3 border-b bg-gray-50/50">
                         <div>
                             <div className="text-xs font-bold mb-1.5 text-gray-600">
-                                نوع واحد حقوقی
+                                وضعیت
                             </div>
                             <select
-                                className="w-full p-2 text-sm border rounded-lg bg-white outline-none"
-                                value={sub_type || ""}
+                                className="w-full p-2 text-sm border rounded-lg bg-white focus:ring-2 focus:ring-[#39A894]/20 outline-none"
+                                value={status || ""}
                                 onChange={(e) =>
                                     handleFilterChange({
-                                        sub_type: e.target.value,
+                                        status: e.target.value,
                                     })
                                 }
                             >
-                                <option value="">همه</option>
-                                {item_id === "2" &&
-                                    subTypesData.mosque &&
-                                    Object.entries(subTypesData.mosque).map(
+                                <option value="">همه وضعیت‌ها</option>
+                                <option value="rejected">رد شده</option>
+                                <option value="in_progress">جاری</option>
+                                <option value="action_needed">
+                                    نیازمند اصلاح
+                                </option>
+                                <option value="done_temp">تایید و ارسال</option>
+                                <option value="done">تایید شده</option>
+                            </select>
+                        </div>
+
+                        {item_id && (
+                            <div>
+                                <div className="text-xs font-bold mb-1.5 text-gray-600">
+                                    نوع واحد حقوقی
+                                </div>
+                                <select
+                                    className="w-full p-2 text-sm border rounded-lg bg-white outline-none"
+                                    value={sub_type || ""}
+                                    onChange={(e) =>
+                                        handleFilterChange({
+                                            sub_type: e.target.value,
+                                        })
+                                    }
+                                >
+                                    <option value="">همه</option>
+                                    {item_id === "2" &&
+                                        subTypesData.mosque &&
+                                        Object.entries(subTypesData.mosque).map(
+                                            ([key, value]) => (
+                                                <option key={key} value={key}>
+                                                    {value}
+                                                </option>
+                                            ),
+                                        )}
+                                    {item_id === "3" &&
+                                        subTypesData.school &&
+                                        Object.entries(subTypesData.school).map(
+                                            ([key, value]) => (
+                                                <option key={key} value={key}>
+                                                    {value}
+                                                </option>
+                                            ),
+                                        )}
+                                    {item_id === "4" &&
+                                        subTypesData.center &&
+                                        subTypesData.center.map(
+                                            (value, index) => (
+                                                <option
+                                                    key={index}
+                                                    value={value}
+                                                >
+                                                    {value}
+                                                </option>
+                                            ),
+                                        )}
+                                    {item_id === "8" &&
+                                        subTypesData.university &&
+                                        subTypesData.university.map(
+                                            (value, index) => (
+                                                <option
+                                                    key={index}
+                                                    value={value}
+                                                >
+                                                    {value}
+                                                </option>
+                                            ),
+                                        )}
+                                </select>
+                            </div>
+                        )}
+
+                        {item_id === "3" && (
+                            <div>
+                                <div className="text-xs font-bold mb-1.5 text-gray-600">
+                                    نوع مربی در مدارس
+                                </div>
+                                <select
+                                    className="w-full p-2 text-sm border rounded-lg bg-white outline-none"
+                                    value={school_coach_type || ""}
+                                    onChange={(e) =>
+                                        handleFilterChange({
+                                            school_coach_type: e.target.value,
+                                        })
+                                    }
+                                >
+                                    <option value="">همه</option>
+                                    {Object.entries(schoolCoachTypes).map(
                                         ([key, value]) => (
                                             <option key={key} value={key}>
                                                 {value}
                                             </option>
                                         ),
                                     )}
-                                {item_id === "3" &&
-                                    subTypesData.school &&
-                                    Object.entries(subTypesData.school).map(
-                                        ([key, value]) => (
-                                            <option key={key} value={key}>
-                                                {value}
-                                            </option>
-                                        ),
-                                    )}
-                                {item_id === "4" &&
-                                    subTypesData.center &&
-                                    subTypesData.center.map((value, index) => (
-                                        <option key={index} value={value}>
-                                            {value}
-                                        </option>
-                                    ))}
-                                {item_id === "8" &&
-                                    subTypesData.university &&
-                                    subTypesData.university.map(
-                                        (value, index) => (
-                                            <option key={index} value={value}>
-                                                {value}
-                                            </option>
-                                        ),
-                                    )}
-                            </select>
-                        </div>
-                    )}
-
-                    {item_id === "3" && (
-                        <div>
-                            <div className="text-xs font-bold mb-1.5 text-gray-600">
-                                نوع مربی در مدارس
+                                </select>
                             </div>
-                            <select
-                                className="w-full p-2 text-sm border rounded-lg bg-white outline-none"
-                                value={school_coach_type || ""}
-                                onChange={(e) =>
-                                    handleFilterChange({
-                                        school_coach_type: e.target.value,
-                                    })
-                                }
+                        )}
+                    </div>
+
+                    {/* بخش‌های آکاردئونی برای لیست‌های طولانی */}
+                    <div className="divide-y divide-gray-100">
+                        {/* اکشن پلن ها */}
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => toggleSection("plans")}
+                                className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
                             >
-                                <option value="">همه</option>
-                                {Object.entries(schoolCoachTypes).map(
-                                    ([key, value]) => (
-                                        <option key={key} value={key}>
-                                            {value}
-                                        </option>
-                                    ),
-                                )}
-                            </select>
+                                <span className="text-sm font-bold text-gray-700">
+                                    اکشن پلن‌ها
+                                </span>
+                                <span
+                                    className={`text-[10px] transform transition-transform ${openSection === "plans" ? "rotate-180" : ""}`}
+                                >
+                                    ▼
+                                </span>
+                            </button>
+                            {openSection === "plans" && (
+                                <div className="p-3 pt-0">
+                                    <input
+                                        type="text"
+                                        placeholder="جستجو..."
+                                        className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
+                                        value={planSearch}
+                                        onChange={(e) =>
+                                            setPlanSearch(e.target.value)
+                                        }
+                                    />
+                                    <div className="max-h-32 overflow-y-auto border rounded-md relative">
+                                        {loadingPlans && (
+                                            <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
+                                                <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                        {plans.map((plan) => (
+                                            <div
+                                                key={plan.id}
+                                                onClick={() =>
+                                                    handleFilterChange({
+                                                        plan_id: String(
+                                                            plan.id,
+                                                        ),
+                                                    })
+                                                }
+                                                className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${plan_id === String(plan.id) ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
+                                            >
+                                                {plan.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {planTotalPages > 1 && (
+                                        <div className="flex justify-center mt-2 scale-90">
+                                            {renderPlanPaginationButtons()}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    )}
+
+                        {/* واحدهای سازمانی */}
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => toggleSection("units")}
+                                className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+                            >
+                                <span className="text-sm font-bold text-gray-700">
+                                    واحدهای سازمانی
+                                </span>
+                                <span
+                                    className={`text-[10px] transform transition-transform ${openSection === "units" ? "rotate-180" : ""}`}
+                                >
+                                    ▼
+                                </span>
+                            </button>
+                            {openSection === "units" && (
+                                <div className="p-3 pt-0">
+                                    <input
+                                        type="text"
+                                        placeholder="جستجو..."
+                                        className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
+                                        value={localUnitSearchInput}
+                                        onChange={(e) =>
+                                            setLocalUnitSearchInput(
+                                                e.target.value,
+                                            )
+                                        }
+                                    />
+                                    <div className="max-h-32 overflow-y-auto border rounded-md relative">
+                                        {loadingUnits && (
+                                            <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
+                                                <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                        {units.map((unit) => (
+                                            <div
+                                                key={unit.id}
+                                                onClick={() =>
+                                                    handleFilterChange({
+                                                        unit_id: unit.id,
+                                                    })
+                                                }
+                                                className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${unit_id === unit.id ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
+                                            >
+                                                {unit.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {unitFilterTotalPages > 1 && (
+                                        <div className="flex justify-center mt-2 scale-90">
+                                            {renderUnitPaginationButtons()}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* مناطق */}
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => toggleSection("regions")}
+                                className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+                            >
+                                <span className="text-sm font-bold text-gray-700">
+                                    مناطق
+                                </span>
+                                <span
+                                    className={`text-[10px] transform transition-transform ${openSection === "regions" ? "rotate-180" : ""}`}
+                                >
+                                    ▼
+                                </span>
+                            </button>
+                            {openSection === "regions" && (
+                                <div className="p-3 pt-0">
+                                    <input
+                                        type="text"
+                                        placeholder="جستجو..."
+                                        className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
+                                        value={regionSearch}
+                                        onChange={(e) =>
+                                            setRegionSearch(e.target.value)
+                                        }
+                                    />
+                                    <div className="max-h-32 overflow-y-auto border rounded-md relative">
+                                        {loadingRegions && (
+                                            <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
+                                                <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                        {regions.map((region) => (
+                                            <div
+                                                key={region.id}
+                                                onClick={() =>
+                                                    handleFilterChange({
+                                                        region_id: region.id,
+                                                    })
+                                                }
+                                                className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${String(region_id) === String(region.id) ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
+                                            >
+                                                {region.title || region.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {regionTotalPages > 1 && (
+                                        <div className="flex justify-center mt-2 scale-90">
+                                            {renderRegionPaginationButtons()}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-                {/* بخش‌های آکاردئونی برای لیست‌های طولانی */}
-                <div className="divide-y divide-gray-100">
-                    {/* اکشن پلن ها */}
-                    <div className="flex flex-col">
-                        <button
-                            onClick={() => toggleSection("plans")}
-                            className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
-                        >
-                            <span className="text-sm font-bold text-gray-700">
-                                اکشن پلن‌ها
-                            </span>
-                            <span
-                                className={`text-[10px] transform transition-transform ${openSection === "plans" ? "rotate-180" : ""}`}
-                            >
-                                ▼
-                            </span>
-                        </button>
-                        {openSection === "plans" && (
-                            <div className="p-3 pt-0">
-                                <input
-                                    type="text"
-                                    placeholder="جستجو..."
-                                    className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
-                                    value={planSearch}
-                                    onChange={(e) =>
-                                        setPlanSearch(e.target.value)
-                                    }
-                                />
-                                <div className="max-h-32 overflow-y-auto border rounded-md relative">
-                                    {loadingPlans && (
-                                        <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
-                                            <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
-                                        </div>
-                                    )}
-                                    {plans.map((plan) => (
-                                        <div
-                                            key={plan.id}
-                                            onClick={() =>
-                                                handleFilterChange({
-                                                    plan_id: String(plan.id),
-                                                })
-                                            }
-                                            className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${plan_id === String(plan.id) ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
-                                        >
-                                            {plan.title}
-                                        </div>
-                                    ))}
-                                </div>
-                                {planTotalPages > 1 && (
-                                    <div className="flex justify-center mt-2 scale-90">
-                                        {renderPlanPaginationButtons()}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* واحدهای سازمانی */}
-                    <div className="flex flex-col">
-                        <button
-                            onClick={() => toggleSection("units")}
-                            className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
-                        >
-                            <span className="text-sm font-bold text-gray-700">
-                                واحدهای سازمانی
-                            </span>
-                            <span
-                                className={`text-[10px] transform transition-transform ${openSection === "units" ? "rotate-180" : ""}`}
-                            >
-                                ▼
-                            </span>
-                        </button>
-                        {openSection === "units" && (
-                            <div className="p-3 pt-0">
-                                <input
-                                    type="text"
-                                    placeholder="جستجو..."
-                                    className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
-                                    value={localUnitSearchInput}
-                                    onChange={(e) =>
-                                        setLocalUnitSearchInput(e.target.value)
-                                    }
-                                />
-                                <div className="max-h-32 overflow-y-auto border rounded-md relative">
-                                    {loadingUnits && (
-                                        <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
-                                            <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
-                                        </div>
-                                    )}
-                                    {units.map((unit) => (
-                                        <div
-                                            key={unit.id}
-                                            onClick={() =>
-                                                handleFilterChange({
-                                                    unit_id: unit.id,
-                                                })
-                                            }
-                                            className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${unit_id === unit.id ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
-                                        >
-                                            {unit.title}
-                                        </div>
-                                    ))}
-                                </div>
-                                {unitFilterTotalPages > 1 && (
-                                    <div className="flex justify-center mt-2 scale-90">
-                                        {renderUnitPaginationButtons()}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* مناطق */}
-                    <div className="flex flex-col">
-                        <button
-                            onClick={() => toggleSection("regions")}
-                            className="flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
-                        >
-                            <span className="text-sm font-bold text-gray-700">
-                                مناطق
-                            </span>
-                            <span
-                                className={`text-[10px] transform transition-transform ${openSection === "regions" ? "rotate-180" : ""}`}
-                            >
-                                ▼
-                            </span>
-                        </button>
-                        {openSection === "regions" && (
-                            <div className="p-3 pt-0">
-                                <input
-                                    type="text"
-                                    placeholder="جستجو..."
-                                    className="w-full p-2 text-xs border rounded-md mb-2 outline-none"
-                                    value={regionSearch}
-                                    onChange={(e) =>
-                                        setRegionSearch(e.target.value)
-                                    }
-                                />
-                                <div className="max-h-32 overflow-y-auto border rounded-md relative">
-                                    {loadingRegions && (
-                                        <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
-                                            <div className="w-5 h-5 border-2 border-[#39A894] border-t-transparent rounded-full animate-spin"></div>
-                                        </div>
-                                    )}
-                                    {regions.map((region) => (
-                                        <div
-                                            key={region.id}
-                                            onClick={() =>
-                                                handleFilterChange({
-                                                    region_id: region.id,
-                                                })
-                                            }
-                                            className={`p-2 text-xs cursor-pointer hover:bg-gray-50 ${String(region_id) === String(region.id) ? "bg-teal-50 text-[#39A894] font-medium" : ""}`}
-                                        >
-                                            {region.title || region.name}
-                                        </div>
-                                    ))}
-                                </div>
-                                {regionTotalPages > 1 && (
-                                    <div className="flex justify-center mt-2 scale-90">
-                                        {renderRegionPaginationButtons()}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                {/* دکمه‌های عملیاتی */}
+                <div className="p-3 bg-white border-t flex gap-2">
+                    <button
+                        className="flex-1 p-2 bg-[#39A894] text-white text-sm font-bold rounded-lg hover:bg-[#2d8575] transition-colors"
+                        onClick={() => onClose(false)}
+                    >
+                        اعمال فیلتر
+                    </button>
+                    <button
+                        className="flex-1 p-2 bg-white text-red-500 text-sm font-bold border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
+                        onClick={handleResetFilters}
+                    >
+                        حذف فیلتر
+                    </button>
                 </div>
             </div>
-
-            {/* دکمه‌های عملیاتی */}
-            <div className="p-3 bg-white border-t flex gap-2">
-                <button
-                    className="flex-1 p-2 bg-[#39A894] text-white text-sm font-bold rounded-lg hover:bg-[#2d8575] transition-colors"
-                    onClick={() => onClose(false)}
-                >
-                    اعمال فیلتر
-                </button>
-                <button
-                    className="flex-1 p-2 bg-white text-red-500 text-sm font-bold border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
-                    onClick={handleResetFilters}
-                >
-                    حذف فیلتر
-                </button>
-            </div>
-        </div>
+        </>
     );
 }
